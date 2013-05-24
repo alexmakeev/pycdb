@@ -18,9 +18,13 @@ Python Configuration Database is a Python application, based on django 1.3.1 fra
 
 2\. Go to /conf and copy any local_*.py file to new file local_[installation_name].py where installation_name is a short description of a place you are installing PyCDB
 
-3\. Edit local_[installation_name].py, you could overwrite any settings of common.py configuration file.
+3\. Edit local_[installation_name].py, you could overwrite any settings of common.py configuration file, also for first use you could erase all CONFIGURATIONS like this:
 
-*This is very useful to have common settings in repository and use small local settings files to overwrite only some settings parameters.*
+```python
+CONFIGURATIONS = {}
+```
+
+*This is very useful to have common settings in repository and use small local settings files to overwrite their part.*
 
 4\. Copy settings_example.py to settings.py
 
@@ -52,6 +56,7 @@ To run debug server, go to application root directory and run the command:
 ```
 $ ./zrun
 ```
+*The server will run at all available ip-addresses on port 8082. For example, you could use http://127.0.0.1:8082*
 
 **Deploying**
 
