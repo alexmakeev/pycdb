@@ -1,7 +1,11 @@
+import os
+from utils import *
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-PROJECT_DIR = "/home/alexmak/Projects/pycdb"
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))[:-5] # cut "/conf" from the end
+
 
 DATABASES = {
     'default': {
@@ -18,12 +22,6 @@ STATIC_ROOT = PROJECT_DIR + '/static'
 
 EMAIL_SITE_ROOT_URL = "http://localhost:8082"
 EMAIL_FROM = "pce.dev@gmail.com"
-
-class ConfigurationInfo():
-    def __init__(self, title, configuration, storage):
-        self.title = title
-        self.configuration = configuration
-        self.storage = storage
 
 CONFIGURATIONS = {
     "tst_config" : ConfigurationInfo("Test Configuration", "graph_db.configurations.test_config.TestConfig", PROJECT_DIR + "/graph_db/databases/nxgraph.gpickle"),
