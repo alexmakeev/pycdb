@@ -1,7 +1,9 @@
 pycdb - Python Configuration Database
 =====
 
-Python Configuration Database is a Python application, based on django 1.3.1 framework. PyCDB consists of 3 base django applications: graph_db, portal, std_editor
+Python Configuration Database is a Python application, based on django 1.3.1 framework.
+
+PyCDB consists of 3 base django applications: graph_db, portal, std_editor
 
 ===
 
@@ -64,3 +66,50 @@ It is recommended to use nginx web-server with FCGI connection to django.
 
 /// MORE INFO WILL BE ADDED SOON
 
+
+**Creating Configuration**
+
+1\. Go to graph_db/configurations directory.
+
+2\. Create new [test_config].py file, where test_config is a short description of your software
+
+3\. Make the configuration class. Example:
+
+```python
+from graph_db.configuration import Configuration, makeAttribute, makeAllowedRelation
+
+class TestConfig(Configuration):
+    def __init__(self):
+        Configuration.__init__(self)
+        self.addEntityClass(1, "pc", "PC", "Personal Computer", [
+                makeAttribute("title", "Title", "Title of the PC", self.TYPE_STRING, ""),
+            ])
+        self.addEntityClass(2, "device", "Device", "Digital Device", [
+                makeAttribute("title", "Title", "Title of the device", self.TYPE_STRING, ""),
+            ])
+
+        self.addRelationClass(101, "physical", "Physical", "Physical connections", [
+            ], [
+                makeAllowedRelation(
+                    {"cname":"pc", "multiplicity" : self.MUL_ONE},
+                    {"cname":"device", "multiplicity" : self.MUL_ZERO_OR_MORE}
+                ),
+            ])
+```
+*Full documentation of how to create configuration class you could find in the wiki of PyCDB.*
+
+**Using Configuration**
+
+1\. Go to conf/local_[installation_name] and find CONFIGURATIONS setting.
+
+2\. Make a new configuration connection:
+
+```python
+CONFIGURATIONS = {
+    "tst_config" : ConfigurationInfo("Test Configuration", "graph_db.configurations.test_config.TestConfig", PROJECT_DIR + "/graph_db/databases/test_config.gpickle"),
+}
+```
+
+*CONFIGURATIONS is a dictionary of configuration connnections. Keys are connection names that are usable in automated scripts.*
+*Value is an instance of ConfigurationInfo class that in its constructor accepts: connection title, dotted path to the configuration class and path, where the configuration data will be stored.*
+*Full documentation of how to create configuration connections you could find in the wiki of PyCDB.*
