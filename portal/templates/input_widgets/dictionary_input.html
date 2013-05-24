@@ -1,0 +1,47 @@
+<script language="JavaScript">
+    var tbl_{{field_name}} = DictionaryInput("{{field_name}}_");
+</script>
+
+<input type="hidden" id="{{field_name}}_table_data" name="{{field_name}}" value='{{field_value|safe}}'>
+<table id="{{field_name}}_table" class="table" style="padding: 0px;">
+    <tbody id="{{field_name}}_table_body">
+    </tbody>
+    <tfoot>
+    <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td>
+            <a href="#" id="{{field_name}}_btn_add_row" onclick="return tbl_{{field_name}}.row_add()" class="invisible" data-original-title="">add</a>
+        </td>
+    </tr>
+    </tfoot>
+
+</table>
+
+
+<div id="{{field_name}}_template" style="display: none;">
+    <table>
+        <tbody name="dynamic_table_row">
+        <tr id="{{field_name}}_uid_${uid}">
+            <td class="dynamic_table_row dynamic_table_row_header ${css_class}">
+                <input style="width:100px;" id="{{field_name}}_key_${uid}" type="text" onchange="return tbl_{{field_name}}.row_save('${uid}')" data-original-title="">
+            </td>
+            <td>:</td>
+            <td class="dynamic_table_row ${css_class}">
+                <input style="width:100px;" id="{{field_name}}_value_${uid}" type="text" onchange="return tbl_{{field_name}}.row_save('${uid}')" data-original-title="">
+            </td>
+            <td class="${css_class}"><a href="#" onclick="return tbl_{{field_name}}.row_delete('${uid}')" data-original-title="">del</a></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script language="JavaScript">
+    tbl_{{field_name}}.init_templates()
+    tbl_{{field_name}}.load_table()
+</script>
+

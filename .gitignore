@@ -1,0 +1,15 @@
+*.py~
+*.pyc
+*~
+*.log
+*.pid
+*.sqlite
+*.fuse*
+/graph_db/databases/*.gpickle
+/files
+/settings.py
+/.idea
+/lib/django
+/static
+/zfcgi
+/projectFilesBackup

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+    <title>{% trans "Edit configuration" %}</title>
+{% endblock head %}
+
+
+{% block content %}
+    {% for ent in entities %}
+        <p>
+            {{ ent.cid }}.{{ ent.id }} : {{ ent.info }} <a href="{% url std-editor-edit-instance ent.cid ent.id %}">Edit</a>
+        </p>
+    {% endfor %}
+    <a href="{% url std-editor-add-instance cid %}">Add Instance</a>
+{% endblock content %}

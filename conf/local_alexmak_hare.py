@@ -1,0 +1,32 @@
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
+
+PROJECT_DIR = "/home/alexmak/Projects/pycdb"
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': PROJECT_DIR + '/storage.sqlite',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+STATIC_ROOT = PROJECT_DIR + '/static'
+
+EMAIL_SITE_ROOT_URL = "http://localhost:8082"
+EMAIL_FROM = "pce.dev@gmail.com"
+
+class ConfigurationInfo():
+    def __init__(self, title, configuration, storage):
+        self.title = title
+        self.configuration = configuration
+        self.storage = storage
+
+CONFIGURATIONS = {
+    "tst_config" : ConfigurationInfo("Test Configuration", "graph_db.configurations.test_config.TestConfig", PROJECT_DIR + "/graph_db/databases/nxgraph.gpickle"),
+    "tst_config2" : ConfigurationInfo("Test Configuration 2", "graph_db.configurations.test_config.TestConfig", PROJECT_DIR + "/graph_db/databases/nxgraph2.gpickle"),
+    "nsls2_magnets" : ConfigurationInfo("NSLS 2 - Magnets configuration", "graph_db.configurations.nsls2_magnets.NSLS2Magnets", PROJECT_DIR + "/graph_db/databases/nsls2_magnets.gpickle"),
+}

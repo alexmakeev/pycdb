@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+    <title>{% trans "Edit configuration" %}</title>
+{% endblock head %}
+
+
+{% block content %}
+    {% for cls in classes_list %}
+        <p>
+        {{ cls.id }} - {{ cls.name }} [{{ cls.count }}] --- <a href="{% url std-editor-list cls.id %}">List</a> | <a href="{% url std-editor-add-instance cls.id %}">Add Instance</a><br>
+        {{ cls.info }}
+        </p>
+    {% endfor %}
+{% endblock content %}

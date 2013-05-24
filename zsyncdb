@@ -1,0 +1,7 @@
+python manage.py syncdb
+
+echo ""
+echo "### Migrating portal"
+python manage.py schemamigration portal --auto
+python manage.py migrate portal
+
