@@ -7,10 +7,20 @@
 
 
 {% block content %}
+    <h3>{{ class_info.readable_name }} instances</h3>
+    <table style="width:500px;">
+    <tr>
+        <th style="width:70px;">CID.ID</th>
+        <th>Title</th>
+        <th style="width:100px;">Action</th>
+    </tr>
     {% for ent in entities %}
-        <p>
-            {{ ent.cid }}.{{ ent.id }} : {{ ent.info }} <a href="{% url std-editor-edit-instance ent.cid ent.id %}">Edit</a>
-        </p>
+        <tr>
+            <td>{{ ent.cid }}.{{ ent.id }}</td>
+            <td>{{ ent.getTitle }}</td>
+            <td style="text-align: center;"><a href="{% url std-editor-edit-instance ent.cid ent.id %}">Edit</a></td>
+        </tr>
     {% endfor %}
+    </table>
     <a href="{% url std-editor-add-instance cid %}">Add Instance</a>
 {% endblock content %}

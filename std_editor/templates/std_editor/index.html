@@ -7,10 +7,22 @@
 
 
 {% block content %}
+    <table style="width:500px;">
+    <thead>
+        <tr>
+            <th style="width:50px;">CID</th>
+            <th>Title</th>
+            <th>Instances Count</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
     {% for cls in classes_list %}
-        <p>
-        {{ cls.id }} - {{ cls.name }} [{{ cls.count }}] --- <a href="{% url std-editor-list cls.id %}">List</a> | <a href="{% url std-editor-add-instance cls.id %}">Add Instance</a><br>
-        {{ cls.info }}
-        </p>
+        <tr>
+            <td>{{ cls.id }}</td>
+            <td>{{ cls.title }}</td>
+            <td style="text-align: center;">{{ cls.count }}</td>
+            <td style="text-align: center;"><a href="{% url std-editor-list cls.id %}">List</a> | <a href="{% url std-editor-add-instance cls.id %}">Add Instance</a></td>
+        </tr>
     {% endfor %}
+    </table>
 {% endblock content %}

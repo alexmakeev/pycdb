@@ -14,3 +14,11 @@
 .error {
     color: maroon;
 }
+
+.errorlist {
+    color: maroon;
+}
+
+table tr:hover {
+    background-color: #fafad2;
+}

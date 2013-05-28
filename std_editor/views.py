@@ -19,8 +19,8 @@ def index(request):
         if cls_info["type"] != "entity_class" : continue
         classes_list += [{
             "id" : cls_id,
-            "name" : cls_info["name"],
-            "info" : cls_info["description"],
+            "title" : cls_info["readable_name"],
+            "description" : cls_info["description"],
             "count" : len(request.configuration.getAllEntities(cls_id)),
         }]
 
@@ -33,6 +33,14 @@ def add_instance(request, cid):
     new_id = new_inst.id
     return HttpResponseRedirect(reverse("std-editor-edit-instance", kwargs={"cid" : cid, "id" : new_id}))
 
+def delete_instance(request, cid, id):
+    cid = int(cid)
+    id = int(id)
+    entity = request.configuration.loadEntity(cid, id)
+    entity.delete()
+    messages.success(request, 'Instance deleted.')
+    return HttpResponseRedirect(reverse("std-editor-list", kwargs={"cid" : cid}))
+
 @render_to("std_editor/edit.html")
 def edit_instance(request, cid, id):
     cid = int(cid)
@@ -41,11 +49,6 @@ def edit_instance(request, cid, id):
     entity = request.configuration.loadEntity(cid, id)
 
     if request.method == "POST":
-        if ("delete" in request.POST):
-            entity.delete()
-            messages.success(request, 'Instance deleted.')
-            return HttpResponseRedirect(reverse("std-editor-list", kwargs={"cid" : cid}))
-
         #print request.POST
         form = EditInstanceForm(request.configuration, class_info["attributes"], entity, request.POST)
         if (form.is_valid()):
@@ -89,11 +92,6 @@ def edit_instance(request, cid, id):
             messages.error(request, 'Please, fix the errors below.')
     else:
         form = EditInstanceForm(request.configuration, class_info["attributes"], entity)
-
-#    links = []
-
-#    allowed_neighbours = request.configuration.getAllAllowedNeighboursPatterns(entity)
-#    links = request.configuration.getAllNeighbours(entity)
 
     allowed_neighbours = request.configuration.getAllAllowedNeighboursPatternsByRelationsClassesIds(entity)
     relations = request.configuration.getAllRelations(entity)
@@ -145,12 +143,9 @@ def edit_instance(request, cid, id):
             neighbour_role = neighbour_info["neighbour_role"]
             neighbour_filter_data = neighbour_info["neighbour"]
 
+            # callback to be saved in runtime memory to be reused by AJAX queries
+            # Function is needed because lambda context has to be copied. So it is function that returns function with copied context =)
             def neighbour_filter(cid):
-                #print "Initiating: ", cid
-                #def t_func(ent):
-                    #print "COMPARING:", ent["cid"], cid
-                    #return ent["cid"]==cid
-                #return t_func
                 return lambda ent: ent["cid"]==cid
 
             cls_info = request.configuration.classes[neighbour_filter_data["cid"]]
@@ -178,9 +173,9 @@ def list(request, cid):
     cid = int(cid)
     entities = request.configuration.getAllEntities(cid)
     class_info = request.configuration.classes[cid]
-    for entity in entities:
-        e_info = []
-        for attr in class_info["attributes"]:
-            e_info += [str(entity[attr["name"]])]
-        entity.info = " / ".join(e_info)
-    return {"cid" : cid, "entities" : entities}
+
+    print "1", entities
+    entities.sort(lambda a,b: cmp(a.getTitle(), b.getTitle()))
+    print "2", entities
+
+    return {"cid" : cid, "entities" : entities, "class_info" : class_info}

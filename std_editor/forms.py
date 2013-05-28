@@ -15,6 +15,7 @@ class EditInstanceForm(forms.Form):
             field_attrs = {
                 "label" : attribute["readable_name"],
                 "initial" : instance[attribute["name"]],
+
             }
             #print attribute["name"], instance[attribute["name"]]
             Cls = None

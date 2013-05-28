@@ -6,8 +6,8 @@ class NSLS2Magnets(Configuration):
 
         ############ NODES #############
         base_attributes = [
-            makeAttribute("name", "Unique Name", "", self.TYPE_STRING, ""),
             makeAttribute("readable_name", "Readable Name", "", self.TYPE_STRING, ""),
+            makeAttribute("name", "Unique Name", "", self.TYPE_STRING, ""),
         ]
 
         # addEntityClass(cid, name, readable_name, description, attributes_list)
