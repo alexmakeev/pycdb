@@ -15,7 +15,7 @@ class EditInstanceForm(forms.Form):
             field_attrs = {
                 "label" : attribute["readable_name"],
                 "initial" : instance[attribute["name"]],
-
+                "required" : False,
             }
             #print attribute["name"], instance[attribute["name"]]
             Cls = None
@@ -23,5 +23,8 @@ class EditInstanceForm(forms.Form):
             if attribute["data_type"] == configuration.TYPE_DOUBLE: Cls = forms.FloatField
             if attribute["data_type"] == configuration.TYPE_STRING: Cls = forms.CharField
             if attribute["data_type"] == configuration.TYPE_DICTIONARY: Cls = DictionaryInputField
+            if attribute["data_type"] == configuration.TYPE_TEXT:
+                Cls = forms.CharField
+                field_attrs["widget"] = forms.Textarea
 
             self.fields[attribute["name"]] = Cls(**field_attrs)

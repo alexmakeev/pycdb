@@ -65,7 +65,7 @@ def edit_instance(request, cid, id):
                 cid = int(vals[0])
                 entity_role = vals[1]
                 neighbour_role = vals[3]
-                cid_or_id_str = str(vals[5])
+                cid_or_id_str = str(vals[-1])
                 rel_key = "_".join(vals[:-1])
                 if rel_key not in new_relations: new_relations[rel_key] = {}
                 new_relations[rel_key][cid_or_id_str] = cid_or_id_value

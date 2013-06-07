@@ -113,6 +113,7 @@ class Configuration:
     TYPE_INTEGER = "int"
     TYPE_DOUBLE = "double"
     TYPE_STRING = "string"
+    TYPE_TEXT = "text"
     TYPE_DICTIONARY = "dict"
 
     def __init__(self):
