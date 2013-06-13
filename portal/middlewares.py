@@ -56,5 +56,3 @@ class SelectConfigurationMiddleware():
             request.configuration.storage.persist()
         self.saved = 1
         return response
-
-

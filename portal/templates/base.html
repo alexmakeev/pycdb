@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load selectors %}
+{% load menu %}
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -16,6 +17,7 @@
     {% endblock head %}
 </head>
 <body>
+<div id="body_content">
 <p>
     <h1>PyConfigEngine 2.0</h1>
     Configuration:
@@ -24,9 +26,7 @@
 </p>
 
 <p>
-    |
-    <a href="{% url index %}">Home</a> |
-    <a href="{% url std-editor-index %}">Editor</a> |
+    {% menu %}
 </p>
 
 {% if messages %}
@@ -46,5 +46,6 @@
     {{ timer_info|safe }}
 </small>
 {% endif %}
+</div>
 </body>
 </html>

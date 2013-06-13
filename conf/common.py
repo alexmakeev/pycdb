@@ -118,7 +118,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -132,8 +132,10 @@ INSTALLED_APPS = (
     'south',
     'annoying',
     'portal',
-    'std_editor'
-)
+    'std_editor',
+]
+
+MENU_SOURCES = ["portal.menu.MENU_ITEMS"]
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

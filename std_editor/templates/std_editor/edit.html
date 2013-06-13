@@ -11,7 +11,7 @@
     <form method="POST" action="">
         {% csrf_token %}
         {{ form.non_field_errors }}
-        <table cellspacing="10">
+        <table style="width:100%;" cellspacing="10">
             {% for field in form %}
                 <tr>
                     <td>
@@ -29,13 +29,13 @@
         </table>
 
         Relations:
-        <table cellspacing="10">
+        <table style="width:100%;" cellspacing="10">
         {% for relation_info in relations_infos %}
             <tr>
                 <td style="background-color: #90ee90; padding: 5px;">
                     <b>{{ relation_info.title }}</b>
                 </td>
-                <td width="550px;">
+                <td>
                     {% for relation in relation_info.relations %}
                         {% if relation %}
                         <div style='background-color: #e1e1e1; width:100px; float:left; padding:2px; margin: 1px; border: 1px gray solid;'>
@@ -84,5 +84,4 @@
         <a href="{% url std-editor-delete-instance entity.cid entity.id %}"  onclick="return confirm('Are you sure you want to delete entity {{ entity.getTitle }}?')">Delete</a>
     </form>
 
-    <hr>
 {% endblock content %}

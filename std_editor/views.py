@@ -52,7 +52,8 @@ def edit_instance(request, cid, id):
         #print request.POST
         form = EditInstanceForm(request.configuration, class_info["attributes"], entity, request.POST)
         if (form.is_valid()):
-            for key in entity.attributes:
+            for attr in class_info["attributes"]:
+                key = attr["name"]
                 entity.attributes[key]=form.cleaned_data[key]
 
             new_relations = {}

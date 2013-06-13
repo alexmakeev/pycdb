@@ -21,4 +21,5 @@ urlpatterns = patterns('',
     url(r'^', include('portal.urls')),
     url(r'^pasha/', include('pasha_app.urls')),
     url(r'^std_editor/', include('std_editor.urls')),
+    url(r'^nsls_tools/', include('nsls_tools.urls')),
 )

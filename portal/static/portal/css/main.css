@@ -1,14 +1,19 @@
 .messages {
-    margin: 10px 20%;
-    background-color: #fafad2;
-    width: 50%;
     text-align: center;
-    position: absolute;
-    top: 20px;
 }
 
 .success {
     color: green;
+    background-color: #d2fad2;
+    padding: 3px 0px;
+    position: absolute;
+    top: 5px;
+    left:10%;
+    width: 80%;
+    border-radius: 5px 5px;
+    -moz-border-radius: 5px 5px;
+    -webkit-border-radius: 5px 5px;
+    border: 1px solid #b5e6b5;
 }
 
 .error {
@@ -20,5 +25,17 @@
 }
 
 table tr:hover {
-    background-color: #fafad2;
+    background-color: #f2fbff;
+}
+
+#body_content{
+    left:15%;
+    width: 64%;
+    position:relative;
+    background-color: #fafcff;
+    padding: 10px 3%;
+    border-radius: 5px 5px;
+    -moz-border-radius: 5px 5px;
+    -webkit-border-radius: 5px 5px;
+    border: 1px solid rgba(128, 193, 255, 0.47);
 }

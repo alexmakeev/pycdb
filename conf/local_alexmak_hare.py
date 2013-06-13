@@ -1,5 +1,6 @@
 import os
 from utils import *
+import common
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -28,3 +29,9 @@ CONFIGURATIONS = {
     "tst_config2" : ConfigurationInfo("Test Configuration 2", "graph_db.configurations.test_config.TestConfig", PROJECT_DIR + "/graph_db/databases/nxgraph2.gpickle"),
     "nsls2_magnets" : ConfigurationInfo("NSLS 2 - Magnets configuration", "graph_db.configurations.nsls2_magnets.NSLS2Magnets", PROJECT_DIR + "/graph_db/databases/nsls2_magnets.gpickle"),
 }
+
+common.INSTALLED_APPS += [
+    'nsls_tools'
+]
+
+common.MENU_SOURCES += ["nsls_tools.menu.MENU_ITEMS", "std_editor.menu.MENU_ITEMS"]
