@@ -46,14 +46,14 @@ class Entity(ConfigurationObject):
     def delete(self):
         return self.configuration.deleteEntity(self)
 
-    def getNeighbours(self, relation_cname_or_cid, filter=None):
-        return self.configuration.getAllRelations(self, relation_cname_or_cid, filter=filter)
+    def getNeighbours(self, relation_cname_or_cid=None, filter_func=None):
+        return self.configuration.getAllNeighbours(self, relation_cname_or_cid, filter_func=filter_func)
 
-    def getNeighboursFrom(self, relation_cname_or_cid, filter=None):
-        return self.configuration.getAllRelations(self, relation_cname_or_cid, filter=filter, role="from")
+    def getNeighboursFrom(self, relation_cname_or_cid=None, filter_func=None):
+        return self.configuration.getAllNeighbours(self, relation_cname_or_cid, filter_func=filter_func, role="from")
 
-    def getNeighboursTo(self, relation_cname_or_cid, filter=None):
-        return self.configuration.getAllRelations(self, relation_cname_or_cid, filter=filter, role="to")
+    def getNeighboursTo(self, relation_cname_or_cid=None, filter_func=None):
+        return self.configuration.getAllNeighbours(self, relation_cname_or_cid, filter_func=filter_func, role="to")
 
     def getTitle(self, length=None):
         ret_arr =  []
@@ -304,8 +304,13 @@ class Configuration:
                     ret += [instance]
         return ret
 
-    def getAllRelations(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True):
-        edges = self.storage.nxgraph.in_edges(entity.getId(), keys=True, data=True) + self.storage.nxgraph.out_edges(entity.getId(), keys=True, data=True)
+    def getAllRelations(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None):
+        edges = []
+        if not role or role=="from":
+            edges += self.storage.nxgraph.in_edges(entity.getId(), keys=True, data=True)
+        if not role or role=="to":
+            edges += self.storage.nxgraph.out_edges(entity.getId(), keys=True, data=True)
+
         ret = []
         rcid = self.convertCNameIfNeeded(relation_cname_or_cid)
 
@@ -325,8 +330,25 @@ class Configuration:
                     ret += [relation]
         return ret
 
-    def getAllNeighbours(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True):
-        return
+    def getAllNeighbours(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None):
+        ret = []
+        if not role or role=="from":
+            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "from")
+            for relation in relations:
+                will_add = True
+                neighbour = relation.getFromEntity()
+                if filter_func:
+                    will_add = will_add and filter_func(neighbour)
+                if will_add: ret += [neighbour]
+        if not role or role=="to":
+            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "to")
+            for relation in relations:
+                will_add = True
+                neighbour = relation.getToEntity()
+                if filter_func:
+                    will_add = will_add and filter_func(neighbour)
+                if will_add: ret += [neighbour]
+        return ret
 
     def getAllAllowedNeighboursPatternsByRelationsClassesIds(self, entity, relation_cname_or_cid=None):
         ret = {}

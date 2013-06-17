@@ -68,7 +68,7 @@ class NSLS2Magnets(Configuration):
             ),
             ])
 
-        self.addRelationClass(102, "types", "Types", "Typification links", [
+        self.addRelationClass(102, "type", "Types", "Typification links", [
         ], [
             makeAllowedRelation(
                 {"cname":"device", "multiplicity" : self.MUL_ZERO_OR_MORE},
@@ -80,7 +80,7 @@ class NSLS2Magnets(Configuration):
             ),
             ])
 
-        self.addRelationClass(103, "compositions", "Compositions", "Compositions links", [
+        self.addRelationClass(103, "composition", "Compositions", "Compositions links", [
         ], [
             makeAllowedRelation(
                 {"cname":"device_type", "multiplicity" : self.MUL_ONE},
@@ -89,6 +89,11 @@ class NSLS2Magnets(Configuration):
             makeAllowedRelation(
                 {"cname":"device_type", "multiplicity" : self.MUL_ONE},
                 {"cname":"channel", "multiplicity" : self.MUL_ZERO_OR_MORE}
+            ),
+            # ConnectionT-ConnectionTP
+            makeAllowedRelation(
+                {"cname":"connection_type", "multiplicity" : self.MUL_ZERO_OR_ONE},
+                {"cname":"connection_type_part", "multiplicity" : self.MUL_ONE}
             ),
             ])
 
@@ -112,12 +117,6 @@ class NSLS2Magnets(Configuration):
             makeAllowedRelation(
                 {"cname":"connection_type", "multiplicity" : self.MUL_ZERO_OR_ONE},
                 {"cname":"device_type", "multiplicity" : self.MUL_ONE}
-            ),
-
-            # ConnectionT-ConnectionTP
-            makeAllowedRelation(
-                {"cname":"connection_type", "multiplicity" : self.MUL_ZERO_OR_ONE},
-                {"cname":"connection_type_part", "multiplicity" : self.MUL_ONE}
             ),
 
             # Link-ConnectionTP-channel

@@ -1,6 +1,6 @@
-<input type="text" id="autocomplete_{{ name }}" />
-<input type="hidden" name="{{ name }}_cid" id="{{ name }}_cid" value="0" />
-<input type="hidden" name="{{ name }}_id" id="{{ name }}_id" value="0" />
+<input type="text" id="autocomplete_{{ name }}" value="{{ title }}" placeholder="Select entity..." />
+<input type="hidden" name="{{ name }}_cid" id="{{ name }}_cid" value="{{ cid }}" />
+<input type="hidden" name="{{ name }}_id" id="{{ name }}_id" value="{{ id }}" />
 
 <style>
     .ui-autocomplete-loading {
@@ -31,7 +31,7 @@
                 {% endif %}
                 return false;
             },
-            minLength: 2,
+            minLength: 1,
             delay: 500
         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
             return $( "<li>" )

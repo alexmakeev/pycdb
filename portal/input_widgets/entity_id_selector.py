@@ -3,9 +3,10 @@ import datetime
 from annoying.decorators import JsonResponse
 from django.template import RequestContext
 from django.template.loader import render_to_string
+from graph_db.configuration import Entity
 from portal.utils.random_generators import GenerateRandomStr
 
-def GetHtmlEntityIdSelector(request, name,cids_or_cnames_list=None, filter_func=None, submit_form_on_select=True):
+def GetHtmlEntityIdSelector(request, name,cids_or_cnames_list=None, filter_func=None, submit_form_on_select=True, value=None):
     cids = []
     func = filter_func
 
@@ -30,10 +31,22 @@ def GetHtmlEntityIdSelector(request, name,cids_or_cnames_list=None, filter_func=
         "filter_func" : func,
     }
 
+    t_title = ""
+    t_cid = 0
+    t_id = 0
+    if value:
+        if not isinstance(value, Entity): value = request.configuration.loadEntityByEntityId(value)
+        t_title = value.getTitle()
+        t_cid = value.cid
+        t_id = value.id
+
     params = {
         "name" : name,
         "unique_str" : unique_str,
         "submit_form_on_select" : submit_form_on_select,
+        "title" : t_title,
+        "cid" : t_cid,
+        "id" : t_id,
         }
 
     ret = render_to_string("input_widgets/entity_id_selector.html", params, context_instance=RequestContext(request))
@@ -51,7 +64,11 @@ def AjaxGetSuggestionEntities(request):
     def term_filter_func(ent):
         if filter_func and not filter_func(ent): return False
         #print term, unicode(ent), " === ", term in unicode(ent.values())
-        return term.lower() in unicode(ent.values()).lower()
+        val = unicode(ent.values()).lower()
+        found = True
+        for t_term in term.lower().split(" "):
+            found = found and t_term in val
+        return found
 
     ents = request.configuration.getAllEntities(filter_func=term_filter_func, load_instances=True)
 
