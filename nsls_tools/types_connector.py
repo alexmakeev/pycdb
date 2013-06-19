@@ -18,7 +18,16 @@ def updateConnType(request, conn_type, vals):
     conn_type["readable_name"] = title
     conn_type.save()
 
-    ### TODO: prevent deletion of ConnectorTypePart entities if links not changed
+    from_dev = getFirstOrNone(conn_type.getNeighboursFrom(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type")))
+    to_dev = getFirstOrNone(conn_type.getNeighboursTo(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type")))
+
+    if (from_dev and from_dev.getId()==(from_cid, from_id) and
+        to_dev and to_dev.getId()==(to_cid, to_id)):
+        return HttpResponse("Ok. Relations not changed")
+
+    through_items = conn_type.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "connection_type_part"))
+    for item in through_items:
+        item.delete()
     old_relations = request.configuration.getAllRelations(conn_type, load_instances=True)
     for rel in old_relations:
         rel.delete()
@@ -32,6 +41,8 @@ def updateConnType(request, conn_type, vals):
         to_entity = request.configuration.loadEntity(to_cid, to_id)
         rel_to = request.configuration.makeRelation("logical", conn_type, to_entity)
         rel_to.save()
+
+    return HttpResponse("Ok. Relations erased")
 
 
 ################## BASE FUNCTIONALITY
