@@ -49,29 +49,44 @@ def updateConnType(request, conn_type, vals):
 
 @render_to("nsls_tools/types_connector.html")
 def index(request):
+    recent_id = None
+    if "recent_id" in request.GET: recent_id = int(request.GET["recent_id"])
 
     from_widget = GetHtmlEntityIdSelector(request, "from", cids_or_cnames_list=["device_type"], submit_form_on_select=False)
     to_widget = GetHtmlEntityIdSelector(request, "to", cids_or_cnames_list=["device_type"], submit_form_on_select=False)
 
-    connection_types = request.configuration.getAllEntities("connection_type", load_instances=True)
-    def sort_func(a,b):
-        return cmp(a.getTitle(), b.getTitle())
-    connection_types.sort(sort_func)
+    connection_types_list = request.configuration.getAllEntities("connection_type", load_instances=True)
 
-    ct = connection_types[0]
+    connection_types = []
+    for conn_type in connection_types_list:
+        t_conn_type = {
+            "title" : conn_type.getTitle(),
+            "cid" : conn_type.cid,
+            "id" : conn_type.id,
+            "from" : getFirstOrNone(conn_type.getNeighboursFrom(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type"))),
+            "to" : getFirstOrNone(conn_type.getNeighboursTo(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type"))),
+            "is_recent" : recent_id==conn_type.id
+        }
+        connection_types += [t_conn_type]
+    def sort_func(a,b):
+        return cmp(a["title"], b["title"])
+    connection_types.sort(sort_func)
 
     return {"from_widget" : from_widget, "to_widget" : to_widget, "connection_types" : connection_types}
 
 def add_connection_type(request):
     conn_type = request.configuration.makeEntity("connection_type")
     updateConnType(request, conn_type, request.POST)
-    return HttpResponseRedirect(reverse("nsls-types-connector"))
+    return HttpResponseRedirect(reverse("nsls-types-connector") + "?recent_id=%s" % conn_type.id)
 
 def del_connection_type(request, cid, id):
     cid = int(cid)
     id = int(id)
-    ent = request.configuration.loadEntity(cid, id)
-    ent.delete()
+    conn_type = request.configuration.loadEntity(cid, id)
+    through_items = conn_type.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "connection_type_part"))
+    for item in through_items:
+        item.delete()
+    conn_type.delete()
     return HttpResponseRedirect(reverse("nsls-types-connector"))
 
 @render_to("nsls_tools/types_connector_edit.html")

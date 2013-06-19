@@ -25,9 +25,8 @@ EMAIL_SITE_ROOT_URL = "http://localhost:8082"
 EMAIL_FROM = "pce.dev@gmail.com"
 
 CONFIGURATIONS = {
-    "tst_config" : ConfigurationInfo("Test Configuration", "graph_db.configurations.test_config.TestConfig", PROJECT_DIR + "/graph_db/databases/nxgraph.gpickle"),
-    "tst_config2" : ConfigurationInfo("Test Configuration 2", "graph_db.configurations.test_config.TestConfig", PROJECT_DIR + "/graph_db/databases/nxgraph2.gpickle"),
     "nsls2_magnets" : ConfigurationInfo("NSLS 2 - Magnets configuration", "graph_db.configurations.nsls2_magnets.NSLS2Magnets", PROJECT_DIR + "/graph_db/databases/nsls2_magnets.gpickle"),
+    "nsls2_magnets_test" : ConfigurationInfo("Test NSLS 2 - Magnets configuration", "graph_db.configurations.nsls2_magnets.NSLS2Magnets", PROJECT_DIR + "/graph_db/databases/nsls2_magnets_test.gpickle"),
 }
 
 common.INSTALLED_APPS += [

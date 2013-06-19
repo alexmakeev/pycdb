@@ -1,7 +1,7 @@
 <script language="JavaScript">
     function UpdateSelectedConfiguration(sender)
     {
-        val = $(sender).attr("value")
+        var val = $(sender).val()
         if (val == "") return;
         $.ajax({
             type: "GET",

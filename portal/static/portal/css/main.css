@@ -28,6 +28,18 @@ table tr:hover {
     background-color: #f2fbff;
 }
 
+a {
+    color: #4169e1;
+    text-decoration: none;
+    outline:none;
+}
+a:hover {
+    color: #0038e0;
+    text-decoration: underline;
+    outline:none;
+}
+
+
 #body_content{
     left:15%;
     width: 64%;
@@ -38,4 +50,23 @@ table tr:hover {
     -moz-border-radius: 5px 5px;
     -webkit-border-radius: 5px 5px;
     border: 1px solid rgba(128, 193, 255, 0.47);
+}
+
+.selected_menu_item, .not_selected_menu_item{
+    text-align: center;
+    padding: 5px 10px;
+    margin: 3px;
+    border-radius: 5px 5px;
+    -moz-border-radius: 5px 5px;
+    -webkit-border-radius: 5px 5px;
+    border: 1px solid #708ce0;
+}
+.selected_menu_item{
+    background-color: #9daee0;
+}
+.not_selected_menu_item{
+    background-color: #b4bfe0;
+}
+.not_selected_menu_item:hover{
+    background-color: #9daee0;
 }

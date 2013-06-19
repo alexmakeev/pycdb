@@ -7,8 +7,8 @@ MENU_ITEMS = [
         "title" : "NSLS",
         "subitems" : [
             {
-                "title" : "Connector",
-                "url" : reverse("nsls-types-connector")
+                "title" : "Devices Connector",
+                "url" : reverse("nsls-devices-connector")
             }
         ]
     }

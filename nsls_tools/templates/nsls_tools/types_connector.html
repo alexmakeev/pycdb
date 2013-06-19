@@ -7,38 +7,45 @@
 
 
 {% block content %}
-<h1>Types connector</h1>
-Awailable connections:
-<form method="POST" action="{% url nsls-types-connector-add %}">
-{% csrf_token %}
-    <table style="width:100%;">
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        {% for conn_type in connection_types %}
-        <tr>
-            <td>{{ conn_type.getTitle }}</td>
-            <td style="text-align: center;">{{ conn_type.getNeighboursFrom.0.getTitle }}</td>
-            <td style="text-align: center;">{{ conn_type.getNeighboursTo.0.getTitle }}</td>
-            <td style="text-align: center;">
-                <a href="{% url nsls-types-connector-edit conn_type.cid conn_type.id%}">Edit</a> |
-                <a href="{% url nsls-types-connector-delete conn_type.cid conn_type.id%}">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-        <tr>
-            <td><input type="text" name="title" value="" placeholder="Title"></td>
-            <td style="text-align: center;">{{ from_widget }}</td>
-            <td style="text-align: center;">{{ to_widget }}</td>
-            <td style="text-align: center;"><input type="submit" value="Add"></td>
-        </tr>
-    </table>
-</form>
+    <a href="{% url nsls-devices-connector %}"><span class="not_selected_menu_item">
+        Devices connector
+    </span></a>
+    <span class="selected_menu_item">
+        Types connector
+    </span>
+    <p>
+        Types Connections:
+    </p>
+    <form method="POST" action="{% url nsls-types-connector-add %}">
+    {% csrf_token %}
+        <table style="width:100%;">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            {% for conn_type in connection_types %}
+            <tr {% if conn_type.is_recent %}style="background-color: #e6ffe6;"{% endif %}>
+                <td>{{ conn_type.title }}</td>
+                <td style="text-align: center;">{{ conn_type.from.getTitle }}</td>
+                <td style="text-align: center;">{{ conn_type.to.getTitle }}</td>
+                <td style="text-align: center;">
+                    <a href="{% url nsls-types-connector-edit conn_type.cid conn_type.id%}">Edit</a> |
+                    <a href="{% url nsls-types-connector-delete conn_type.cid conn_type.id%}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><input type="text" name="title" value="" placeholder="Title"></td>
+                <td style="text-align: center;">{{ from_widget }}</td>
+                <td style="text-align: center;">{{ to_widget }}</td>
+                <td style="text-align: center;"><input type="submit" value="Add"></td>
+            </tr>
+        </table>
+    </form>
 
 
 {% endblock content %}

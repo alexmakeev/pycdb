@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+    <title>{% trans "Types connector" %}</title>
+{% endblock head %}
+
+
+{% block content %}
+    <span class="selected_menu_item">
+        Devices connector
+    </span>
+    <a href="{% url nsls-types-connector %}">
+    <span class="not_selected_menu_item">
+        Types connector
+    </span>
+    </a>
+    <p>
+    Devices Connections:
+    </p>
+    <form method="POST" action="{% url nsls-devices-connector-add %}">
+        {% csrf_token %}
+        <table style="width:100%;">
+            <thead>
+            <tr>
+                <th>From</th>
+                <th>Through</th>
+                <th>To</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            {% for conn in connections %}
+                <tr {% if conn.is_recent %}style="background-color: #e6ffe6;"{% endif %}>
+                    <td style="text-align: center;">{{ conn.from.getTitle }}</td>
+                    <td style="text-align: center;">{{ conn.through.getTitle }}</td>
+                    <td style="text-align: center;">{{ conn.to.getTitle }}</td>
+                    <td style="text-align: center;">
+                        <a href="{% url nsls-devices-connector-delete conn.cid conn.id%}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td style="text-align: center;">{{ from_widget }}</td>
+                <td style="text-align: center;">{{ through_widget }}</td>
+                <td style="text-align: center;">{{ to_widget }}</td>
+                <td style="text-align: center;"><input type="submit" value="Add"></td>
+            </tr>
+        </table>
+    </form>
+{% endblock content %}

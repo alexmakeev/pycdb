@@ -9,7 +9,7 @@ from graph_db.storage import Storage
 
 @render_to(template="portal/index.html")
 def index(request):
-    print request.configuration.storage.nxgraph.graph["edges_by_ids"]
+#    print request.configuration.storage.nxgraph.graph["edges_by_ids"]
 #    timer = Timer()
 #
 #    timer.start("Init DB")
