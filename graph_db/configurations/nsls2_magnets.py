@@ -50,23 +50,26 @@ class NSLS2Magnets(Configuration):
         # Tiny class without base attributes
         self.addEntityClass(9, "connection_type_part", "Connection Type Part", "", [])
 
+        self.addEntityClass(10, "channel_type", "Channel Type", "", base_attributes_top + [
+            makeAttribute("type", "Type", "Type of the Channel", self.TYPE_STRING, ""),
+            ] + base_attributes_bottom)
 
 
 
 
         ############ EDGES #############
         # addRelationClass(cid, name, readable_name, description, attributes_list, allowed_relations)
-        self.addRelationClass(101, "physical", "Physical", "Physical connections", [
-            ], [
-            makeAllowedRelation(
-                {"cname":"server", "multiplicity" : self.MUL_ONE},
-                {"cname":"ioc", "multiplicity" : self.MUL_ZERO_OR_MORE}
-            ),
-            makeAllowedRelation(
-                {"cname":"ioc", "multiplicity" : self.MUL_ONE},
-                {"cname":"device", "multiplicity" : self.MUL_ZERO_OR_MORE}
-            ),
-            ])
+        #self.addRelationClass(101, "physical", "Physical", "Physical connections", [
+        #    ], [
+        #    makeAllowedRelation(
+        #        {"cname":"server", "multiplicity" : self.MUL_ONE},
+        #        {"cname":"ioc", "multiplicity" : self.MUL_ZERO_OR_MORE}
+        #    ),
+        #    makeAllowedRelation(
+        #        {"cname":"ioc", "multiplicity" : self.MUL_ONE},
+        #        {"cname":"device", "multiplicity" : self.MUL_ZERO_OR_MORE}
+        #    ),
+        #    ])
 
         self.addRelationClass(102, "type", "Types", "Typification links", [
         ], [
@@ -77,6 +80,10 @@ class NSLS2Magnets(Configuration):
             makeAllowedRelation(
                 {"cname":"connection", "multiplicity" : self.MUL_ZERO_OR_MORE},
                 {"cname":"connection_type", "multiplicity" : self.MUL_ONE}
+            ),
+            makeAllowedRelation(
+                {"cname":"channel", "multiplicity" : self.MUL_ZERO_OR_MORE},
+                {"cname":"channel_type", "multiplicity" : self.MUL_ONE}
             ),
             ])
 
@@ -99,6 +106,15 @@ class NSLS2Magnets(Configuration):
 
         self.addRelationClass(104, "logical", "Logical", "Logical connections", [
         ], [
+            makeAllowedRelation(
+                {"cname":"server", "multiplicity" : self.MUL_ONE},
+                {"cname":"ioc", "multiplicity" : self.MUL_ZERO_OR_MORE}
+            ),
+            makeAllowedRelation(
+                {"cname":"ioc", "multiplicity" : self.MUL_ONE},
+                {"cname":"device", "multiplicity" : self.MUL_ZERO_OR_MORE}
+            ),
+
             # Dev-Connection-Dev
             makeAllowedRelation(
                 {"cname":"device", "multiplicity" : self.MUL_ONE},
@@ -119,6 +135,7 @@ class NSLS2Magnets(Configuration):
                 {"cname":"device_type", "multiplicity" : self.MUL_ONE}
             ),
 
+            # TODO: make it     L -> CTP -> Ch
             # Link-ConnectionTP-channel
             makeAllowedRelation(
                 {"cname":"connection_type_part", "multiplicity" : self.MUL_ZERO_OR_MORE},

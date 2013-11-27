@@ -1,0 +1,43 @@
+#!../../bin/linux-x86/psc
+
+< envPaths
+
+epicsEnvSet("EPICS_CA_AUTO_ADDR_LIST","NO")
+epicsEnvSet("EPICS_CA_ADDR_LIST","10.0.153.255")
+epicsEnvSet("IOCNAME", "{{ioc}}")
+
+# to avoid a lot of "scanOnce: Ring buffer overflow" during 
+# save/restore initialization
+scanOnceSetQueueSize(2000)
+
+cd ${TOP}
+
+## Register all support components
+dbLoadDatabase("dbd/psc.dbd",0,0)
+psc_registerRecordDeviceDriver(pdbbase)
+
+{% block records %}
+## Load record instances
+{% endblock %}
+
+### Save/Restore ###
+set_savefile_path("${TOP}/../${IOCNAME}","/as/save")
+set_requestfile_path("${TOP}/../${IOCNAME}","/as/req")
+set_pass0_restoreFile("${IOCNAME}.sav")
+set_pass1_restoreFile("${IOCNAME}_waveforms.sav")
+
+### Start IOC ###
+cd ${TOP}/iocBoot/${IOC}
+iocInit()
+
+### Channel Finder
+#dbl > ${TOP}/../${IOCNAME}/records.dbl
+#system "cp ${TOP}/../${IOCNAME}/records.dbl /cf-update/${HOSTNAME}.${IOCNAME}.dbl"
+
+### Save/Restore ###
+makeAutosaveFileFromDbInfo("${TOP}/../${IOCNAME}/as/req/${IOCNAME}.req", "autosaveFields_pass0")
+makeAutosaveFileFromDbInfo("${TOP}/../${IOCNAME}/as/req/${IOCNAME}_waveforms.req", "autosaveFields_pass1")
+
+create_monitor_set("${IOCNAME}.req", 5 , "")
+create_monitor_set("${IOCNAME}_waveforms.req", 30 , "")
+

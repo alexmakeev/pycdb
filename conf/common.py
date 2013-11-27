@@ -133,6 +133,7 @@ INSTALLED_APPS = [
     'annoying',
     'portal',
     'std_editor',
+    'nsls_tools',
 ]
 
 MENU_SOURCES = ["portal.menu.MENU_ITEMS"]

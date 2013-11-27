@@ -13,7 +13,12 @@ urlpatterns = patterns('',
     url(r'^conns$', 'nsls_tools.devices_connector.index', name="nsls-devices-connector"),
     url(r'^conns/add$', 'nsls_tools.devices_connector.add_connection', name="nsls-devices-connector-add"),
     url(r'^conns/(?P<cid>\d+)/(?P<id>\d+)/delete$', 'nsls_tools.devices_connector.del_connection', name="nsls-devices-connector-delete"),
+    
+    url(r'^export_db$', 'nsls_tools.views.index', name="nsls-export-db"),
 
 #    url(r'^widgets/entity_id_ajax$', 'portal.input_widgets.entity_id_selector.AjaxGetSuggestionEntities', name="widget-entity-id-ajax"),
+
+    url(r'^dbg_show_ioc/(?P<ioc_name>\w+)$', 'nsls_tools.views.dbg_show_ioc', name="nsls-dbg-ioc-show"),
+
 )
 

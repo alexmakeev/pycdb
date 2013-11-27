@@ -1,0 +1,102 @@
+dbLoadRecords("db/Commands.db",       "PriSys=BR, PS=PSC18")
+dbLoadRecords("db/Status.db",         "PriSys=BR, PS=PSC18")
+dbLoadRecords("db/ADCWaveform.db",    "PSy=BR, PS=PSC18, TIMESTAMP=BST-TS{EVR:D3A}Cnt:BRPrev-I, ADC1K_POINTS=1014, ADC10K_POINTS=10150")
+dbLoadRecords("db/RampingTable.db",   "PriSys=BR, PSC=PSC18, RAWDATA_LENGTH=43440, WF10K_LENGTH=10150, CHANNEL=0_Raw, MSGID=81")
+dbLoadRecords("db/RampingTable.db",   "PriSys=BR, PSC=PSC18, RAWDATA_LENGTH=43440, WF10K_LENGTH=10150, CHANNEL=1_Raw, MSGID=82")
+
+
+
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:00_Raw-I,  OUTPUT=BR{PSC18}ADC:00-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:01_Raw-I,  OUTPUT=BR{PSC18}ADC:01-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:02_Raw-I,  OUTPUT=BR{PSC18}ADC:02-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:03_Raw-I,  OUTPUT=BR{PSC18}ADC:03-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:04_Raw-I,  OUTPUT=BR{PSC18}ADC:04-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:05_Raw-I,  OUTPUT=BR{PSC18}ADC:05-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:06_Raw-I,  OUTPUT=BR{PSC18}ADC:06-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:07_Raw-I,  OUTPUT=BR{PSC18}ADC:07-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:08_Raw-I,  OUTPUT=BR{PSC18}ADC:08-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:09_Raw-I,  OUTPUT=BR{PSC18}ADC:09-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:10_Raw-I,  OUTPUT=BR{PSC18}ADC:10-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:11_Raw-I,  OUTPUT=BR{PSC18}ADC:11-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:12_Raw-I,  OUTPUT=BR{PSC18}ADC:12-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:13_Raw-I,  OUTPUT=BR{PSC18}ADC:13-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:14_Raw-I,  OUTPUT=BR{PSC18}ADC:14-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:15_Raw-I,  OUTPUT=BR{PSC18}ADC:15-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:16_Raw-I,  OUTPUT=BR{PSC18}ADC:16-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:17_Raw-I,  OUTPUT=BR{PSC18}ADC:17-I, WF_LENGTH=1014")
+
+dbLoadRecords("db/Average.db",        "INPUT=BR{PSC18}ADC10k:0_Raw-I,  OUTPUT=BR{PSC18}ADC10k:0_Raw_Avg-I, WF_LENGTH=10150")
+dbLoadRecords("db/Average.db",        "INPUT=BR{PSC18}ADC10k:1_Raw-I,  OUTPUT=BR{PSC18}ADC10k:1_Raw_Avg-I, WF_LENGTH=10150")
+dbLoadRecords("db/Subtract.db",       "INPUT1=BR{PSC18}ADC10k:0_Raw-I, INPUT2=BR{PSC18}ADC10k:1_Raw-I, OUTPUT=BR{PSC18}ADC10k_Sub-I, WF_LENGTH=10150")
+
+dbLoadRecords("db/Ch-WfOut-Coeff.db", "INPUT=BR{PSC18}DAC:0-SP,         OUTPUT=BR{PSC18}DAC:0_Raw-SP,       WF_LENGTH=10150")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{PSC18}DAC:0_Raw-SP,     OUTPUT=BR{PSC18}DAC:0_Raw-SP-1k,    WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{PSC18}DAC:0_Raw_tr-SP,  OUTPUT=BR{PSC18}DAC:0_Raw_tr-SP-1k, WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+
+dbLoadRecords("db/Ch-WfOut-Coeff.db", "INPUT=BR{PSC18}DAC:1-SP,         OUTPUT=BR{PSC18}DAC:1_Raw-SP,       WF_LENGTH=10150")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{PSC18}DAC:1_Raw-SP,     OUTPUT=BR{PSC18}DAC:1_Raw-SP-1k,    WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{PSC18}DAC:1_Raw_tr-SP,  OUTPUT=BR{PSC18}DAC:1_Raw_tr-SP-1k, WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+
+
+
+
+
+
+
+
+dbLoadRecords("db/Ch-WfOut-Coeff.db", "INPUT=BR:DS-PS{6A:CXW2}I-SP,              OUTPUT=BR{PSC18}DAC:0-SP,    WF_LENGTH=10150")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:00-I,    OUTPUT=BR:DS-PS{6A:CXW2}I-I,         WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:01-I,    OUTPUT=BR:DS-PS{6A:CXW2}I:DAC-I,     WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{PSC18}ADC:02-I,    OUTPUT=BR:DS-PS{6A:CXW2}E:PS-I,      WF_LENGTH=1014")
+dbLoadRecords("db/Ch-DOut.db",        "INPUT=BR:DS-PS{6A:CXW2}Cmd:PwrOn-Cmd,     OUTPUT=BR{PSC18}DO:1-Cmd")
+dbLoadRecords("db/Ch-DIn.db",         "INPUT=BR{PSC18}DI:01-Sts,   OUTPUT=BR:DS-PS{6A:CXW2}Sts:PSworks-Sts")
+
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR:DS-PS{6A:CXW2}I-SP, OUTPUT=BR:DS-PS{6A:CXW2}I-SP-1k, WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+
+dbLoadRecords("db/Average.db",        "INPUT=BR:DS-PS{6A:CXW2}I-SP-1k, OUTPUT=BR:DS-PS{6A:CXW2}I-SP-1k-Avg-I, WF_LENGTH=1014")
+dbLoadRecords("db/Slicer.db",         "INPUT=BR:DS-PS{6A:CXW2}I-SP-1k, WF_LENGTH=1014")
+
+dbLoadRecords("db/Average.db",        "INPUT=BR:DS-PS{6A:CXW2}I-I,     OUTPUT=BR:DS-PS{6A:CXW2}I-I-Avg-I, WF_LENGTH=1014")
+dbLoadRecords("db/Slicer.db",         "INPUT=BR:DS-PS{6A:CXW2}I-I,     WF_LENGTH=1014")
+
+dbLoadRecords("db/Average.db",        "INPUT=BR:DS-PS{6A:CXW2}I:DAC-I, OUTPUT=BR:DS-PS{6A:CXW2}I:DAC-I-Avg-I, WF_LENGTH=1014")
+dbLoadRecords("db/Slicer.db",         "INPUT=BR:DS-PS{6A:CXW2}I:DAC-I, WF_LENGTH=1014")
+
+dbLoadRecords("db/Average.db",        "INPUT=BR:DS-PS{6A:CXW2}E:PS-I,  OUTPUT=BR:DS-PS{6A:CXW2}E:PS-I-Avg-I, WF_LENGTH=1014")
+dbLoadRecords("db/Slicer.db",         "INPUT=BR:DS-PS{6A:CXW2}E:PS-I,  WF_LENGTH=1014")
+
+dbLoadRecords("db/Monitoring.db", "CHANNEL=BR:DS-PS{6A:CXW2}I-SP, CHANNEL_REF=BR:DS-PS{6A:CXW2}I-SP_Ref, CHANNEL_TOL=BR:DS-PS{6A:CXW2}I-SP_Tol, DATA_TYPE=FLOAT, WF_LENGTH=10150")
+dbLoadRecords("db/Monitoring.db", "CHANNEL=BR:DS-PS{6A:CXW2}I-I, CHANNEL_REF=BR:DS-PS{6A:CXW2}I-I_Ref, CHANNEL_TOL=BR:DS-PS{6A:CXW2}I-I_Tol, DATA_TYPE=FLOAT, WF_LENGTH=1014")
+dbLoadRecords("db/Monitoring.db", "CHANNEL=BR:DS-PS{6A:CXW2}I:DAC-I, CHANNEL_REF=BR:DS-PS{6A:CXW2}I:DAC-I_Ref, CHANNEL_TOL=BR:DS-PS{6A:CXW2}I:DAC-I_Tol, DATA_TYPE=FLOAT, WF_LENGTH=1014")
+dbLoadRecords("db/Monitoring.db", "CHANNEL=BR:DS-PS{6A:CXW2}E:PS-I, CHANNEL_REF=BR:DS-PS{6A:CXW2}E:PS-I_Ref, CHANNEL_TOL=BR:DS-PS{6A:CXW2}E:PS-I_Tol, DATA_TYPE=FLOAT, WF_LENGTH=1014")
+
+
+PS 6A
+=====
+Type    Channel         LinkTo
+------------------------------------
+WfOut   I-SP            PSC DAC:0
+WfIn    I-I             PSC ADC:00
+WfIn    I:DAC-I         PSC ADC:01
+WfIn    E:PS-I          PSC ADC:02
+DOut    Cmd:PwrOn-Cmd   PSC DO:1
+DIn     Sts:PSworks-Sts PSC DI:01
+
+Subsmp  I-SP-1k         6A  I-SP
+
+Avg     I-SP-1k-Avg-I   6A  I-SP-1k
+Slcr    ???             6A  I-SP-1k
+
+Avg     I-I-Avg-I       6A  I-I
+Slcr    ???             6A  I-I
+
+Avg     I:DAC-I-Avg-I   6A  I:DAC-I
+Slcr    ???             6A  I:DAC-I
+
+Avg     E:PS-I-Avg-I    6A  E:PS-I
+Slcr    ???             6A  E:PS-I
+
+Monit   ???             6A  I-SP
+Monit   ???             6A  I-I
+Monit   ???             6A  I:DAC-I
+Monit   ???             6A  E:PS-I

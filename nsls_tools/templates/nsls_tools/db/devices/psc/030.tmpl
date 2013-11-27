@@ -1,0 +1,45 @@
+## Load record instances
+
+#####################################################################################################################
+############################################   PSC   {{ proxy.device.name }}  ################################################
+#####################################################################################################################
+dbLoadRecords("db/Commands.db",       "PriSys=BR, PS={{ proxy.device.name }}")
+dbLoadRecords("db/Status.db",         "PriSys=BR, PS={{ proxy.device.name }}")
+# ADC waveforms (both 10k and 1k)
+dbLoadRecords("db/ADCWaveform.db",    "PSy=BR, PS={{ proxy.device.name }}, TIMESTAMP=BST-TS{EVR:D3A}Cnt:BRPrev-I, ADC1K_POINTS=1014, ADC10K_POINTS=10150")
+# adjusted ADC waveforms are below
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:00_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:00-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:01_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:01-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:02_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:02-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:03_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:03-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:04_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:04-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:05_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:05-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:06_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:06-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:07_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:07-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:08_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:08-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:09_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:09-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:10_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:10-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:11_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:11-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:12_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:12-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:13_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:13-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:14_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:14-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:15_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:15-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:16_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:16-I, WF_LENGTH=1014")
+dbLoadRecords("db/Ch-WfIn-Coeff.db",  "INPUT=BR{{ proxy.get_name_with_brackets }}ADC:17_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC:17-I, WF_LENGTH=1014")
+
+dbLoadRecords("db/Average.db",        "INPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:0_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:0_Raw_Avg-I, WF_LENGTH=10150")
+dbLoadRecords("db/Average.db",        "INPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:1_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:1_Raw_Avg-I, WF_LENGTH=10150")
+dbLoadRecords("db/Subtract.db",       "INPUT1=BR{{ proxy.get_name_with_brackets }}ADC10k:0_Raw-I, INPUT2=BR{{ proxy.get_name_with_brackets }}ADC10k:1_Raw-I, OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC10k_Sub-I, WF_LENGTH=10150")
+dbLoadRecords("db/FFT.db",            "INPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:0_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:0_Raw_I_FFT-I, WF_LENGTH=10150")
+dbLoadRecords("db/FFT.db",            "INPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:1_Raw-I,  OUTPUT=BR{{ proxy.get_name_with_brackets }}ADC10k:1_Raw_I_FFT-I, WF_LENGTH=10150")
+
+dbLoadRecords("db/RampingTable.db",   "PriSys=BR, PSC={{ proxy.device.name }}, RAWDATA_LENGTH=43440, WF10K_LENGTH=10150, CHANNEL=0, MSGID=81, DELTA=BR-PS{}6A_Delta-SP, DELTA_STEPS=BR-PS{}6A_DeltaSteps-SP")
+dbLoadRecords("db/Ch-WfOut-Coeff.db", "INPUT=BR{{ proxy.get_name_with_brackets }}DAC:0-SP,         OUTPUT=BR{{ proxy.get_name_with_brackets }}DAC:0_Raw-SP,       WF_LENGTH=10150")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{{ proxy.get_name_with_brackets }}DAC:0_Raw-SP,     OUTPUT=BR{{ proxy.get_name_with_brackets }}DAC:0_Raw-SP-1k,    WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{{ proxy.get_name_with_brackets }}DAC:0_Raw_tr-SP,  OUTPUT=BR{{ proxy.get_name_with_brackets }}DAC:0_Raw_tr-SP-1k, WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+
+dbLoadRecords("db/RampingTable.db",   "PriSys=BR, PSC={{ proxy.device.name }}, RAWDATA_LENGTH=43440, WF10K_LENGTH=10150, CHANNEL=1, MSGID=82, DELTA=BR-PS{}6A_Delta-SP, DELTA_STEPS=BR-PS{}6A_DeltaSteps-SP")
+dbLoadRecords("db/Ch-WfOut-Coeff.db", "INPUT=BR{{ proxy.get_name_with_brackets }}DAC:1-SP,         OUTPUT=BR{{ proxy.get_name_with_brackets }}DAC:1_Raw-SP,       WF_LENGTH=10150")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{{ proxy.get_name_with_brackets }}DAC:1_Raw-SP,     OUTPUT=BR{{ proxy.get_name_with_brackets }}DAC:1_Raw-SP-1k,    WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+dbLoadRecords("db/Subsampling.db",    "INPUT=BR{{ proxy.get_name_with_brackets }}DAC:1_Raw_tr-SP,  OUTPUT=BR{{ proxy.get_name_with_brackets }}DAC:1_Raw_tr-SP-1k, WF_LENGTH=10150, WF_LENGTH2=1014, DIVIDER=10")
+

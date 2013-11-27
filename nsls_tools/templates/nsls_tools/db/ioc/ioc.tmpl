@@ -1,0 +1,28 @@
+{% load range %}
+{% load dict_key %}
+#!../../bin/linux-x86/Booster
+
+< envPaths
+
+epicsEnvSet("EPICS_CA_AUTO_ADDR_LIST","NO")
+epicsEnvSet("EPICS_CA_ADDR_LIST","10.0.140.255")
+
+cd ${TOP}
+
+epicsThreadSleep 5
+
+## Register all support components
+dbLoadDatabase "dbd/Booster.dbd"
+Booster_registerRecordDeviceDriver pdbbase
+
+asynSetAutoConnectTimeout(10.0)
+
+{% mkrange 0 60 as range_0_60 %}
+{% for i in range_0_60 %}{% for t_str in blocks|keyvalue:i %}{{ t_str|safe }}{% endfor %}{% endfor %}
+
+### Start IOC ###
+cd ${TOP}/iocBoot/${IOC}
+iocInit
+
+{% mkrange 60 100 as range_60_100 %}
+{% for i in range_60_100 %}{% for t_str in blocks|keyvalue:i %}{{ t_str|safe }}{% endfor %}{% endfor %}

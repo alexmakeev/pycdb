@@ -9,6 +9,7 @@
 /files
 /settings.py
 /.idea
+/django
 /lib/django
 /static
 /zfcgi
