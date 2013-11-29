@@ -1,25 +1,66 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load dict_key %}
 
 {% block head %}
     <title>{% trans "Edit configuration" %}</title>
+    <style>
+    .proto .attribute-value {
+        opacity: 0.5;
+    }
+    </style>
 {% endblock head %}
 
 
 {% block content %}
+    <script language="JavaScript">
+    function ClickProto(clicked_obj)
+    {
+        var obj = $(clicked_obj)
+        if (obj.prop("checked"))
+        {
+            obj.parents("tr").first().addClass("proto");
+        }
+        else
+        {
+            obj.parents("tr").first().removeClass("proto");
+        }
+    }
+    </script>
     <small>Editing [{{ entity.cid }}.{{ entity.id }}]</small> <b>{{ entity.getTitle }}</b>
     <form method="POST" action="">
         {% csrf_token %}
         {{ form.non_field_errors }}
         <table style="width:100%;" cellspacing="10">
+            <tr>
+                <td>
+                    <font size='1' style="font-weight: bold;">
+                        Attribute
+                    </font>
+                </td>
+                <td>
+                    <font size='1' style="font-weight: bold;">
+                        Proto /<br>
+                        Default
+                    </font>
+                </td>
+                <td>
+                    <font size='1' style="font-weight: bold;">
+                        Value
+                    </font>
+                </td>
+            </tr>
             {% for field in form %}
-                <tr>
-                    <td>
+                <tr {% if protos|keyvalue:field.name %}class="proto"{% endif %}>
+                    <td class="attribute-name">
                         <font size='2'>
                             {{ field.label_tag }}:
                         </font>
                     </td>
-                    <td> {{ field }}
+                    <td class="attribute-proto">
+                        <input onclick="ClickProto(this);" type="checkbox" {% if protos|keyvalue:field.name %}checked="checked"{% endif %} purpose="proto" name="{{ field.name }}_proto" />
+                    </td>
+                    <td class="attribute-value"> {{ field }}
                     {% if field.errors %}
                         {{ field.errors }}
                     {% endif %}
@@ -83,5 +124,6 @@
         <input name="save_and_return" type="submit" value="Save and return">
         <a href="{% url std-editor-delete-instance entity.cid entity.id %}"  onclick="return confirm('Are you sure you want to delete entity {{ entity.getTitle }}?')">Delete</a>
     </form>
+
 
 {% endblock content %}

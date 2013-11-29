@@ -51,10 +51,11 @@ def edit_instance(request, cid, id):
     if request.method == "POST":
         #print request.POST
         form = EditInstanceForm(request.configuration, class_info["attributes"], entity, request.POST)
-        if (form.is_valid()):
+        if form.is_valid():
             for attr in class_info["attributes"]:
                 key = attr["name"]
                 entity.attributes[key]=form.cleaned_data[key]
+                if key + "_proto" in request.POST: del entity.attributes[key]
 
             new_relations = {}
             for key in request.POST:
@@ -87,12 +88,16 @@ def edit_instance(request, cid, id):
                     rel.save()
 
                 messages.success(request, 'Relations saved.')
-            if ("save_and_return" in request.POST):
+            if "save_and_return" in request.POST:
                 return HttpResponseRedirect(reverse("std-editor-list", kwargs={"cid" : cid}))
         else:
             messages.error(request, 'Please, fix the errors below.')
     else:
         form = EditInstanceForm(request.configuration, class_info["attributes"], entity)
+
+    protos = {}
+    for field in form:
+        protos[field.name] = field.name not in entity
 
     allowed_neighbours = request.configuration.getAllAllowedNeighboursPatternsByRelationsClassesIds(entity)
     relations = request.configuration.getAllRelations(entity)
@@ -159,7 +164,7 @@ def edit_instance(request, cid, id):
         relations_infos += [relation_info_by_cids]
 
 
-    return {"cid" : cid, "id" : id, "form" : form, "entity" : entity, "relations_infos" : relations_infos}
+    return {"cid" : cid, "id" : id, "form" : form, "entity" : entity, "relations_infos" : relations_infos, "protos" : protos}
 
 def delete_relation(request, rcid, id):
     rel = request.configuration.loadRelation(int(rcid), int(id))
