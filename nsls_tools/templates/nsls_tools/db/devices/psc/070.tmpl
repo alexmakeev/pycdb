@@ -1,9 +1,9 @@
 #####################################################################################################################
 ############################################   PSC   {{ proxy.device.name }}  ################################################
 #####################################################################################################################
-createPSC("Tx{{ proxy.device.name }}", "{{ proxy.device.address }}", 7, 0)
+createPSC("Tx{{ proxy.device.name }}", "{{ proxy.device.params.address }}", 7, 0)
 epicsThreadSleep 0.1
 
-createPSC("Rx{{ proxy.device.name }}", "{{ proxy.device.address }}", 20, 1)
+createPSC("Rx{{ proxy.device.name }}", "{{ proxy.device.params.address }}", 20, 1)
 epicsThreadSleep 0.1
 setPSCSendBlockSize("Tx{{ proxy.device.name }}", 80, 128)

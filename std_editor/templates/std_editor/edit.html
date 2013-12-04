@@ -8,6 +8,17 @@
     .proto .attribute-value {
         opacity: 0.5;
     }
+    .attribute-warning {
+        display: none;
+        color: maroon;
+        font-size: small;
+    }
+    .proto .attribute-warning {
+        display: inline;
+    }
+    .hidden {
+        display: none !important;
+    }
     </style>
 {% endblock head %}
 
@@ -25,6 +36,7 @@
         {
             obj.parents("tr").first().removeClass("proto");
         }
+        obj.parents("tr").first().find(".hidden").removeClass("hidden")
     }
     </script>
     <small>Editing [{{ entity.cid }}.{{ entity.id }}]</small> <b>{{ entity.getTitle }}</b>
@@ -61,9 +73,17 @@
                         <input onclick="ClickProto(this);" type="checkbox" {% if protos|keyvalue:field.name %}checked="checked"{% endif %} purpose="proto" name="{{ field.name }}_proto" />
                     </td>
                     <td class="attribute-value"> {{ field }}
+
+                    <div class="attribute-warning {% if protos|keyvalue:field.name %}hidden{% endif %}">
+                        <br>
+                        This value will be lost and linked to proto/default:<br>
+                        {{ protos_values|keyvalue:field.name }}
+                    </div>
+
                     {% if field.errors %}
                         {{ field.errors }}
                     {% endif %}
+
                     </td>
                 </tr>
             {% endfor %}

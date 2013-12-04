@@ -23,6 +23,7 @@ class NSLS2Magnets(Configuration):
             ] + base_attributes_bottom)
 
         self.addEntityClass(2, "ioc", "IOC", "", base_attributes_top + [
+            makeAttribute("template", "Template", "Template file for generating IOC's config", self.TYPE_STRING, "ioc.tmpl"),
             ] + base_attributes_bottom)
 
         self.addEntityClass(3, "device", "Device", "", base_attributes_top + [
@@ -31,7 +32,7 @@ class NSLS2Magnets(Configuration):
 
         self.addEntityClass(4, "device_type", "Device Type", "", base_attributes_top + [
             makeAttribute("params", "Parameters", "A set of device type parameters", self.TYPE_DICTIONARY, {"PSy" : "BR"}),
-            makeAttribute("template", "Template", "Template file for generating IOC's shell commands", self.TYPE_STRING, ""),
+            makeAttribute("template", "Template", "Template dir name to use for generating IOC's config", self.TYPE_STRING, ""),
             ] + base_attributes_bottom)
 
         self.addEntityClass(5, "channel", "Channel", "", base_attributes_top + [

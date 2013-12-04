@@ -36,13 +36,9 @@ class ConfigurationObject:
     def __delitem__(self, key):
         del self.attributes[key]
 
-    def __getitem__(self, key):
-        if key=="id": return self.id
-        if key=="cid": return self.cid
-        #Check instance value
-        if key in self.attributes: return self.attributes[key]
-
+    def get_default_attribute_value(self, key):
         class_info = self.configuration.classes[self.cid]
+
         #Check for entity its prototype existence and value
         if class_info["type"]=="entity_class":
             protos = self.configuration.getAllNeighbours(self, "prototypes", role="from")
@@ -57,6 +53,13 @@ class ConfigurationObject:
         for attr in class_info["attributes"]:
             if attr["name"]==key: return attr["default_value"]
         raise KeyError(key)
+
+    def __getitem__(self, key):
+        if key=="id": return self.id
+        if key=="cid": return self.cid
+        #Check instance value
+        if key in self.attributes: return self.attributes[key]
+        return self.get_default_attribute_value(key)
 
     def __setitem__(self, key, value):
         self.attributes[key] = value
@@ -88,6 +91,10 @@ class Entity(ConfigurationObject):
             attr_name = attr["name"]
             ret_arr += [self[attr_name]]
         ret = " ".join(ret_arr)
+        protos = self.configuration.getAllNeighbours(self, "prototypes", role="from")
+        len_protos = len(protos)
+        if len_protos>=1:
+            ret += " [" + protos[0].getTitle() + "]"
         if length and len(ret)>length: ret = ret[:(length-3)] + "..."
         return ret
 
@@ -233,8 +240,6 @@ class Configuration:
 
         self.storage.nxgraph.add_node(entity.getId())
         self.storage.nxgraph.node[entity.getId()] = entity.attributes
-        print entity.attributes
-        print self.storage.nxgraph.node[entity.getId()]
         return True
 
     def loadEntityAttributes(self, entity, data=None):
@@ -329,7 +334,10 @@ class Configuration:
             if filter_func:
                 params = {"cid" : node[0][0], "id" : node[0][1]} # Make a copy of dict for lame storage protection
                 params.update(node[1])
-                will_add = will_add and filter_func(params)
+                try:
+                    will_add = will_add and filter_func(params)
+                except KeyError:
+                    continue
             if will_add:
                 if not load_instances: ret += [node[0]]
                 else: # Load instance without querying storage

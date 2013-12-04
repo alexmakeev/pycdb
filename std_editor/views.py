@@ -56,12 +56,13 @@ def edit_instance(request, cid, id):
                 key = attr["name"]
                 entity.attributes[key]=form.cleaned_data[key]
                 if key + "_proto" in request.POST: del entity.attributes[key]
+            form = EditInstanceForm(request.configuration, class_info["attributes"], entity)
 
             new_relations = {}
             for key in request.POST:
                 if not key.startswith("new_rel_"): continue
                 cid_or_id_value = int(request.POST[key])
-                if cid_or_id_value <=0 : continue
+                if cid_or_id_value <= 0 : continue
                 vals = key[8:].split("_")
                 #print key, key[8:], vals
                 cid = int(vals[0])
@@ -96,8 +97,10 @@ def edit_instance(request, cid, id):
         form = EditInstanceForm(request.configuration, class_info["attributes"], entity)
 
     protos = {}
+    protos_values = {}
     for field in form:
         protos[field.name] = field.name not in entity
+        protos_values[field.name] = entity.get_default_attribute_value(field.name)
 
     allowed_neighbours = request.configuration.getAllAllowedNeighboursPatternsByRelationsClassesIds(entity)
     relations = request.configuration.getAllRelations(entity)
@@ -164,7 +167,7 @@ def edit_instance(request, cid, id):
         relations_infos += [relation_info_by_cids]
 
 
-    return {"cid" : cid, "id" : id, "form" : form, "entity" : entity, "relations_infos" : relations_infos, "protos" : protos}
+    return {"cid" : cid, "id" : id, "form" : form, "entity" : entity, "relations_infos" : relations_infos, "protos" : protos, "protos_values" : protos_values}
 
 def delete_relation(request, rcid, id):
     rel = request.configuration.loadRelation(int(rcid), int(id))
@@ -180,8 +183,6 @@ def list(request, cid):
     entities = request.configuration.getAllEntities(cid)
     class_info = request.configuration.classes[cid]
 
-    print "1", entities
     entities.sort(lambda a,b: cmp(a.getTitle(), b.getTitle()))
-    print "2", entities
 
     return {"cid" : cid, "entities" : entities, "class_info" : class_info}

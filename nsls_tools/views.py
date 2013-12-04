@@ -2,6 +2,8 @@ import os
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from annoying.decorators import render_to
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
 import settings
@@ -86,8 +88,7 @@ class ProxyDevice:
     def get_name_with_brackets(self):
         return "{%s}" % self.device["name"]
 
-@render_to("nsls_tools/db/ioc/ioc.tmpl")
-def dbg_show_ioc(request, ioc_name):
+def show_ioc(request, ioc_name):
     psc_list = []
 
     iocs = request.configuration.getAllEntities("ioc", filter_func=lambda ent: (ent["name"] == ioc_name))
@@ -95,6 +96,7 @@ def dbg_show_ioc(request, ioc_name):
         raise Exception("Wrong IOC count. Found %s IOCs with name '%s'" % (len(iocs), ioc_name))
 
     ioc = iocs[0]
+    tmpl = "nsls_tools/db/ioc/" + ioc["template"]
 
     blocks = {}
     for i in range(0,101):
@@ -116,4 +118,5 @@ def dbg_show_ioc(request, ioc_name):
 
         #psc_list += [t_dummy_device]
 
-    return {"ioc" : ioc, "blocks" : blocks}
+    return render_to_response(tmpl, {"ioc" : ioc, "blocks" : blocks}, context_instance=RequestContext(request))
+

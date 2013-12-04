@@ -18,7 +18,7 @@ urlpatterns = patterns('',
 
 #    url(r'^widgets/entity_id_ajax$', 'portal.input_widgets.entity_id_selector.AjaxGetSuggestionEntities', name="widget-entity-id-ajax"),
 
-    url(r'^dbg_show_ioc/(?P<ioc_name>\w+)$', 'nsls_tools.views.dbg_show_ioc', name="nsls-dbg-ioc-show"),
+    url(r'^show_ioc/(?P<ioc_name>\w+)$', 'nsls_tools.views.show_ioc', name="nsls-dbg-ioc-show"),
 
 )
 
