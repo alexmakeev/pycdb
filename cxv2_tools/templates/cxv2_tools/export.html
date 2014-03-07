@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+    <title>{% trans "Export configuration files" %}</title>
+{% endblock head %}
+
+
+{% block content %}
+
+        <form method="POST" action="{% url cxv2-tools-export %}">
+            {% csrf_token %}
+            <table style="width:100%;">
+                <tr>
+                    <td style="text-align: center;">
+                        <input type="hidden" name="Export" value="Export">
+                        <input type="submit" value="Export">
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+ {{ results }}
+{% endblock content %}

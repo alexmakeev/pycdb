@@ -15,4 +15,4 @@ def index(request):
     servs = request.configuration.getAllEntities("server", filter_func=lambda ent: (ent["name"]=="Pasha" and ent["id"]==2))
     serv = servs[0]
 
-    return HttpResponse("All ok 123 %s" % serv.getTitle())
+    return HttpResponse("All ok " % serv.getTitle())

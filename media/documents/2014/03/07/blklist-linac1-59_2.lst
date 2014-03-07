@@ -1,0 +1,6 @@
+# linac1:59 - Karpov's BPMs (for linac)
+remdrv	remdrv	16	w5	-	ppc/ppc-ebpm:cm5307_karpov_delayunit
+remdrv	remdrv	17	w5	-	ppc/ppc-ebpm:cm5307_karpov_delayunit
+remdrv	remdrv	16	w5	-	ppc/ppc-pbpm:cm5307_karpov_delayunit
+remdrv	remdrv	23	r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1 -	ppc/ppc-ebpm:cm5307_karpov_monster 2+1,4+3,6+5,8+7,10+9,12+11,14+13
+remdrv	remdrv	23	r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1,r7,w1 -	ppc/ppc-pbpm:cm5307_karpov_monster 2+1,4+3,6+5,8+7,10+9,12+11,14+13

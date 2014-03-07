@@ -134,6 +134,7 @@ INSTALLED_APPS = [
     'portal',
     'std_editor',
     'nsls_tools',
+    'cxv2_tools'
 ]
 
 MENU_SOURCES = ["portal.menu.MENU_ITEMS"]

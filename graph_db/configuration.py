@@ -1,5 +1,6 @@
 from copy import deepcopy
 import logging
+import sys
 logger = logging.getLogger(__name__)
 
 def makeAttribute(name, readable_name, description, data_type, default_value):
