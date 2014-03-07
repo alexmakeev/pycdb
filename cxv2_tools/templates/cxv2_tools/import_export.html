@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+    <title>{% trans "Import configuration files" %}</title>
+{% endblock head %}
+
+
+{% block content %}
+
+    <a href="{% url cxv2-tools-list %}">Список файлов</a>
+    <p>
+    Actions:
+    </p>
+    <form method="POST" action="{% url cxv2-import %}">
+        {% csrf_token %}
+        <table style="width:100%;">
+            <tr>
+
+                <td style="text-align: center;">
+                    <input type="hidden" name="value" value="Import">
+                    <input type="submit" value="Import">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <form method="POST" action="{% url cxv2-export %}">
+        {% csrf_token %}
+        <table style="width:100%;">
+            <tr>
+                <td style="text-align: center;">
+                    <input type="hidden" name="value" value="Export">
+                    <input type="submit" value="Export">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <p>{{ action_name }}</p>
+    {{ results }}
+{% endblock content %}

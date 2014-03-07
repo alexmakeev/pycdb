@@ -1,4 +1,5 @@
 from time import sleep
+import sys
 import datetime
 from annoying.decorators import JsonResponse
 from django.template import RequestContext
@@ -71,6 +72,7 @@ def AjaxGetSuggestionEntities(request):
         return found
 
     ents = request.configuration.getAllEntities(filter_func=term_filter_func, load_instances=True)
+
 
     #print "SUGGESTIONS: ", ents
 

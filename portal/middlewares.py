@@ -1,5 +1,6 @@
 import imp, os
 import inspect
+import sys
 import random
 import datetime
 from graph_db.storage import Storage
@@ -30,6 +31,7 @@ class SelectConfigurationMiddleware():
             request.session["selected_configuration"] = config_name
 
         if not self.configuration and request.session["selected_configuration"]:
+
             config_name = request.session["selected_configuration"]
             resolver = StrResolver()
             cfg_class = resolver.ResolveModuleMember(CONFIGURATIONS[config_name].configuration)
@@ -42,7 +44,6 @@ class SelectConfigurationMiddleware():
             for key in self.runtime_data["ajax_filters"].keys():
                 if cur_time - self.runtime_data["ajax_filters"][key]["created"] > datetime.timedelta(days=7):
                     del self.runtime_data["ajax_filters"][key]
-
 
         request.configuration = self.configuration
         request.runtime_data = self.runtime_data

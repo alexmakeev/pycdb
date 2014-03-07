@@ -1,4 +1,5 @@
 import logging
+import sys
 logger = logging.getLogger(__name__)
 
 def makeAttribute(name, readable_name, description, data_type, default_value):
@@ -283,18 +284,24 @@ class Configuration:
 
     ################### QUERIES
 
-    def getAllEntities(self, cname_or_cid=None, filter_func=None, load_instances=True):
+    def getAllEntities(self, cname_or_cid=None, filter_func=None, load_instances=True, filter_dict=None):
         #TODO: make optimization by creating indexes by cid at initial configuration load
         if (not cname_or_cid and not filter_func and not load_instances): return self.storage.nxgraph.nodes(data=False)
         nodes = self.storage.nxgraph.nodes(data=True)
         ret = []
+
         cid = self.convertCNameIfNeeded(cname_or_cid)
         for node in nodes:
             will_add = True
             if cname_or_cid: will_add = will_add and node[0][0] == cid
             if filter_func:
                 params = {"cid" : node[0][0], "id" : node[0][1]} # Make a copy of dict for lame storage protection
+#                sys.stdout.write('PARAMS:'+str(params)+'\n')
+
                 params.update(node[1])
+                params['cnames_to_cids'] = self.cnames_to_cids
+                params['filter_dict'] = filter_dict
+
                 will_add = will_add and filter_func(params)
             if (will_add):
                 if (not load_instances): ret += [node[0]]

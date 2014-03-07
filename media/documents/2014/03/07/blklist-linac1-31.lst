@@ -1,0 +1,73 @@
+# linac1:31 -- linac magnetic system, incl. magnetic correction
+# file 		driver 		bus_id 	main_info
+
+# Magsys -- OLD VCh300
+remdrv	remdrv	0,62	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcanadc40 time=4 magn=0
+remdrv	remdrv	0,63	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcandac16 
+remdrv	remdrv	0,60	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcanadc40 time=4 magn=0
+remdrv	remdrv	0,61	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcandac16
+# Magsys -- NEW VCh300
+:v3hxa40_1:remdrv	remdrv	0,56	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcanadc40 time=4 magn=0
+:v3hxd16_1:remdrv	remdrv	0,57	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcandac16
+:v3hxa40_2:remdrv	remdrv	0,54	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcanadc40 time=4 magn=0
+:v3hxd16_2:remdrv	remdrv	0,55	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcandac16
+:v3h_ip2_l16:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:0
+:v3h_ip2_l17:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:1
+:v3h_ip2_l18:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:2
+:v3h_ip2_l19:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:3
+:v3h_ip2_l20:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:4
+:v3h_ip2_l21:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:5
+:v3h_ip2_l22:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:6
+:v3h_ip2_l23:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_1,v3hxd16_1:7
+:v3h_ip2_l24:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:0
+:v3h_ip2_l25:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:1
+:v3h_ip2_l26:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:2
+:v3h_ip2_l27:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:3
+:v3h_ip2_l28:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:4
+:v3h_ip2_l29:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:5
+:v3h_ip2_l30:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:6
+:v3h_ip2_l31:v3h_xa40d16	v3h_xa40d16	-	w7,r13	-	v3hxa40_2,v3hxd16_2:7
+
+# Magcor
+remdrv	remdrv	0,31	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcanadc40 time=2 magn=0 end=31
+remdrv	remdrv	0,30	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcandac16
+remdrv	remdrv	0,29	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcanadc40 time=2 magn=0 end=31
+remdrv	remdrv	0,28	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcandac16
+remdrv	remdrv	0,27	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcanadc40 time=2 magn=0 end=31
+remdrv	remdrv	0,26	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36 -	cangw/cangw-magsys:xcandac16
+
+# pks8
+remdrv	remdrv	5	w8		-	ppc/ppc-v1000:cm5307_g0603
+remdrv	remdrv	8	w8		-	ppc/ppc-v1000:cm5307_g0603
+remdrv	remdrv	16	r64		-	ppc/ppc-v1000:cm5307_c0612
+
+# New-magsys
+:icd0:remdrv		remdrv	0,47	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-	cangw/cangw-magsys:xcdac20 spd=-400000
+:icd1:remdrv		remdrv	0,46	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-	cangw/cangw-magsys:xcdac20 spd=-400000
+
+# ISTR-13
+:icd2:remdrv		remdrv	0,63	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-	cangw/cangw-istr13:xcdac20 spd=-400000
+:icd3:remdrv		remdrv	0,62	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-	cangw/cangw-istr13:xcdac20 spd=-400000
+
+# Reserve
+:icd4:remdrv		remdrv	0,63	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-	cangw/cangw-v1000:xcdac20 spd=-2000000
+:icd5:noop		noop	0	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-
+:icd6:noop		noop	0	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-
+:icd7:noop		noop	0	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-
+:icd8:noop		noop	0	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-
+:icd9:noop		noop	0	w40,r20,w8,r8,w1,r1,r22,r100,w64,r36	-
+
+# Ists
+:ist0:ist_xcdac20	ist_xcdac20	-	w50,r50		-	icd0
+:ist1:ist_xcdac20	ist_xcdac20	-	w50,r50		-	icd1
+:ist2:ist_xcdac20	ist_xcdac20	-	w50,r50		-	icd2
+:ist3:ist_xcdac20	ist_xcdac20	-	w50,r50		-	icd3
+:ist4:ist_xcdac20	ist_xcdac20	-	w50,r50		-	icd4
+:ist5:noop	noop		-	w50,r50		-	icd5
+:ist6:noop	noop		-	w50,r50		-	icd6
+:ist7:noop	noop		-	w50,r50		-	icd7
+:ist8:noop	noop		-	w50,r50		-	icd8
+:ist9:noop	noop		-	w50,r50		-	icd9
+
+# Magcor aux crate 2/cac208
+remdrv	remdrv	0,25	w20,w8,r8,w1,r1,r12,r24,w16,r8 8*1+58i/1+58i,1*1+261i/1+261i	cangw/cangw-magsys:xcac208
