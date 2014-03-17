@@ -47,6 +47,14 @@
                 <div>Число уровней: <input id="neighbor_number" type="number" name="neighbors" value="1"></div>
                 <div><button type="button" onclick="findNeighbors()">Найти</button></div>
             </form>
+            <form id="obj_group_info" class="hidden">
+                <div>Цвет: <input onclick="checkDefaultPair('color')" name="color_default" type="checkbox"/><input type="color" name="color" value="#ffffff"></div>
+                <div>Размер: <input type="number" name="size"></div>
+                <div>Форма: <input list="palette_shapes" name="shape"></div>
+                <div></div><!--Поворот: <input type="number" name="angle"></div-->
+                <div><input type="button" value="Сохранить группу" onclick="saveGroup()"></div>
+                <div><input type="button" value="Удалить группу" onclick="deleteGroup()"></div>
+            </form>
             <form id="obj_rel_info" class="hidden">
                 <div></div>
                 <div></div>

@@ -64,6 +64,7 @@ def configData(request):
     #return HttpResponse(request.configuration.__class__.__name__)
     return JsonResponse([classes_list,relations_list])
 
+
 def getGraphData(request):
     nodes_list = []
     relations_list = []
@@ -105,6 +106,7 @@ def getGraphData(request):
     #return HttpResponse(len(entities))
     return JsonResponse([nodes_list,relations_list])
 
+
 def getObjAttributes(request,cid,id):
     cid = int(cid)
     id = int(id)
@@ -124,6 +126,7 @@ def getObjAttributes(request,cid,id):
 
     return JsonResponse([attr_list,attr_data_list,protos,protos_values])
 
+
 def getRelAttributes(request,cid,id):
     cid = int(cid)
     id = int(id)
@@ -139,29 +142,62 @@ def getRelAttributes(request,cid,id):
 
     return JsonResponse([attr_list,attr_data_list])
 
+
 def getSearchWidget(request):
     input_widget = GetHtmlEntityIdSelector(request, "search_string")
     return JsonResponse(input_widget)
 
+
 def addInstance(request):
     data=request.GET
-    cid = int(data["cid"])
-    new_inst = request.configuration.makeEntity(cid)
+    node = json.loads(data["node"])
+    new_inst = request.configuration.makeEntity(node["cid"])
+    new_inst["name"] = node["title"]
     new_inst.save()
     new_id = new_inst.id
     configuration = Configurations.objects.get(name=request.configuration.__class__.__name__)
-    new_model = Node(id=str(cid)+","+str(new_id),config=configuration,color="default",size=10,shape="default",x=data["cx"],y=data["cy"])
+    new_model = Node(id=str(node["cid"])+","+str(new_id),config=configuration,color=node["color"],size=node["size"],shape=node["shape"],x=node["x"],y=node["y"])
     new_model.save()
     return HttpResponse(new_id)
-    #return HttpResponse(data["cx"])
+    #return HttpResponse(node)
+
 
 def addRelation(request):
     data = request.GET
-    ent1 = request.configuration.loadEntity(int(data["from_cid"]), int(data["from_id"]))
-    ent2 = request.configuration.loadEntity(int(data["to_cid"]), int(data["to_id"]))
-    rel = request.configuration.makeRelation(int(data["rcid"]), ent1, ent2)
-    rel.save()
-    return HttpResponse(rel.cid)
+    rel = json.loads(data["rel"])
+    ent1 = request.configuration.loadEntity(rel["source"][0], rel["source"][1])
+    ent2 = request.configuration.loadEntity(rel["target"][0], rel["target"][1])
+    relation = request.configuration.makeRelation(rel["cid"], ent1, ent2)
+    relation.save()
+    return HttpResponse(relation.cid)
+
+
+def addFragment(request):
+    data = request.GET
+    fragment = json.loads(data["fragment"])
+    nodes = fragment["nodes"]
+    relations = fragment["rels"]
+    for node in nodes:
+        new_inst = request.configuration.makeEntity(node["cid"])
+        new_inst["name"] = node["title"]
+        new_inst.save()
+        new_id = new_inst.id
+        configuration = Configurations.objects.get(name=request.configuration.__class__.__name__)
+        new_model = Node(id=str(node["cid"])+","+str(new_id),config=configuration,color=node["color"],size=node["size"],shape=node["shape"],x=node["x"],y=node["y"])
+        new_model.save()
+        for rel in relations:
+            if rel["source"][0]==node["cid"] and rel["source"][1]==node["id"]:
+                rel["source"][1] = new_id
+            if rel["target"][0]==node["cid"] and rel["target"][1]==node["id"]:
+               rel["target"][1] = new_id
+        node["id"] = new_id
+    for rel in relations:
+        ent1 = request.configuration.loadEntity(rel["source"][0], rel["source"][1])
+        ent2 = request.configuration.loadEntity(rel["target"][0], rel["target"][1])
+        relation = request.configuration.makeRelation(rel["cid"], ent1, ent2)
+        relation.save()
+    return JsonResponse(fragment)
+
 
 def saveNode(request):
     result = "success"
@@ -191,6 +227,7 @@ def saveNode(request):
         result = e
     return HttpResponse(result)
 
+
 def saveRelation(request):
     result = "success"
     try:
@@ -208,6 +245,7 @@ def saveRelation(request):
         result = e
     return HttpResponse(result)
 
+
 def saveGraph(request):
     data = request.GET
     configuration = Configurations.objects.get(name=request.configuration.__class__.__name__)
@@ -218,6 +256,7 @@ def saveGraph(request):
         obj.y=node["y"]
         obj.save()
     return HttpResponse(0)
+
 
 def deleteNode(request,cid,id):
     result = "success"
@@ -230,6 +269,7 @@ def deleteNode(request,cid,id):
     except Exception,e:
         result = e
     return HttpResponse(result)
+
 
 def deleteRelation(request,cid,id):
     result = "success"
