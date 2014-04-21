@@ -16,7 +16,7 @@
 			        {% for document in documents %}
 				        <tr>
                             <td style="text-align: left;">
-                                <input type='checkbox' name='check_{{ document.docfile.name }}'>
+                                <input type='checkbox' name='check_{{document.docfile.name}}'>
                                 <a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a>
                                 <a href='{% url cxv2-tools-delete document.id %}'>Delete</a>
                             </td>
@@ -35,12 +35,11 @@
         </form>
 
 		<!-- Upload form. Note enctype attribute! -->
-		<form action="{% url cxv2-tools-list %}" method="post" enctype="multipart/form-data">
+		<form action="{% url cxv2-tools-save %}" method="post" enctype="multipart/form-data">
 		{% csrf_token %}
-<!--			<p>{{ form.non_field_errors }}</p>
-			<p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+s			<p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
 			<p>
-				{{ form.docfile.errors }}-->
+				{{ form.docfile.errors }}
 				{{ form.docfile }}
 			</p>
 			<p><input type="submit" value="Upload" /></p>
@@ -48,5 +47,4 @@
 
 
 
- <!--{{ results }}-->
 {% endblock content %}

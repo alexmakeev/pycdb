@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^export$', 'cxv2_tools.import_export.export', name="cxv2-tools-export"),
     url(r'^$', 'cxv2_tools.import_export.index', name="cxv2-tools-index"),
     url(r'^list$', 'cxv2_tools.import_export.list', name='cxv2-tools-list'),
+    url(r'^list_save$', 'cxv2_tools.import_export.save', name='cxv2-tools-save'),
     url(r'^list/(?P<did>\d+)$', 'cxv2_tools.import_export.delete', name='cxv2-tools-delete'),
 )
 
