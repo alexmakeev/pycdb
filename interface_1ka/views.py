@@ -47,6 +47,8 @@ def configData(request):
                 "y": cls_model_info.y,
                 "color": cls_model_info.color,
                 "size": cls_model_info.size,
+                "image": cls_model_info.image,
+                "scale": cls_model_info.scale
             }]
         else:
             relations_list += [{
@@ -62,17 +64,17 @@ def configData(request):
             }]
 
     #return HttpResponse(request.configuration.__class__.__name__)
-    return JsonResponse([classes_list,relations_list])
+    return JsonResponse({"nodes":classes_list,"rels":relations_list})
 
 
 def getGraphData(request):
+    data = request.GET
     nodes_list = []
     relations_list = []
     configuration = Configurations.objects.get(name=request.configuration.__class__.__name__).id
     trans = maketrans("","")
 
-    #ents = request.configuration.loadEntity(2,1)
-    #request.configuration.deleteEntity(ents)
+    #cids = json.loads(data["cids"])
     cids = request.configuration.classes.keys()
     entities = []
     for cid in cids:
@@ -89,6 +91,8 @@ def getGraphData(request):
             "color": object_info.color,
             "shape": object_info.shape,
             "size": object_info.size,
+            "image": object_info.image,
+            "scale": object_info.scale
             #"test": str(en.getId()).translate(maketrans("",""),'(|)| '),
         }]
         relations = request.configuration.getAllRelations(en,None,None,True,"to")
@@ -99,12 +103,11 @@ def getGraphData(request):
                 "target": rel.getToEntity().getId(),
                 "cid": rel.getId()[0],
             }]
-            """if(rel.getFromEntity().cid==2):
+    """        if(rel.getFromEntity().cid==2):
                 rel.delete();
-                return HttpResponse(relations)
-"""
-    #return HttpResponse(len(entities))
-    return JsonResponse([nodes_list,relations_list])
+                return HttpResponse(relations)"""
+    #return HttpResponse(Node.objects.get(id="1,45",config=configuration));
+    return JsonResponse({'nodes':nodes_list,'rels':relations_list})
 
 
 def getObjAttributes(request,cid,id):
@@ -124,7 +127,12 @@ def getObjAttributes(request,cid,id):
         protos[key] = key not in entity
         protos_values[key] = entity.get_default_attribute_value(key)
 
-    return JsonResponse([attr_list,attr_data_list,protos,protos_values])
+    return JsonResponse({
+        "fields": attr_list,
+        "vals": attr_data_list,
+        "protos": protos,
+        "proto_vals": protos_values
+    })
 
 
 def getRelAttributes(request,cid,id):
@@ -140,7 +148,10 @@ def getRelAttributes(request,cid,id):
         attr_list.append(key)
         attr_data_list.append(relation[key])
 
-    return JsonResponse([attr_list,attr_data_list])
+    return JsonResponse({
+        "fields": attr_list,
+        "vals": attr_data_list
+    })
 
 
 def getSearchWidget(request):
@@ -169,7 +180,7 @@ def addRelation(request):
     ent2 = request.configuration.loadEntity(rel["target"][0], rel["target"][1])
     relation = request.configuration.makeRelation(rel["cid"], ent1, ent2)
     relation.save()
-    return HttpResponse(relation.cid)
+    return HttpResponse(relation.getId())
 
 
 def addFragment(request):
@@ -222,6 +233,7 @@ def saveNode(request):
         obj.color=node["color"]
         obj.shape=node["shape"]
         obj.size=node["size"]
+        obj.image=node["image"]
         obj.save()
     except Exception,e:
         result = e
