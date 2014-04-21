@@ -209,6 +209,7 @@ class Configuration:
 
     def convertCNameIfNeeded(self, cname_or_cid):
         cid = cname_or_cid
+        print(self.cnames_to_cids)
         if type(cid) == str: cid = self.cnames_to_cids[cname_or_cid]
         return cid
 
@@ -347,7 +348,7 @@ class Configuration:
                     ret += [instance]
         return ret
 
-    def getAllRelations(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None):
+    def getAllRelations(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None, include_prototype_relations=True):
         edges = []
         if not role or role=="from":
             edges += self.storage.nxgraph.in_edges(entity.getId(), keys=True, data=True)
@@ -371,12 +372,17 @@ class Configuration:
                     relation = self.makeRelation(rel_id[0], from_id, to_id, rel_id[1])
                     self.loadRelationAttributes(relation, data)
                     ret += [relation]
+        if include_prototype_relations:
+            protos = self.getAllNeighbours(entity, "prototypes", role="from", include_prototype_relations=False)
+            len_protos = len(protos)
+            if len_protos>=1:
+                ret +=  self.getAllRelations(protos[0], relation_cname_or_cid, filter_func, load_instances, role, include_prototype_relations)
         return ret
 
-    def getAllNeighbours(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None):
+    def getAllNeighbours(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None, include_prototype_relations=True):
         ret = []
         if not role or role=="from":
-            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "from")
+            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "from", include_prototype_relations)
             for relation in relations:
                 will_add = True
                 neighbour = relation.getFromEntity()
@@ -384,7 +390,7 @@ class Configuration:
                     will_add = will_add and filter_func(neighbour)
                 if will_add: ret += [neighbour]
         if not role or role=="to":
-            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "to")
+            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "to", include_prototype_relations)
             for relation in relations:
                 will_add = True
                 neighbour = relation.getToEntity()

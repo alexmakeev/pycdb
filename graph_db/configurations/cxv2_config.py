@@ -37,6 +37,9 @@ class CXV2Config(Configuration):
             makeAttribute("addr", "Address", "Address of the Device at the Bus", self.TYPE_STRING, ""),
             makeAttribute("init_str", "Initialize String", "String to initialize the Device by the driver", self.TYPE_STRING, ""),
             makeAttribute("sequence_number", "Sequence Number", "Sequence number for sorting devices during export", self.TYPE_INTEGER, ""),
+            makeAttribute("bigc_info", "Big Channel Info", "Big channel information [should be temporal]", self.TYPE_TEXT, ""),
+            makeAttribute("main_info", "Main Info", "Main information", self.TYPE_STRING, "No main info"),
+
             ] + base_attributes_bottom)
 
         self.addEntityClass(6, "device_channel", "Device Channel", "", base_attributes_top + [
@@ -53,13 +56,16 @@ class CXV2Config(Configuration):
             makeAttribute("group_number", "Group Number", "The priority for group sorting", self.TYPE_INTEGER, ""),
             ] + base_attributes_bottom)
 
-        self.addEntityClass(8, "device_type", "Device Type", "", base_attributes_top + [
-            makeAttribute("bigc_info", "Big Channel Info", "Big channel information [should be temporal]", self.TYPE_TEXT, ""),
-            ] + base_attributes_bottom)
+#        self.addEntityClass(8, "device_type", "Device Type", "", base_attributes_top + [
+#            makeAttribute("bigc_info", "Big Channel Info", "Big channel information [should be temporal]", self.TYPE_TEXT, ""),
+#            ] + base_attributes_bottom)
 
         self.addEntityClass(9, "server", "Server", "", base_attributes_top + [
             ] + base_attributes_bottom)
 
+        self.addEntityClass(10, "layer_info", "Layer Info", "", base_attributes_top + [
+            makeAttribute("info", "Info", "Information of the layer", self.TYPE_STRING, ""),
+            ] + base_attributes_bottom)
 
         
 	    ############ EDGES #############
@@ -90,10 +96,6 @@ class CXV2Config(Configuration):
                 {"cname":"bus_controller", "multiplicity" : self.MUL_ONE},
                 {"cname":"bus_controller_type", "multiplicity" : self.MUL_ZERO_OR_MORE}
             ),
-            makeAllowedRelation(
-                {"cname":"device", "multiplicity" : self.MUL_ONE},
-                {"cname":"device_type", "multiplicity" : self.MUL_ZERO_OR_MORE}
-            ),
             ])
 
 
@@ -104,7 +106,11 @@ class CXV2Config(Configuration):
                 {"cname":"device_channel", "multiplicity" : self.MUL_ZERO_OR_MORE}
             ),
             makeAllowedRelation(
-                {"cname":"device_type", "multiplicity" : self.MUL_ONE},
+                {"cname":"server", "multiplicity" : self.MUL_ONE},
+                {"cname":"layer_info", "multiplicity" : self.MUL_ZERO_OR_MORE}
+            ),
+            makeAllowedRelation(
+                {"cname":"device", "multiplicity" : self.MUL_ONE},
                 {"cname":"device_channel_group", "multiplicity" : self.MUL_ZERO_OR_MORE}
             ),
             ])

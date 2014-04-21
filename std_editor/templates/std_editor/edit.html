@@ -99,7 +99,7 @@
                 <td>
                     {% for relation in relation_info.relations %}
                         {% if relation %}
-                        <div style='background-color: #e1e1e1; width:100px; float:left; padding:2px; margin: 1px; border: 1px gray solid;'>
+                        <div style='background-color: #e1e1e1;{% if not relation.is_real %}opacity: 0.3;{% endif %} width:100px; float:left; padding:2px; margin: 1px; border: 1px gray solid;'>
                             <div style="float: right;">
                                 <font size='1'>
                                     <a onclick="return confirm('Are you sure you want to delete relation {{ relation.role }} {{ relation.title }}?')" href="{% url std-editor-delete-relation relation.cid relation.id %}?next={{ request.get_full_path|urlencode }}">X</a>

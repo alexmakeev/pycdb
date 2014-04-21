@@ -104,11 +104,18 @@ def edit_instance(request, cid, id):
 
     allowed_neighbours = request.configuration.getAllAllowedNeighboursPatternsByRelationsClassesIds(entity)
     relations = request.configuration.getAllRelations(entity)
+
+    relations_real = request.configuration.getAllRelations(entity, include_prototype_relations=False)
     relations.sort(lambda a,b: cmp(a.id, b.id))
 
     cids = allowed_neighbours.keys()
     cids.sort()
 
+    real_rel_ids = []
+    for rel in relations_real:
+        real_rel_ids += [rel.id]
+    print(allowed_neighbours)
+    print(cids)
     relations_infos = []
     for t_cid in cids:
         relation_info_by_cids = {
@@ -118,18 +125,30 @@ def edit_instance(request, cid, id):
             "allowed_neighbours" : []
         }
         relations_dict = {}
+        proto_rel_num = 0
+        real_entity = entity
         for rel in relations:
             if rel.cid != t_cid: continue
+            if rel.from_id!=entity.getId() and rel.to_id!=entity.getId():
+                real_entity = entity
+                proto_rel = request.configuration.getAllRelations(entity,relation_cname_or_cid='logical' )
+                rel = proto_rel[proto_rel_num]
+                entity = rel.getFromEntity()
+                proto_rel_num+= 1
             t_role = "to"
             other_id = rel.to_id
             if rel.from_id!=entity.getId():
                 t_role = "from"
                 other_id = rel.from_id
+
+            if rel.from_id!=real_entity.getId() and rel.to_id!=real_entity.getId():
+                entity = real_entity
             other = request.configuration.loadEntityByEntityId(other_id)
             t_rel = {
                 "role" : t_role,
                 "id" : rel.id,
                 "cid" : rel.cid,
+                "is_real" : rel.id in real_rel_ids,
                 "other_cid" : other.cid,
                 "other_id" : other.id,
                 "title" : other.getTitle(),
@@ -165,8 +184,6 @@ def edit_instance(request, cid, id):
             }
             relation_info_by_cids["allowed_neighbours"] += [neighbour]
         relations_infos += [relation_info_by_cids]
-
-
     return {"cid" : cid, "id" : id, "form" : form, "entity" : entity, "relations_infos" : relations_infos, "protos" : protos, "protos_values" : protos_values}
 
 def delete_relation(request, rcid, id):
