@@ -278,7 +278,7 @@ def addFragment(request):
         try:
             Object.objects.get(oid=str(node["cid"])+","+str(new_id),config=configuration,view=the_view)
         except Exception:
-            new_model = Object(oid=str(node["cid"])+","+str(new_id),config=configuration,color=node["color"],size=node["size"],shape=node["shape"],x=node["x"],y=node["y"],view=the_view)
+            new_model = Object(oid=str(node["cid"])+","+str(new_id),config=configuration,color=node["color"],image=node["image"],size=node["size"],shape=node["shape"],x=node["x"],y=node["y"],view=the_view)
             new_model.save()
         if the_view == None:
             for rel in relations:
