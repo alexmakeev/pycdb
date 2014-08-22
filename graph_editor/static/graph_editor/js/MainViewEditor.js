@@ -19,6 +19,9 @@ ZOOMPYCDB.namespace = function (ns_string) {
     return parent;
 };
 ZOOMPYCDB.test;
+ZOOMPYCDB.serveradr = function(){
+	return "http://0.0.0.0:8082/";
+};
 ZOOMPYCDB.view_editor = true;
 $(document).ready(function(){
     var storage = ZOOMPYCDB.Storage(),
