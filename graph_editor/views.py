@@ -224,18 +224,15 @@ def addView(request):
 
 
 def addInstance(request):
-    try:
-        data=request.GET
-        node = json.loads(data["node"])
-        new_inst = request.configuration.makeEntity(node["cid"])
-        new_inst["name"] = node["title"]
-        new_inst.save()
-        new_id = new_inst.id
-        configuration = Configuration.objects.get(name=request.configuration.__class__.__name__)
-        new_model = Object(oid=str(node["cid"])+","+str(new_id),config=configuration,color=node["color"],size=node["size"],shape=node["shape"],x=node["x"],y=node["y"],scale=node["scale"])
-        new_model.save()
-    except Exception,e:
-        new_id=e
+    data=request.GET
+    node = json.loads(data["node"])
+    new_inst = request.configuration.makeEntity(node["cid"])
+    new_inst["name"] = node["title"]
+    new_inst.save()
+    new_id = new_inst.id
+    configuration = Configuration.objects.get(name=request.configuration.__class__.__name__)
+    new_model = Object(oid=str(node["cid"])+","+str(new_id),config=configuration,color=node["color"],size=node["size"],shape=node["shape"],x=node["x"],y=node["y"],scale=node["scale"])
+    new_model.save()
     return HttpResponse(new_id)
     #return HttpResponse(node)
 
