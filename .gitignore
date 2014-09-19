@@ -5,7 +5,7 @@
 *.pid
 *.sqlite
 *.fuse*
-/graph_db/databases/*.gpickle
+/graph_db/databases/*.gpickle*
 /files
 /settings.py
 /.idea
