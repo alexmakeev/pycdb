@@ -1,4 +1,4 @@
-__author__ = 'user'
+
 
 from django.conf.urls.defaults import patterns, include, url
 

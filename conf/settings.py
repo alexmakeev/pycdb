@@ -140,7 +140,9 @@ INSTALLED_APPS = [
     'portal',
     'std_editor',
     'nsls_tools',
-    'cxv2_tools'
+    'cxv2_tools',
+    'graph_editor',
+    'interface_1ka',
 ]
 
 MENU_SOURCES = ["portal.menu.MENU_ITEMS"]

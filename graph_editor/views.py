@@ -1,7 +1,7 @@
-__author__ = 'user'
+
 import random
 from django.http import HttpResponse
-from annoying.decorators import JsonResponse
+from annoying.decorators import ajax_request
 from portal.utils.array_helpers import getFirstOrNone
 from annoying.decorators import render_to
 from graph_editor.models import Object,ObjectClass,Configuration,Background,View
@@ -75,7 +75,7 @@ def configData(request):
                 "size": cls_model_info.size,
                 "allowed_relations": cls_info["allowed_relations"]
             }]
-    return JsonResponse({"nodes":classes_list,"rels":relations_list})
+    return ajax_request({"nodes":classes_list,"rels":relations_list})
 
 
 def getViewsData(request):
@@ -88,7 +88,7 @@ def getViewsData(request):
             "name": v.name,
             "image": v.image
         }]
-    return JsonResponse({"data":views_list})
+    return ajax_request({"data":views_list})
 
 
 def getGraphData(request):
@@ -162,7 +162,7 @@ def getGraphData(request):
                 rel.delete();
                 return HttpResponse(relations)"""
     #return HttpResponse(Node.objects.get(id="1,45",config=configuration));
-    return JsonResponse({'nodes':nodes_list,'rels':relations_list,'bgs':backgrounds_list})
+    return ajax_request({'nodes':nodes_list,'rels':relations_list,'bgs':backgrounds_list})
 
 
 def getObjAttributes(request,cid,id):
@@ -184,7 +184,7 @@ def getObjAttributes(request,cid,id):
         protos[key] = key not in entity
         protos_values[key] = entity.get_default_attribute_value(key)
 
-    return JsonResponse({
+    return ajax_request({
         "fields": attr_list,
         "vals": attr_data_list,
         "types": types,
@@ -206,7 +206,7 @@ def getRelAttributes(request,cid,id):
         attr_list.append(key)
         attr_data_list.append(relation[key])
 
-    return JsonResponse({
+    return ajax_request({
         "fields": attr_list,
         "vals": attr_data_list
     })
@@ -214,7 +214,7 @@ def getRelAttributes(request,cid,id):
 
 def getSearchWidget(request):
     input_widget = GetHtmlEntityIdSelector(request, "search_string")
-    return JsonResponse(input_widget)
+    return ajax_request(input_widget)
 
 def addView(request):
     configuration = Configuration.objects.get(name=request.configuration.__class__.__name__)
@@ -293,7 +293,7 @@ def addFragment(request):
             ent2 = request.configuration.loadEntity(rel["target"][0], rel["target"][1])
             relation = request.configuration.makeRelation(rel["cid"], ent1, ent2)
             relation.save()
-    return JsonResponse(fragment)
+    return ajax_request(fragment)
 
 
 def saveNode(request):

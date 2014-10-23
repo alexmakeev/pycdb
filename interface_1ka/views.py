@@ -1,7 +1,8 @@
-__author__ = 'user'
+# -*- encoding: utf-8 -*-
+
 import random
 from django.http import HttpResponse
-from annoying.decorators import JsonResponse
+from annoying.decorators import ajax_request
 from portal.utils.array_helpers import getFirstOrNone
 from annoying.decorators import render_to
 from interface_1ka.models import Node,DefaultNode,Configurations
@@ -64,7 +65,7 @@ def configData(request):
             }]
 
     #return HttpResponse(request.configuration.__class__.__name__)
-    return JsonResponse({"nodes":classes_list,"rels":relations_list})
+    return ajax_request({"nodes":classes_list,"rels":relations_list})
 
 
 def getGraphData(request):
@@ -127,7 +128,7 @@ def getObjAttributes(request,cid,id):
         protos[key] = key not in entity
         protos_values[key] = entity.get_default_attribute_value(key)
 
-    return JsonResponse({
+    return ajax_request({
         "fields": attr_list,
         "vals": attr_data_list,
         "protos": protos,
@@ -148,7 +149,7 @@ def getRelAttributes(request,cid,id):
         attr_list.append(key)
         attr_data_list.append(relation[key])
 
-    return JsonResponse({
+    return ajax_request({
         "fields": attr_list,
         "vals": attr_data_list
     })
@@ -156,7 +157,7 @@ def getRelAttributes(request,cid,id):
 
 def getSearchWidget(request):
     input_widget = GetHtmlEntityIdSelector(request, "search_string")
-    return JsonResponse(input_widget)
+    return ajax_request(input_widget)
 
 
 def addInstance(request):
@@ -207,7 +208,7 @@ def addFragment(request):
         ent2 = request.configuration.loadEntity(rel["target"][0], rel["target"][1])
         relation = request.configuration.makeRelation(rel["cid"], ent1, ent2)
         relation.save()
-    return JsonResponse(fragment)
+    return ajax_request(fragment)
 
 
 def saveNode(request):

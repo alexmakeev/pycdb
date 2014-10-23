@@ -1,4 +1,4 @@
-__author__ = 'user'
+
 from django.core.urlresolvers import reverse
 
 MENU_ITEMS = [
