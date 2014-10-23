@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 # Django settings for boxes project.
 
+import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DEBUG = False
