@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/d3.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/Main.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/Storage.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/TempData.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/SchemeView.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/GraphView.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/ObjectView.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/SchemeController.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/GraphController.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/ObjectController.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/Logger.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/Keyboard.js"></script>
+    <!--<script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/palette.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/objectInfo.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/graph.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/ajaxDb.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/logger.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/main.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}interface_1ka/css/main.css" >
+{% endblock %}
+
+{% block content %}
+    <datalist id="palette_shapes">
+        <option value="default">
+        <option value="circle">
+        <option value="square">
+        <option value="triangle-up">
+        <option value="cross">
+        <option value="diamond">
+        <option value="triangle-down">
+    </datalist>
+    <div id="search"></div>
+    <div id="palette_header">
+        <span id="palette_info_left">
+            <img id="palette_info_img" class="hidden" width="100px" height="100px"/>
+            <input type="url" id="node_img_url" class="hidden"/>
+            <input id="node_img_submit" class="hidden" type="button" value="Загрузить"/>
+            <form id="obj_config_info">
+                <div id="obj_attrs">
+                    <!--<div>Название: <input type="title" name="title"></div>
+                    <div>Описание: <input type="description" name="description"></div>-->
+                </div>
+                <!--input id="object_info_save" type="button" value="Сохранить">-->
+            </form>
+        </span>
+        <span id="palette_info_right">
+            <form id="obj_node_info" class="hidden">
+                <div>Цвет: <input id="color_default" name="color_default" type="checkbox"/><input type="color" name="color" value="#ffffff"></div>
+                <div>Размер: <input type="number" name="size"></div>
+                <div>Форма: <input list="palette_shapes" name="shape"></div>
+                <div></div><!--Поворот: <input type="number" name="angle"></div-->
+                <div><input type="button" value="Сохранить" class="save_button"></div>
+                <div><input type="button" value="Удалить" class="delete_button"></div>
+            </form>
+            <form id="search_neighbors" class="hidden">
+                <div>Поиск соседей: <input id="neighbor_number" type="number" name="neighbors" value="1"></div>
+                <div><button type="button">Найти</button></div>
+            </form>
+            <form id="obj_group_info" class="hidden">
+                <div>Цвет: <input name="color_default" type="checkbox"/><input type="color" name="color" value="#ffffff"></div>
+                <div>Размер: <input type="number" name="size"></div>
+                <div>Форма: <input list="palette_shapes" name="shape"></div>
+                <div></div><!--Поворот: <input type="number" name="angle"></div-->
+                <div><input type="button" value="Сохранить" class="save_button"></div>
+                <div><input type="button" value="Удалить" class="delete_button"></div>
+            </form>
+            <form id="obj_rel_info" class="hidden">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div><input type="button" value="Сохранить" class="save_button"></div>
+                <div><input type="button" value="Удалить" class="delete_button"></div>
+            </form>
+        </span>
+    </div>
+    <svg height="1"><defs><filter id="filtersPicture">
+       <feComposite result="inputTo_38" in="SourceGraphic" in2="SourceGraphic" operator="arithmetic" k1="0" k2="1" k3="0" k4="0"></feComposite>
+       <feColorMatrix id="filter_38" type="saturate" values="0" data-filterid="38"></feColorMatrix>
+    </filter></defs></svg>
+    <svg id="palette" width="200px" height="550px"></svg>
+    <div id="palette_nodes"></div>
+    <svg id="graph_map" width="550" height="550">
+    </svg>
+    <div id="error_message">Error: </div>
+{% endblock content %}
