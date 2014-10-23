@@ -3,8 +3,8 @@
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-
 from annoying.decorators import render_to
+
 from portal.input_widgets.entity_id_selector import GetHtmlEntityIdSelector
 from std_editor.forms import EditInstanceForm
 
@@ -68,7 +68,7 @@ def edit_instance(request, cid, id):
                 cid_or_id_value = int(request.POST[key])
                 if cid_or_id_value <= 0: continue
                 vals = key[8:].split("_")
-                #print key, key[8:], vals
+                # print key, key[8:], vals
                 cid = int(vals[0])
                 entity_role = vals[1]
                 neighbour_role = vals[3]
@@ -87,8 +87,8 @@ def edit_instance(request, cid, id):
                 for rel_dict in new_relations.values():
                     ent1 = entity
                     ent2 = request.configuration.loadEntity(rel_dict["cid"], rel_dict["id"])
-                    if rel_dict["entity_role"] != "from": (ent1, ent2) = (ent2, ent1)  #swap
-                    #print "adding rel:", ent1.getId(), ent2.getId()
+                    if rel_dict["entity_role"] != "from": (ent1, ent2) = (ent2, ent1)  # swap
+                    # print "adding rel:", ent1.getId(), ent2.getId()
                     rel = request.configuration.makeRelation(rel_dict["rcid"], ent1, ent2)
                     rel.save()
 
@@ -185,7 +185,7 @@ def edit_instance(request, cid, id):
             neighbour = {
                 "title": "%s %s" % (neighbour_role, cls_info["readable_name"]),
                 "input_widget": GetHtmlEntityIdSelector(request, "new_rel_%s_%s_me_%s_%s" % (
-                t_cid, entity_role, neighbour_role, cls_info["name"]),
+                    t_cid, entity_role, neighbour_role, cls_info["name"]),
                                                         filter_func=neighbour_filter(neighbour_filter_data["cid"]))
             }
             relation_info_by_cids["allowed_neighbours"] += [neighbour]

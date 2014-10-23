@@ -6,6 +6,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 
 from annoying.decorators import ajax_request
+
 from graph_db.configuration import Entity
 from portal.utils.random_generators import GenerateRandomStr
 
@@ -60,7 +61,7 @@ def GetHtmlEntityIdSelector(request, name, cids_or_cnames_list=None, filter_func
 
 def AjaxGetSuggestionEntities(request):
     # print "GET", request.GET
-    #    print "POST", request.POST
+    # print "POST", request.POST
     term = unicode(request.GET["term"])
     filter_func_id = request.GET["filter_func_id"]
     filter_func = request.runtime_data["ajax_filters"][filter_func_id]["filter_func"]

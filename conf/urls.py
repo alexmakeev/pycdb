@@ -17,7 +17,7 @@ urlpatterns = patterns('',
 
                        # Uncomment the next line to enable the admin:
                        # url(r'^portal/', include('portal.urls')),
-                       #url(r'^transhette/', include('libs.transhette.urls')),
+                       # url(r'^transhette/', include('libs.transhette.urls')),
 
                        url(r'^admin/', include(admin.site.urls)),
                        url(r'^', include('portal.urls')),

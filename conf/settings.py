@@ -1,9 +1,7 @@
 # -*- encoding: utf-8 -*-
 # Django settings for boxes project.
 
-import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -86,7 +84,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -96,7 +94,7 @@ SECRET_KEY = '(1%h(r44w5w(cv=-w*dbrn_h6eih-$_)lp*if=j!bajj(_pqbd'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    #     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -110,7 +108,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'conf.urls'
-
 
 TEMPLATE_DIRS = ()
 
@@ -188,7 +185,7 @@ LOGGING = {
     }
 }
 
-#AUTH_PROFILE_MODULE = 'dashboard.UserProfile'
+# AUTH_PROFILE_MODULE = 'dashboard.UserProfile'
 
 LOGIN_URL = "/login"
 LOGOUT_URL = "/logout"

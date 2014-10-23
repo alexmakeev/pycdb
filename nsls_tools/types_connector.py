@@ -2,9 +2,9 @@
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-
 from annoying.decorators import render_to
 from annoying.decorators import ajax_request
+
 from portal.input_widgets.entity_id_selector import GetHtmlEntityIdSelector
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
@@ -153,7 +153,7 @@ def save_connection_type(request, cid, id):
     return HttpResponseRedirect(reverse("nsls-types-connector-edit", args=(cid, id)))
 
 
-################## D&D FUNCTIONALITY
+# ################# D&D FUNCTIONALITY
 
 def save_connection_type_part(request, cid, id):
     cid = int(cid)

@@ -4,8 +4,8 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
-
 from annoying.decorators import render_to
+
 from cxv2_tools.models import Document
 from cxv2_tools.forms import DocumentForm
 from cxv2_tools.utils import *
@@ -62,7 +62,7 @@ def list(request):
             action_name = ''
 
         file_names = getCheckedFileNames(request.POST)
-        #       urls = getChe
+        # urls = getChe
         if action_name == 'Import':
             for file_name in file_names:
                 results.append(parser(request, file_name))

@@ -2,9 +2,10 @@
 
 from django.template.loader import render_to_string
 from django import template
+from django.conf import settings
 
 from portal.utils.str_resolver import StrResolver
-from django.conf import settings
+
 
 register = template.Library()
 

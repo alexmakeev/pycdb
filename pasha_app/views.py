@@ -10,7 +10,7 @@ def my_filter(ent):
 def index(request):
     # serv = request.configuration.loadEntity("server", 2)
 
-    #    servs = request.configuration.getAllEntities("server", filter_func=my_filter)
+    # servs = request.configuration.getAllEntities("server", filter_func=my_filter)
     #    serv = servs[0]
 
     servs = request.configuration.getAllEntities("server",

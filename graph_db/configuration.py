@@ -49,13 +49,13 @@ class ConfigurationObject:
         if class_info["type"] == "entity_class":
             protos = self.configuration.getAllNeighbours(self, "prototypes", role="from")
             len_protos = len(protos)
-            #print self.id, protos[0].id
+            # print self.id, protos[0].id
             #if len_protos>1: raise Exception("Multiple prototypes of instance %s" % str(self.getId()))
             if len_protos == 1:
                 if protos[0].id != self.id:
                     return protos[0][key]
 
-        #Check default value
+        # Check default value
         for attr in class_info["attributes"]:
             if attr["name"] == key: return attr["default_value"]
         raise KeyError(key)
@@ -263,12 +263,12 @@ class Configuration:
             if id not in self.storage.nxgraph.node: raise Exception("Object %s not found in the storage" % str(id))
             data = self.storage.nxgraph.node[id]
         entity.attributes = deepcopy(data)
-        #        for (key, value) in data.iteritems():
+        # for (key, value) in data.iteritems():
         #            entity.attributes[key] = value
         entity.is_loaded = True
         return True
 
-    ################### RELATIONS
+    # ################## RELATIONS
 
     def makeRelation(self, cname_or_id, ent_or_id_from=None, ent_or_id_to=None, id=-1):
         if isinstance(ent_or_id_from, ConfigurationObject): ent_or_id_from = ent_or_id_from.getId()

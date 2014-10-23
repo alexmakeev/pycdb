@@ -3,9 +3,10 @@
 import random
 import datetime
 
+from django.conf import settings
+
 from graph_db.storage import Storage
 from portal.utils.str_resolver import StrResolver
-from django.conf import settings
 
 
 class SelectConfigurationMiddleware():
@@ -22,7 +23,7 @@ class SelectConfigurationMiddleware():
 
     def process_request(self, request):
         if ("selected_configuration" not in request.session): request.session["selected_configuration"] = \
-        settings.CONFIGURATIONS.keys()[0]
+            settings.CONFIGURATIONS.keys()[0]
 
         if "selected_configuration" in request.GET:
             config_name = request.GET["selected_configuration"]

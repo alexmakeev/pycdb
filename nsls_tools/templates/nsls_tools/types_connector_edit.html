@@ -251,6 +251,7 @@ function DeleteConnection(elem) {
             <div class="through_items"></div>
         </div>
 
+
 </script>
 <script id="tmpl_item_to" type="text/x-jquery-tmpl">
         <div class="item droppable not_connected" p_uid="${uid}" p_cid="${cid}" p_id="${id}">
@@ -258,9 +259,11 @@ function DeleteConnection(elem) {
             <div class="through_items"></div>
         </div>
 
+
 </script>
 <script id="tmpl_item_through" type="text/x-jquery-tmpl">
         <div class="through_item" onmouseover="SelectConnection(this);" ondblclick="DeleteConnection(this);" p_uid="${uid}">${target_title}</div>
+
 
 </script>
 

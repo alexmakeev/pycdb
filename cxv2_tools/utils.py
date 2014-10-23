@@ -105,7 +105,7 @@ def GetCreateEntity(request, results, c_name, filter_dict):
                 if filter_dict['main_info'] == params['main_info']:
                     filter_dict['prototype'] = '0'
                     # else:
-                #                    filter_dict['prototype'] = '1'
+                    # filter_dict['prototype'] = '1'
 
         if params['cid'] == cnames_to_cids['device_channel_group']:
             if 'name' in filter_keys and 'group_number' in filter_keys:
@@ -146,12 +146,12 @@ def GetCreateEntity(request, results, c_name, filter_dict):
             if edge.from_id[1] == filter_dict['from'].id and edge.to_id[1] == filter_dict['to'].id:
                 return edge
 
-            #        sys.stdout.write(' !!! Edges of the entity:'+ str(edges) +' !!! \n\n')
+                # sys.stdout.write(' !!! Edges of the entity:'+ str(edges) +' !!! \n\n')
         edge = request.configuration.makeRelation(c_name, filter_dict['from'], filter_dict['to'])
         edge.save()
         return edge
         # self.addRelationClass(10001, "prototypes", "Prototypes", "Prototypes links", [
-    #        ], allowed_rels)
+    # ], allowed_rels)
     else:
         sys.stdout.write(' \n\n!!! Entity!!!')
         filter_dict['prototype'] = '1'
@@ -212,7 +212,7 @@ def GetCreateEntity(request, results, c_name, filter_dict):
                             edge.save()
                             break
 
-                        #            sys.stdout.write('\n DEVICES: '+str(devices)+' \n')
+                            #            sys.stdout.write('\n DEVICES: '+str(devices)+' \n')
 
         return entity
 
@@ -224,7 +224,7 @@ def SaveEntity(request, results, entity):
     controller = request.config_header.GetConfigController(entity.GetControllerId())
     if (not controller.GetStorage().Save(entity)):
         # session.flash = "Couldn't save " + str(entity.GetInstanceId()) + " entity:" + entity.ToString() + " - see logs for details"
-        #        redirect(URL("index"))
+        # redirect(URL("index"))
         results.append(
             "Couldn't save " + str(entity.GetInstanceId()) + " entity:" + entity.ToString() + " - see logs for details")
     results.append("Saved " + controller.ToString() + " " + entity.ToString())
@@ -265,7 +265,7 @@ def my_blk_row_processor(request, results, matchobj, cur_server, sequence_number
         device.attributes["name"] = name
 
 
-    ####################### Create channel groups
+    # ###################### Create channel groups
     saved_groups = 0
     for t_matchobj in re.finditer(channel_groups_re, row_data["main_info"]):
         group_counts = t_matchobj.groupdict()
@@ -403,7 +403,7 @@ def makeFileContent(request, server, mode, lines):
 
     neighbours_keys = sorted_neighbours.keys()
     neighbours_keys.sort()
-    #=========end==============
+    # =========end==============
 
     for key in neighbours_keys:
         the_neighbour = sorted_neighbours[key].attributes

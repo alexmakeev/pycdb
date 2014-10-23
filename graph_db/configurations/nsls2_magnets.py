@@ -65,7 +65,7 @@ class NSLS2Magnets(Configuration):
 
 
 
-        ############ EDGES #############
+        # ########### EDGES #############
         # addRelationClass(cid, name, readable_name, description, attributes_list, allowed_relations)
         #self.addRelationClass(101, "physical", "Physical", "Physical connections", [
         #    ], [

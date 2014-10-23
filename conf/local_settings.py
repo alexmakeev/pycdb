@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 import os
 
-from utils import *
 from django.conf import settings
+
+from utils import *
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -50,7 +51,6 @@ settings.INSTALLED_APPS += [
 ]
 
 settings.MENU_SOURCES += ["nsls_tools.menu.MENU_ITEMS", "std_editor.menu.MENU_ITEMS", "cxv2_tools.menu.MENU_ITEMS"]
-
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587

@@ -66,7 +66,7 @@ class CXV2Config(Configuration):
             makeAttribute("group_number", "Group Number", "The priority for group sorting", self.TYPE_INTEGER, ""),
         ] + base_attributes_bottom)
 
-        #        self.addEntityClass(8, "device_type", "Device Type", "", base_attributes_top + [
+        # self.addEntityClass(8, "device_type", "Device Type", "", base_attributes_top + [
         #            makeAttribute("bigc_info", "Big Channel Info", "Big channel information [should be temporal]", self.TYPE_TEXT, ""),
         #            ] + base_attributes_bottom)
 

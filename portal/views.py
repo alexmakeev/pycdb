@@ -6,7 +6,7 @@ from annoying.decorators import render_to
 @render_to(template="portal/index.html")
 def index(request):
     # print request.configuration.storage.nxgraph.graph["edges_by_ids"]
-    #    timer = Timer()
+    # timer = Timer()
     #
     #    timer.start("Init DB")
     #    strg = Storage(CONFIGURATIONS["tst_config"].storage)

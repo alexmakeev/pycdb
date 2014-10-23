@@ -6,12 +6,10 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from django.conf import settings
 
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
-from django.conf import settings
-
-
 
 
 def my_filter(ent):
@@ -67,7 +65,7 @@ def get_config_ioc(request, ioc_name):
 def index(request):
     # serv = request.configuration.loadEntity("server", 2)
 
-    #    servs = request.configuration.getAllEntities("server", filter_func=my_filter)
+    # servs = request.configuration.getAllEntities("server", filter_func=my_filter)
     #    serv = servs[0]
 
     #    servs = request.configuration.getAllEntities("server", filter_func=lambda ent: (ent["name"]=="psioc" and ent["id"]==2))

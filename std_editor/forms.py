@@ -12,7 +12,7 @@ class EditInstanceForm(forms.Form):
         :param attributes: attributes list of an instance
         """
         # attributes = kwargs.pop('attributes')
-        #        configuration = kwargs.pop('configuration')
+        # configuration = kwargs.pop('configuration')
         super(EditInstanceForm, self).__init__(*args, **kwargs)
 
         for attribute in attributes:

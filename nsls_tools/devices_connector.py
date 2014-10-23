@@ -2,8 +2,8 @@
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-
 from annoying.decorators import render_to
+
 from portal.input_widgets.entity_id_selector import GetHtmlEntityIdSelector
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
