@@ -1,1 +1,2 @@
-__author__ = 'alexmak'
+# -*- encoding: utf-8 -*-
+

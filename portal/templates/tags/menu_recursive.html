@@ -1,14 +1,14 @@
 <li>
     {% if item.url %}
-        <a href="{{ item.url }}">{{ item.title }}</a>
+    <a href="{{ item.url }}">{{ item.title }}</a>
     {% else %}
-        <a href="#">{{ item.title }}</a>
+    <a href="#">{{ item.title }}</a>
     {% endif %}
     {% if subitems_htmls %}
     <ul>
-    {% for subitem_html in subitems_htmls %}
+        {% for subitem_html in subitems_htmls %}
         {{ subitem_html }}
-    {% endfor %}
+        {% endfor %}
     </ul>
     {% endif %}
 </li>

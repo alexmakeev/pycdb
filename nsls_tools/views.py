@@ -1,18 +1,20 @@
+# -*- encoding: utf-8 -*-
+
 import os
+
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from annoying.decorators import render_to
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from django.conf import settings
+
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
-import settings
-
-__author__ = 'cheblakov'
 
 
 def my_filter(ent):
     return ent["name"] == "psioc"
+
 
 def get_config_channel(request, channel):
     ret = ""
@@ -21,12 +23,14 @@ def get_config_channel(request, channel):
 
     return ret
 
+
 def get_config_device(request, device):
     ret = ""
 
     ret += device.getTitle() + '\n'
 
-    device_type = getFirstOrNone(device.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type")))
+    device_type = getFirstOrNone(
+        device.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type")))
     ret += device_type.getTitle() + '\n'
 
     channels = device_type.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "channel"))
@@ -36,6 +40,7 @@ def get_config_device(request, device):
         ret += get_config_channel(request, channel)
 
     return ret
+
 
 def get_config_ioc(request, ioc_name):
     ret = ""
@@ -58,13 +63,13 @@ def get_config_ioc(request, ioc_name):
 
 
 def index(request):
-    #serv = request.configuration.loadEntity("server", 2)
+    # serv = request.configuration.loadEntity("server", 2)
 
-#    servs = request.configuration.getAllEntities("server", filter_func=my_filter)
-#    serv = servs[0]
+    # servs = request.configuration.getAllEntities("server", filter_func=my_filter)
+    #    serv = servs[0]
 
-#    servs = request.configuration.getAllEntities("server", filter_func=lambda ent: (ent["name"]=="psioc" and ent["id"]==2))
-#    serv = servs[0]
+    #    servs = request.configuration.getAllEntities("server", filter_func=lambda ent: (ent["name"]=="psioc" and ent["id"]==2))
+    #    serv = servs[0]
 
     response = ""
 
@@ -77,9 +82,10 @@ def index(request):
     # for server in servers:
     #     response += server.getTitle() + " "
 
-    response += render_to_string("nsls_tools/db/device.tmpl", {'ioc' : ioc_name})
+    response += render_to_string("nsls_tools/db/device.tmpl", {'ioc': ioc_name})
 
     return HttpResponse(response)
+
 
 class ProxyDevice:
     def __init__(self, device):
@@ -87,6 +93,7 @@ class ProxyDevice:
 
     def get_name_with_brackets(self):
         return "{%s}" % self.device["name"]
+
 
 def show_ioc(request, ioc_name):
     psc_list = []
@@ -99,13 +106,14 @@ def show_ioc(request, ioc_name):
     tmpl = "nsls_tools/db/ioc/" + ioc["template"]
 
     blocks = {}
-    for i in range(0,101):
+    for i in range(0, 101):
         blocks[i] = []
 
     devices = ioc.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "device"))
     for device in devices:
         proxy_device = ProxyDevice(device)
-        dev_type = getFirstOrNone(device.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type")))
+        dev_type = getFirstOrNone(
+            device.getNeighbours(filter_func=getFilterNeighboursByClassName(request.configuration, "device_type")))
         tmpl_dir_name = dev_type["template"]
         tmpl_dir_short = "nsls_tools/db/devices/" + tmpl_dir_name
         tmpl_dir_full = settings.PROJECT_DIR + "/nsls_tools/templates/" + tmpl_dir_short
@@ -113,10 +121,10 @@ def show_ioc(request, ioc_name):
         for dirname, dirnames, filenames in os.walk(tmpl_dir_full):
             for filename in filenames:
                 bin = int(filename.split(".")[0])
-                rendered_str = render_to_string(tmpl_dir_short+"/"+filename, {"proxy" : proxy_device})
+                rendered_str = render_to_string(tmpl_dir_short + "/" + filename, {"proxy": proxy_device})
                 blocks[bin] += ["\n%s\n" % rendered_str]
 
-        #psc_list += [t_dummy_device]
+                # psc_list += [t_dummy_device]
 
-    return render_to_response(tmpl, {"ioc" : ioc, "blocks" : blocks}, context_instance=RequestContext(request))
+    return render_to_response(tmpl, {"ioc": ioc, "blocks": blocks}, context_instance=RequestContext(request))
 

@@ -7,7 +7,6 @@
 *.fuse*
 /graph_db/databases/*.gpickle*
 /files
-/settings.py
 /.idea
 /django
 /lib/django

@@ -1,6 +1,7 @@
+# -*- encoding: utf-8 -*-
+
 import inspect
 
-__author__ = 'alexmak'
 
 class StrResolver():
     def ResolveModule(self, configuration_module_str):
@@ -18,7 +19,8 @@ class StrResolver():
         ret_list = inspect.getmembers(ret_module)
 
         for r in ret_list:
-            if r[0]==class_name:
+            if r[0] == class_name:
                 return r[1]
 
-        raise Exception("No configuration class with a name '%s' found in a module '%s'" % (class_name, ".".join(parts)))
+        raise Exception(
+            "No configuration class with a name '%s' found in a module '%s'" % (class_name, ".".join(parts)))

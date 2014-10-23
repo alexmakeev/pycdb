@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/d3.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/ChooseView.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/Storage.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/TempData.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/SchemeView.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/GraphView.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/ObjectView.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/SchemeController.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/GraphController.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/ObjectController.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/Logger.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}graph_editor/js/Keyboard.js"></script>
+<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}graph_editor/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="{{ STATIC_URL }}graph_editor/js/jquery.jeditable.js"></script>
+<!--<script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/palette.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/objectInfo.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/graph.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/ajaxDb.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/logger.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}interface_1ka/js/main.js"></script>-->
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}graph_editor/css/main.css">
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}graph_editor/css/jquery.dataTables.css">
+{% endblock %}
+{% block content %}
+<div><input type="button" value="+" id="add_view"><input type="button" value="-" id="delete_view">
+    <input type="button" value="Select" id="select_view">
+</div>
+<br/>
+<table id="table_views" class="display">
+    <thead>
+    <tr>
+        <th>Название</th>
+        <th>Вид</th>
+    </tr>
+    </thead>
+</table>
+{% endblock content %}

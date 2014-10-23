@@ -1,14 +1,16 @@
-from annoying.decorators import render_to
+# -*- encoding: utf-8 -*-
+
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.template import RequestContext, loader
-import re
+from django.template import RequestContext
+from annoying.decorators import render_to
+
 from cxv2_tools.models import Document
 from cxv2_tools.forms import DocumentForm
 from cxv2_tools.utils import *
 from conf import local_alexmak_hare
-import sys
+
 
 filename_expression = r"blklist-(?P<server_name>.+?)\.lst"
 filename_re = re.compile(filename_expression, re.I)
@@ -17,14 +19,12 @@ blk_row_expression = r"^((\s*)|(\#.*)|(\s*(?P<filename>.+?)\s+(?P<driver>.+?)\s+
 blk_row_re = re.compile(blk_row_expression, re.I and re.M)
 
 
-
 @render_to("../../cxv2_tools/templates/cxv2_tools/import_export.html")
 def index(request):
     try:
         action_name = request.POST["value"]
     except Exception:
         action_name = ''
-
 
     file_name = 'blklist-linac1-1.lst'
 
@@ -36,12 +36,12 @@ def index(request):
     if action_name == 'Import':
         results = parser(request, file_name)
 
-    return {"action_name":  action_name, "results": results}
+    return {"action_name": action_name, "results": results}
 
 
 def parser(request, file_name):
     results = []
-    f = open(local_alexmak_hare.MEDIA_ROOT+'/'+file_name,'r')
+    f = open(local_alexmak_hare.MEDIA_ROOT + '/' + file_name, 'r')
     data = ''.join(str(e) for e in f.readlines())
     return process_data(request, results, file_name, data)
 
@@ -51,10 +51,10 @@ def list(request):
     results = []
 
     action_name = ''
-    sys.stdout.write('FILES: '+str(request.POST)+' !!! \n')
-    sys.stdout.write('FILES: '+str(request.FILES)+' !!! \n')
+    sys.stdout.write('FILES: ' + str(request.POST) + ' !!! \n')
+    sys.stdout.write('FILES: ' + str(request.FILES) + ' !!! \n')
     if request.method == 'POST':
-    ######## Import list of uploaded files
+        # ####### Import list of uploaded files
 
         try:
             action_name = request.POST["value"]
@@ -62,7 +62,7 @@ def list(request):
             action_name = ''
 
         file_names = getCheckedFileNames(request.POST)
- #       urls = getChe
+        # urls = getChe
         if action_name == 'Import':
             for file_name in file_names:
                 results.append(parser(request, file_name))
@@ -70,7 +70,7 @@ def list(request):
         form = DocumentForm()
 
     else:
-        form = DocumentForm() # A empty, unbound form
+        form = DocumentForm()  # A empty, unbound form
 
     # Load documents for the list page
     documents = Document.objects.all()
@@ -82,15 +82,17 @@ def list(request):
         context_instance=RequestContext(request)
     )
 
-def save(request):
-        ######## Upload new file
-        form = DocumentForm(request.POST, request.FILES)
 
-        sys.stdout.write(' FORM: '+str(form)+' !!! \n')
-        if form.is_valid():
-            newdoc = Document(docfile = request.FILES['docfile'])
-            newdoc.save()
-        return HttpResponseRedirect(reverse('cxv2_tools.import_export.list'))
+def save(request):
+    # ####### Upload new file
+    form = DocumentForm(request.POST, request.FILES)
+
+    sys.stdout.write(' FORM: ' + str(form) + ' !!! \n')
+    if form.is_valid():
+        newdoc = Document(docfile=request.FILES['docfile'])
+        newdoc.save()
+    return HttpResponseRedirect(reverse('cxv2_tools.import_export.list'))
+
 
 def export(request):
     status = ''
@@ -103,14 +105,14 @@ def export(request):
 
         if action == 'blk':
             status = exportAllConfigFiles(request, 'blk')
-        sys.stdout.write('ACTIONS:'+action+'\n')
+        sys.stdout.write('ACTIONS:' + action + '\n')
 
         if action == 'lst':
             status = exportAllConfigFiles(request, 'lst')
 
     return render_to_response(
         'cxv2_tools/export.html',
-        { 'results': status},
+        {'results': status},
         context_instance=RequestContext(request)
     )
 
@@ -140,6 +142,6 @@ def getCheckedFileNames(POST):
     for name in POST.keys():
         if 'check_' in name:
             mod_name = name.split('_')
-            print('MODE_NAME: '+str(mod_name))
+            print('MODE_NAME: ' + str(mod_name))
             file_names.append(mod_name[1])
     return file_names

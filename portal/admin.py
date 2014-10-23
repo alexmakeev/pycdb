@@ -1,4 +1,3 @@
-from django.contrib import admin
-from portal.models import *
+# -*- encoding: utf-8 -*-
 
-#admin.site.register(MY_MODEL)
+# admin.site.register(MY_MODEL)

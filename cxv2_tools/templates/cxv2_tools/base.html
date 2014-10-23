@@ -3,45 +3,49 @@
 {% load menu %}
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery_ui/js/jquery-1.9.1.js"></script>
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery_ui/css/smoothness/jquery-ui-1.10.3.custom.css" >
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}portal/css/main.css" >
-    <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery_ui/js/jquery-ui-1.10.3.custom.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery_ui/css/smoothness/jquery-ui-1.10.3.custom.css">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}portal/css/main.css">
+    <script language="javascript" type="text/javascript"
+            src="{{ STATIC_URL }}jquery_ui/js/jquery-ui-1.10.3.custom.js"></script>
     <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.tmpl.min.js"></script>
     <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}portal/js/base.js"></script>
     <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}portal/js/dictionary_input.js"></script>
 
     {% block head %}
-        <title>No title</title>
+    <title>No title</title>
     {% endblock head %}
 </head>
 <body>
 <div id="body_content">
-<p>
+    <p>
+
     <h1>PyConfigEngine 2.0</h1>
     Configuration:
     {% configuration_selector %}
 
-</p>
+    </p>
 
-<p>
-    {% menu %}
-</p>
+    <p>
+        {% menu %}
+    </p>
 
-{% if messages %}
+    {% if messages %}
     <div class="messages">
         {% for message in messages %}
-            <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
-        {% endfor %}
+        <div
+        {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}
     </div>
+    {% endfor %}
+</div>
 {% endif %}
 
 {% block content %}
 {% endblock content %}
 
 {% if timer_info %}
-<hr />
+<hr/>
 <small>
     {{ timer_info|safe }}
 </small>

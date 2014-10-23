@@ -2,37 +2,38 @@
 {% load i18n %}
 
 {% block head %}
-    <title>{% trans "Export configuration files" %}</title>
+<title>{% trans "Export configuration files" %}</title>
 {% endblock head %}
 
 
 {% block content %}
 
-        <form method="POST" action="{% url cxv2-tools-export %}">
-            {% csrf_token %}
-            <table style="width:100%;">
-                <tr>
-                    <td style="text-align: center;">
-                        <label for="exp_type_0">
-                            Export to .blk
-                            <span class="radio"><input id="exp_type_0" name="export_type" type="radio" value="blk" checked /></span>
-                        </label>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">
-                        <label for="exp_type_1">
-                            Export to .lsl
-                            <span class="radio"><input id="exp_type_1" name="export_type" type="radio" value="lst" /></span>
-                        </label>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">
-                        <!--<input type="hidden" name="Export" value="Export">-->
-                        <input type="submit" value="Export">
-                    </td>
-                </tr>
-            </table>
-        </form>
+<form method="POST" action="{% url cxv2-tools-export %}">
+    {% csrf_token %}
+    <table style="width:100%;">
+        <tr>
+            <td style="text-align: center;">
+                <label for="exp_type_0">
+                    Export to .blk
+                    <span class="radio"><input id="exp_type_0" name="export_type" type="radio" value="blk"
+                                               checked/></span>
+                </label>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                <label for="exp_type_1">
+                    Export to .lsl
+                    <span class="radio"><input id="exp_type_1" name="export_type" type="radio" value="lst"/></span>
+                </label>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                <!--<input type="hidden" name="Export" value="Export">-->
+                <input type="submit" value="Export">
+            </td>
+        </tr>
+    </table>
+</form>
 
- {{ results }}
+{{ results }}
 {% endblock content %}
