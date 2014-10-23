@@ -5,7 +5,7 @@ import datetime
 
 from graph_db.storage import Storage
 from portal.utils.str_resolver import StrResolver
-from settings import *
+from django.conf import settings
 
 
 class SelectConfigurationMiddleware():
@@ -22,11 +22,11 @@ class SelectConfigurationMiddleware():
 
     def process_request(self, request):
         if ("selected_configuration" not in request.session): request.session["selected_configuration"] = \
-        CONFIGURATIONS.keys()[0]
+        settings.CONFIGURATIONS.keys()[0]
 
         if "selected_configuration" in request.GET:
             config_name = request.GET["selected_configuration"]
-            if config_name not in CONFIGURATIONS:
+            if config_name not in settings.CONFIGURATIONS:
                 raise Exception("Configuration with name '%s' not found." % config_name)
             del self.configuration
             self.configuration = None
@@ -35,9 +35,9 @@ class SelectConfigurationMiddleware():
         if not self.configuration and request.session["selected_configuration"]:
             config_name = request.session["selected_configuration"]
             resolver = StrResolver()
-            cfg_class = resolver.ResolveModuleMember(CONFIGURATIONS[config_name].configuration)
+            cfg_class = resolver.ResolveModuleMember(settings.CONFIGURATIONS[config_name].configuration)
             self.configuration = cfg_class()
-            strg = Storage(CONFIGURATIONS[config_name].storage)
+            strg = Storage(settings.CONFIGURATIONS[config_name].storage)
             self.configuration.initialize(strg)
 
         if "ajax_filters" in self.runtime_data and len(self.runtime_data["ajax_filters"]) > 500:

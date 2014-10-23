@@ -4,8 +4,7 @@ from django.template.loader import render_to_string
 from django import template
 
 from portal.utils.str_resolver import StrResolver
-import settings
-
+from django.conf import settings
 
 register = template.Library()
 

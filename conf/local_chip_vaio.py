@@ -3,7 +3,7 @@
 import os
 
 from utils import *
-import common
+import settings
 
 
 DEBUG = True
@@ -38,8 +38,8 @@ CONFIGURATIONS = {
                                        PROJECT_DIR + "/graph_db/databases/nsls2_magnets.gpickle"),
 }
 
-common.INSTALLED_APPS += [
+settings.INSTALLED_APPS += [
     'nsls_tools'
 ]
 
-common.MENU_SOURCES += ["nsls_tools.menu.MENU_ITEMS", "std_editor.menu.MENU_ITEMS"]
+settings.MENU_SOURCES += ["nsls_tools.menu.MENU_ITEMS", "std_editor.menu.MENU_ITEMS"]

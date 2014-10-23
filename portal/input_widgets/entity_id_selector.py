@@ -5,7 +5,7 @@ import datetime
 from django.template import RequestContext
 from django.template.loader import render_to_string
 
-from annoying.decorators import JsonResponse
+from annoying.decorators import ajax_request
 from graph_db.configuration import Entity
 from portal.utils.random_generators import GenerateRandomStr
 
@@ -90,4 +90,4 @@ def AjaxGetSuggestionEntities(request):
                     "description": ent.getDescription(15),
                 }]
 
-    return JsonResponse(ret)
+    return ajax_request(ret)

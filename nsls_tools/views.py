@@ -9,10 +9,9 @@ from django.template.context import RequestContext
 
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
-import settings
+from django.conf import settings
 
 
-__author__ = 'cheblakov'
 
 
 def my_filter(ent):

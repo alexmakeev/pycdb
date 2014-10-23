@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 
 from annoying.decorators import render_to
-from annoying.decorators import JsonResponse
+from annoying.decorators import ajax_request
 from portal.input_widgets.entity_id_selector import GetHtmlEntityIdSelector
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
@@ -178,7 +178,7 @@ def save_connection_type_part(request, cid, id):
     rel = request.configuration.makeRelation("logical", conn_type_part, t_to)
     rel.save()
     ret = {"cid": conn_type_part.cid, "id": conn_type_part.id}
-    return JsonResponse(ret)
+    return ajax_request(ret)
 
 
 def delete_connection_type_part(request, cid, id):
