@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from django.template.loader import render_to_string
 from portal.utils.str_resolver import StrResolver
 import settings

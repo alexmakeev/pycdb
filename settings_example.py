@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from conf.common import *
 from conf.local_alexmak_hare import *
 

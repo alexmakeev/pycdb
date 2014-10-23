@@ -1,6 +1,8 @@
+# -*- encoding: utf-8 -*-
+
 from random import randrange
 
-__author__ = 'alexmak'
+
 
 def GenerateRandomStr(length, existing=[], chars="abcdefghijklmnopqrstuvwxyz0123456789"):
     ret = ""

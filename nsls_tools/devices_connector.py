@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from annoying.decorators import render_to
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect

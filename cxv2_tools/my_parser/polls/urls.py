@@ -1,6 +1,8 @@
+# -*- encoding: utf-8 -*-
+
 from my_parser.polls import views
 
-__author__ = 'xukum'
+
 from django.conf.urls.defaults import patterns, include, url
 
 

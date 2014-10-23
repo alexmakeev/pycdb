@@ -1,4 +1,6 @@
-__author__ = 'alexmak'
+# -*- encoding: utf-8 -*-
+
+
 
 def getFilterNeighboursByClassName(configuration, cname):
     def ret_func(ent):

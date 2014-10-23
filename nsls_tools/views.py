@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 import os
 from django.http import HttpResponse
 from django.template.loader import render_to_string

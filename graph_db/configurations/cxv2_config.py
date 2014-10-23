@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from graph_db.configuration import Configuration, makeAttribute, makeAllowedRelation
 
 class CXV2Config(Configuration):

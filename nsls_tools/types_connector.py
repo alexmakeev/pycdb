@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from annoying.decorators import render_to
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
@@ -6,7 +8,7 @@ from portal.input_widgets.entity_id_selector import GetHtmlEntityIdSelector
 from portal.utils.array_helpers import getFirstOrNone
 from portal.utils.filters import getFilterNeighboursByClassName
 
-__author__ = 'alexmak'
+
 
 def updateConnType(request, conn_type, vals):
     title = vals["title"]

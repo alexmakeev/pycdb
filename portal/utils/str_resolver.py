@@ -1,6 +1,8 @@
+# -*- encoding: utf-8 -*-
+
 import inspect
 
-__author__ = 'alexmak'
+
 
 class StrResolver():
     def ResolveModule(self, configuration_module_str):

@@ -1,4 +1,5 @@
-# Django settings for boxes project.
+# -*- encoding: utf-8 -*-
+#  Django settings for boxes project.
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG

@@ -1,6 +1,8 @@
+# -*- encoding: utf-8 -*-
+
 from django.http import HttpResponse
 
-__author__ = 'alexmak'
+
 
 
 def my_filter(ent):

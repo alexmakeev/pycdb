@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from django import forms
 from portal.input_widgets.dictionary_input import DictionaryInputField
 

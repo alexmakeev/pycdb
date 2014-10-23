@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 import imp, os
 import inspect
 import sys

@@ -1,6 +1,8 @@
+# -*- encoding: utf-8 -*-
+
 from django.core.urlresolvers import reverse
 
-__author__ = 'alexmak'
+
 
 MENU_ITEMS = [
     {

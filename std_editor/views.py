@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from annoying.decorators import render_to
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -6,7 +8,7 @@ from portal.input_widgets.dictionary_input import GetHtmlDictionaryInput
 from portal.input_widgets.entity_id_selector import GetHtmlEntityIdSelector
 from std_editor.forms import EditInstanceForm
 
-__author__ = 'alexmak'
+
 
 @render_to("std_editor/index.html")
 def index(request):

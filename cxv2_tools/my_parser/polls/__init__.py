@@ -1,1 +1,2 @@
-__author__ = 'xukum'
+# -*- encoding: utf-8 -*-
+

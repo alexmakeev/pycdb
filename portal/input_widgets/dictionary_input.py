@@ -1,10 +1,12 @@
+# -*- encoding: utf-8 -*-
+
 import simplejson
 from django.core.exceptions import ValidationError
 from django.forms import Field, HiddenInput, Widget
 from django.template import RequestContext
 from django.template.loader import render_to_string
 
-__author__ = 'alexmak'
+
 
 def GetHtmlDictionaryInput(name, value):
 
