@@ -5,7 +5,6 @@ import networkx.algorithms.approximation as apxa
 
 
 class TestMinWeightDominatingSet:
-
     def test_min_weighted_dominating_set(self):
         graph = nx.Graph()
         graph.add_edge(1, 2)

@@ -6,6 +6,7 @@ __all__ = ['attr_matrix', 'attr_sparse_matrix']
 
 import networkx as nx
 
+
 def _node_value(G, node_attr):
     """Returns a function that returns a value from G.node[u].
     
@@ -39,11 +40,12 @@ def _node_value(G, node_attr):
         # Advanced:  Allow users to specify something else.
         #
         # For example,
-        #     node_attr = lambda u: G.node[u].get('size', .5) * 3
+        # node_attr = lambda u: G.node[u].get('size', .5) * 3
         #
         value = node_attr
 
     return value
+
 
 def _edge_value(G, edge_attr):
     """Returns a function that returns a value from G[u][v].
@@ -80,9 +82,9 @@ def _edge_value(G, edge_attr):
         # topological count of edges
 
         if G.is_multigraph():
-            value = lambda u,v: len(G[u][v])
+            value = lambda u, v: len(G[u][v])
         else:
-            value = lambda u,v: 1
+            value = lambda u, v: 1
 
     elif not hasattr(edge_attr, '__call__'):
         # assume it is a key for the edge attribute dictionary
@@ -90,21 +92,21 @@ def _edge_value(G, edge_attr):
         if edge_attr == 'weight':
             # provide a default value
             if G.is_multigraph():
-                value = lambda u,v: sum([d.get(edge_attr, 1) for d in G[u][v].values()])
+                value = lambda u, v: sum([d.get(edge_attr, 1) for d in G[u][v].values()])
             else:
-                value = lambda u,v: G[u][v].get(edge_attr, 1)
+                value = lambda u, v: G[u][v].get(edge_attr, 1)
         else:
             # otherwise, the edge attribute MUST exist for each edge
             if G.is_multigraph():
-                value = lambda u,v: sum([d[edge_attr] for d in G[u][v].values()])
+                value = lambda u, v: sum([d[edge_attr] for d in G[u][v].values()])
             else:
-                value = lambda u,v: G[u][v][edge_attr]
-            
+                value = lambda u, v: G[u][v][edge_attr]
+
     else:
         # Advanced:  Allow users to specify something else.
         #
         # Alternative default value:  
-        #     edge_attr = lambda u,v: G[u][v].get('thickness', .5)
+        # edge_attr = lambda u,v: G[u][v].get('thickness', .5)
         #
         # Function on an attribute:
         #     edge_attr = lambda u,v: abs(G[u][v]['weight'])
@@ -119,7 +121,8 @@ def _edge_value(G, edge_attr):
 
     return value
 
-def attr_matrix(G, edge_attr=None, node_attr=None, normalized=False, 
+
+def attr_matrix(G, edge_attr=None, node_attr=None, normalized=False,
                 rc_order=None, dtype=None, order=None):
     """Returns a NumPy matrix using attributes from G.
 
@@ -242,7 +245,7 @@ def attr_matrix(G, edge_attr=None, node_attr=None, normalized=False,
         import numpy as np
     except ImportError:
         raise ImportError(
-          "attr_matrix() requires numpy: http://scipy.org/ ")
+            "attr_matrix() requires numpy: http://scipy.org/ ")
 
     edge_value = _edge_value(G, edge_attr)
     node_value = _node_value(G, node_attr)
@@ -253,25 +256,25 @@ def attr_matrix(G, edge_attr=None, node_attr=None, normalized=False,
         ordering = rc_order
 
     N = len(ordering)
-    undirected = not G.is_directed()   
+    undirected = not G.is_directed()
     index = dict(zip(ordering, range(N)))
-    M = np.zeros((N,N), dtype=dtype, order=order)
+    M = np.zeros((N, N), dtype=dtype, order=order)
 
     seen = set([])
-    for u,nbrdict in G.adjacency_iter():
+    for u, nbrdict in G.adjacency_iter():
         for v in nbrdict:
             # Obtain the node attribute values.
             i, j = index[node_value(u)], index[node_value(v)]
             if v not in seen:
-                M[i,j] += edge_value(u,v)
+                M[i, j] += edge_value(u, v)
                 if undirected:
-                    M[j,i] = M[i,j]
+                    M[j, i] = M[i, j]
 
         if undirected:
-            seen.add(u)    
+            seen.add(u)
 
     if normalized:
-        M /= M.sum(axis=1).reshape((N,1))
+        M /= M.sum(axis=1).reshape((N, 1))
 
     M = np.asmatrix(M)
 
@@ -280,7 +283,8 @@ def attr_matrix(G, edge_attr=None, node_attr=None, normalized=False,
     else:
         return M
 
-def attr_sparse_matrix(G, edge_attr=None, node_attr=None, 
+
+def attr_sparse_matrix(G, edge_attr=None, node_attr=None,
                        normalized=False, rc_order=None, dtype=None):
     """Returns a SciPy sparse matrix using attributes from G.
 
@@ -405,7 +409,7 @@ def attr_sparse_matrix(G, edge_attr=None, node_attr=None,
         from scipy import sparse
     except ImportError:
         raise ImportError(
-          "attr_sparse_matrix() requires scipy: http://scipy.org/ ")
+            "attr_sparse_matrix() requires scipy: http://scipy.org/ ")
 
     edge_value = _edge_value(G, edge_attr)
     node_value = _node_value(G, node_attr)
@@ -416,27 +420,27 @@ def attr_sparse_matrix(G, edge_attr=None, node_attr=None,
         ordering = rc_order
 
     N = len(ordering)
-    undirected = not G.is_directed()   
+    undirected = not G.is_directed()
     index = dict(zip(ordering, range(N)))
-    M = sparse.lil_matrix((N,N), dtype=dtype)
+    M = sparse.lil_matrix((N, N), dtype=dtype)
 
     seen = set([])
-    for u,nbrdict in G.adjacency_iter():
+    for u, nbrdict in G.adjacency_iter():
         for v in nbrdict:
             # Obtain the node attribute values.
             i, j = index[node_value(u)], index[node_value(v)]
             if v not in seen:
-                M[i,j] += edge_value(u,v)
+                M[i, j] += edge_value(u, v)
                 if undirected:
-                    M[j,i] = M[i,j]
+                    M[j, i] = M[i, j]
 
         if undirected:
-            seen.add(u)    
+            seen.add(u)
 
     if normalized:
         norms = np.asarray(M.sum(axis=1)).ravel()
-        for i,norm in enumerate(norms):
-            M[i,:] /= norm 
+        for i, norm in enumerate(norms):
+            M[i, :] /= norm
 
     if rc_order is None:
         return M, ordering
@@ -447,6 +451,7 @@ def attr_sparse_matrix(G, edge_attr=None, node_attr=None,
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import numpy
     except:

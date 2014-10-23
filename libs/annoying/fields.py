@@ -27,6 +27,7 @@ class AutoOneToOneField(OneToOneField):
             home_page = models.URLField(max_length=255, blank=True)
             icq = models.IntegerField(max_length=255, null=True)
     '''
+
     def contribute_to_related_class(self, cls, related):
         setattr(cls, related.get_accessor_name(), AutoSingleRelatedObjectDescriptor(related))
 

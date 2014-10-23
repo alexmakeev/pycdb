@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Mixing matrices for node attributes and degree.
 """
@@ -6,6 +6,7 @@ import networkx as nx
 from networkx.utils import dict_to_numpy_array
 from networkx.algorithms.assortativity.pairs import node_degree_xy, \
     node_attribute_xy
+
 __author__ = ' '.join(['Aric Hagberg <aric.hagberg@gmail.com>'])
 __all__ = ['attribute_mixing_matrix',
            'attribute_mixing_dict',
@@ -14,7 +15,8 @@ __all__ = ['attribute_mixing_matrix',
            'numeric_mixing_matrix',
            'mixing_dict']
 
-def attribute_mixing_dict(G,attribute,nodes=None,normalized=False):
+
+def attribute_mixing_dict(G, attribute, nodes=None, normalized=False):
     """Return dictionary representation of mixing matrix for attribute.
 
     Parameters
@@ -48,11 +50,11 @@ def attribute_mixing_dict(G,attribute,nodes=None,normalized=False):
     d : dictionary
        Counts or joint probability of occurrence of attribute pairs.
     """
-    xy_iter=node_attribute_xy(G,attribute,nodes)
-    return mixing_dict(xy_iter,normalized=normalized)
+    xy_iter = node_attribute_xy(G, attribute, nodes)
+    return mixing_dict(xy_iter, normalized=normalized)
 
 
-def attribute_mixing_matrix(G,attribute,nodes=None,mapping=None,
+def attribute_mixing_matrix(G, attribute, nodes=None, mapping=None,
                             normalized=True):
     """Return mixing matrix for attribute.
 
@@ -80,14 +82,14 @@ def attribute_mixing_matrix(G,attribute,nodes=None,mapping=None,
     m: numpy array
        Counts or joint probability of occurrence of attribute pairs.
     """
-    d=attribute_mixing_dict(G,attribute,nodes)
-    a=dict_to_numpy_array(d,mapping=mapping)
+    d = attribute_mixing_dict(G, attribute, nodes)
+    a = dict_to_numpy_array(d, mapping=mapping)
     if normalized:
-        a=a/a.sum()
+        a = a / a.sum()
     return a
 
 
-def degree_mixing_dict(G, x='out', y='in', weight=None, 
+def degree_mixing_dict(G, x='out', y='in', weight=None,
                        nodes=None, normalized=False):
     """Return dictionary representation of mixing matrix for degree.
 
@@ -115,12 +117,11 @@ def degree_mixing_dict(G, x='out', y='in', weight=None,
     d: dictionary
        Counts or joint probability of occurrence of degree pairs.
     """
-    xy_iter=node_degree_xy(G, x=x, y=y, nodes=nodes, weight=weight)
-    return mixing_dict(xy_iter,normalized=normalized)
+    xy_iter = node_degree_xy(G, x=x, y=y, nodes=nodes, weight=weight)
+    return mixing_dict(xy_iter, normalized=normalized)
 
 
-
-def degree_mixing_matrix(G, x='out', y='in', weight=None, 
+def degree_mixing_matrix(G, x='out', y='in', weight=None,
                          nodes=None, normalized=True):
     """Return mixing matrix for attribute.
 
@@ -152,18 +153,19 @@ def degree_mixing_matrix(G, x='out', y='in', weight=None,
     m: numpy array
        Counts, or joint probability, of occurrence of node degree.
     """
-    d=degree_mixing_dict(G, x=x, y=y, nodes=nodes, weight=weight)
-    s=set(d.keys())
-    for k,v in d.items():
+    d = degree_mixing_dict(G, x=x, y=y, nodes=nodes, weight=weight)
+    s = set(d.keys())
+    for k, v in d.items():
         s.update(v.keys())
-    m=max(s)            
-    mapping=dict(zip(range(m+1),range(m+1)))
-    a=dict_to_numpy_array(d,mapping=mapping)
+    m = max(s)
+    mapping = dict(zip(range(m + 1), range(m + 1)))
+    a = dict_to_numpy_array(d, mapping=mapping)
     if normalized:
-        a=a/a.sum()
+        a = a / a.sum()
     return a
 
-def numeric_mixing_matrix(G,attribute,nodes=None,normalized=True):
+
+def numeric_mixing_matrix(G, attribute, nodes=None, normalized=True):
     """Return numeric mixing matrix for attribute.
 
     Parameters
@@ -185,18 +187,19 @@ def numeric_mixing_matrix(G,attribute,nodes=None,normalized=True):
     m: numpy array
        Counts, or joint, probability of occurrence of node attribute pairs.
     """
-    d=attribute_mixing_dict(G,attribute,nodes)
-    s=set(d.keys())
-    for k,v in d.items():
+    d = attribute_mixing_dict(G, attribute, nodes)
+    s = set(d.keys())
+    for k, v in d.items():
         s.update(v.keys())
-    m=max(s)            
-    mapping=dict(zip(range(m+1),range(m+1)))
-    a=dict_to_numpy_array(d,mapping=mapping)
+    m = max(s)
+    mapping = dict(zip(range(m + 1), range(m + 1)))
+    a = dict_to_numpy_array(d, mapping=mapping)
     if normalized:
-        a=a/a.sum()
+        a = a / a.sum()
     return a
 
-def mixing_dict(xy,normalized=False):
+
+def mixing_dict(xy, normalized=False):
     """Return a dictionary representation of mixing matrix.
 
     Parameters
@@ -215,29 +218,28 @@ def mixing_dict(xy,normalized=False):
     d: dictionary
        Counts or Joint probability of occurrence of values in xy.
     """
-    d={}
-    psum=0.0
-    for x,y in xy:
+    d = {}
+    psum = 0.0
+    for x, y in xy:
         if x not in d:
-            d[x]={}
+            d[x] = {}
         if y not in d:
-            d[y]={}
-        v = d[x].get(y,0)
-        d[x][y] = v+1
-        psum+=1
-
+            d[y] = {}
+        v = d[x].get(y, 0)
+        d[x][y] = v + 1
+        psum += 1
 
     if normalized:
-        for k,jdict in d.items():
+        for k, jdict in d.items():
             for j in jdict:
-                jdict[j]/=psum
+                jdict[j] /= psum
     return d
-
 
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import numpy
     except:

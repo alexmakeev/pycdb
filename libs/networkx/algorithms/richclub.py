@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
+
 __author__ = """\n""".join(['Ben Edwards',
                             'Aric Hagberg <hagberg@lanl.gov>'])
 
 __all__ = ['rich_club_coefficient']
+
 
 def rich_club_coefficient(G, normalized=True, Q=100):
     """Return the rich-club coefficient of the nxgraph G.
@@ -65,17 +67,17 @@ def rich_club_coefficient(G, normalized=True, Q=100):
     if len(G.selfloop_edges()) > 0:
         raise Exception('rich_club_coefficient is not implemented for ',
                         'graphs with self loops.')
-    rc=_compute_rc(G)
+    rc = _compute_rc(G)
     if normalized:
         # make R a copy of G, randomize with Q*|E| double edge swaps
         # and use rich_club coefficient of R to normalize
         R = G.copy()
         E = R.number_of_edges()
-        nx.double_edge_swap(R,Q*E,max_tries=Q*E*10)
-        rcran=_compute_rc(R)
+        nx.double_edge_swap(R, Q * E, max_tries=Q * E * 10)
+        rcran = _compute_rc(R)
         for d in rc:
-#            if rcran[d] > 0:
-            rc[d]/=rcran[d]
+            # if rcran[d] > 0:
+            rc[d] /= rcran[d]
     return rc
 
 
@@ -84,18 +86,18 @@ def _compute_rc(G):
     deghist = nx.degree_histogram(G)
     total = sum(deghist)
     # number of nodes with degree > k (omit last entry which is zero)
-    nks = [total-cs for cs in nx.utils.cumulative_sum(deghist) if total-cs > 1]
-    deg=G.degree()
-    edge_degrees=sorted(sorted((deg[u],deg[v])) for u,v in G.edges_iter()) 
-    ek=G.number_of_edges()
-    k1,k2=edge_degrees.pop(0)
-    rc={}
-    for d,nk in zip(range(len(nks)),nks):         
+    nks = [total - cs for cs in nx.utils.cumulative_sum(deghist) if total - cs > 1]
+    deg = G.degree()
+    edge_degrees = sorted(sorted((deg[u], deg[v])) for u, v in G.edges_iter())
+    ek = G.number_of_edges()
+    k1, k2 = edge_degrees.pop(0)
+    rc = {}
+    for d, nk in zip(range(len(nks)), nks):
         while k1 <= d:
-            if len(edge_degrees)==0:
+            if len(edge_degrees) == 0:
                 break
-            k1,k2=edge_degrees.pop(0)
-            ek-=1
-        rc[d] = 2.0*ek/(nk*(nk-1))
+            k1, k2 = edge_degrees.pop(0)
+            ek -= 1
+        rc[d] = 2.0 * ek / (nk * (nk - 1))
     return rc
 

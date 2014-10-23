@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from fractions import gcd
+
 import networkx as nx
+
 """Algorithms for directed acyclic graphs (DAGs)."""
-#    Copyright (C) 2006-2011 by 
+# Copyright (C) 2006-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -11,10 +13,11 @@ import networkx as nx
 __author__ = """\n""".join(['Aric Hagberg <aric.hagberg@gmail.com>',
                             'Dan Schult (dschult@colgate.edu)',
                             'Ben Edwards (bedwards@cs.unm.edu)'])
-__all__ = ['topological_sort', 
+__all__ = ['topological_sort',
            'topological_sort_recursive',
            'is_directed_acyclic_graph',
            'is_aperiodic']
+
 
 def is_directed_acyclic_graph(G):
     """Return True if the nxgraph G is a directed acyclic nxgraph (DAG) or
@@ -36,7 +39,8 @@ def is_directed_acyclic_graph(G):
     except nx.NetworkXUnfeasible:
         return False
 
-def topological_sort(G,nbunch=None):
+
+def topological_sort(G, nbunch=None):
     """Return a list of nodes in topological sort order.
 
     A topological sort is a nonunique permutation of the nodes
@@ -77,41 +81,42 @@ def topological_sort(G,nbunch=None):
     """
     if not G.is_directed():
         raise nx.NetworkXError(
-                "Topological sort not defined on undirected graphs.")
+            "Topological sort not defined on undirected graphs.")
 
     # nonrecursive version
-    seen={}
-    order_explored=[] # provide order and 
-    explored={}       # fast search without more general priorityDictionary
-                     
+    seen = {}
+    order_explored = []  # provide order and
+    explored = {}  # fast search without more general priorityDictionary
+
     if nbunch is None:
-        nbunch = G.nodes_iter() 
-    for v in nbunch:     # process all vertices in G
-        if v in explored: 
+        nbunch = G.nodes_iter()
+    for v in nbunch:  # process all vertices in G
+        if v in explored:
             continue
-        fringe=[v]   # nodes yet to look at
+        fringe = [v]  # nodes yet to look at
         while fringe:
-            w=fringe[-1]  # depth first search
-            if w in explored: # already looked down this branch
+            w = fringe[-1]  # depth first search
+            if w in explored:  # already looked down this branch
                 fringe.pop()
                 continue
-            seen[w]=1     # mark as seen
+            seen[w] = 1  # mark as seen
             # Check successors for cycles and for new nodes
-            new_nodes=[]
+            new_nodes = []
             for n in G[w]:
                 if n not in explored:
-                    if n in seen: #CYCLE !!
+                    if n in seen:  #CYCLE !!
                         raise nx.NetworkXUnfeasible("Graph contains a cycle.")
                     new_nodes.append(n)
-            if new_nodes:   # Add new_nodes to fringe
+            if new_nodes:  # Add new_nodes to fringe
                 fringe.extend(new_nodes)
-            else:           # No new nodes so w is fully explored
-                explored[w]=1
-                order_explored.insert(0,w) # reverse order explored
-                fringe.pop()    # done considering this node
+            else:  # No new nodes so w is fully explored
+                explored[w] = 1
+                order_explored.insert(0, w)  # reverse order explored
+                fringe.pop()  # done considering this node
     return order_explored
 
-def topological_sort_recursive(G,nbunch=None):
+
+def topological_sort_recursive(G, nbunch=None):
     """Return a list of nodes in topological sort order.
 
     A topological sort is a nonunique permutation of the nodes such
@@ -147,31 +152,32 @@ def topological_sort_recursive(G,nbunch=None):
     """
     if not G.is_directed():
         raise nx.NetworkXError(
-                "Topological sort not defined on undirected graphs.")
+            "Topological sort not defined on undirected graphs.")
 
     # function for recursive dfs
-    def _dfs(G,seen,explored,v):
+    def _dfs(G, seen, explored, v):
         seen.add(v)
         for w in G[v]:
-            if w not in seen: 
-                if not _dfs(G,seen,explored,w):
+            if w not in seen:
+                if not _dfs(G, seen, explored, w):
                     return False
             elif w in seen and w not in explored:
                 # cycle Found--- no topological sort
                 raise nx.NetworkXUnfeasible("Graph contains a cycle.")
-        explored.insert(0,v) # inverse order of when explored 
+        explored.insert(0, v)  # inverse order of when explored
         return True
 
-    seen=set()
-    explored=[]
+    seen = set()
+    explored = []
 
     if nbunch is None:
-        nbunch = G.nodes_iter() 
+        nbunch = G.nodes_iter()
     for v in nbunch:  # process all nodes
         if v not in explored:
-            if not _dfs(G,seen,explored,v): 
+            if not _dfs(G, seen, explored, v):
                 raise nx.NetworkXUnfeasible("Graph contains a cycle.")
     return explored
+
 
 def is_aperiodic(G):
     """Return True if G is aperiodic.
@@ -211,7 +217,7 @@ def is_aperiodic(G):
         raise nx.NetworkXError("is_aperiodic not defined for undirected graphs")
 
     s = next(G.nodes_iter())
-    levels = {s:0}
+    levels = {s: 0}
     this_level = [s]
     g = 0
     l = 1
@@ -219,14 +225,14 @@ def is_aperiodic(G):
         next_level = []
         for u in this_level:
             for v in G[u]:
-                if v in levels: # Non-Tree Edge
-                    g = gcd(g, levels[u]-levels[v] + 1)
-                else: # Tree Edge
+                if v in levels:  # Non-Tree Edge
+                    g = gcd(g, levels[u] - levels[v] + 1)
+                else:  # Tree Edge
                     next_level.append(v)
                     levels[v] = l
         this_level = next_level
         l += 1
-    if len(levels)==len(G): #All nodes in tree
-        return g==1
+    if len(levels) == len(G):  #All nodes in tree
+        return g == 1
     else:
-        return g==1 and nx.is_aperiodic(G.subgraph(set(G)-set(levels)))
+        return g == 1 and nx.is_aperiodic(G.subgraph(set(G) - set(levels)))

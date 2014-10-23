@@ -3,7 +3,7 @@
 Shortest path algorithms for unweighted graphs.
 """
 __author__ = """Aric Hagberg (hagberg@lanl.gov)"""
-#    Copyright (C) 2004-2010 by
+# Copyright (C) 2004-2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -17,10 +17,10 @@ __all__ = ['bidirectional_shortest_path',
            'all_pairs_shortest_path_length',
            'predecessor']
 
-
 import networkx as nx
 
-def single_source_shortest_path_length(G,source,cutoff=None):
+
+def single_source_shortest_path_length(G, source, cutoff=None):
     """Compute the shortest path lengths from source to all reachable nodes.
 
     Parameters
@@ -51,22 +51,22 @@ def single_source_shortest_path_length(G,source,cutoff=None):
     --------
     shortest_path_length
     """
-    seen={}                  # level (number of hops) when seen in BFS
-    level=0                  # the current level
-    nextlevel={source:1}  # dict of nodes to check at next level
+    seen = {}  # level (number of hops) when seen in BFS
+    level = 0  # the current level
+    nextlevel = {source: 1}  # dict of nodes to check at next level
     while nextlevel:
-        thislevel=nextlevel  # advance to next level
-        nextlevel={}         # and start a new list (fringe)
+        thislevel = nextlevel  # advance to next level
+        nextlevel = {}  # and start a new list (fringe)
         for v in thislevel:
             if v not in seen:
-                seen[v]=level # set the level of vertex v
-                nextlevel.update(G[v]) # add neighbors of v
+                seen[v] = level  # set the level of vertex v
+                nextlevel.update(G[v])  # add neighbors of v
         if (cutoff is not None and cutoff <= level):  break
-        level=level+1
+        level = level + 1
     return seen  # return all path lengths as dictionary
 
 
-def all_pairs_shortest_path_length(G,cutoff=None):
+def all_pairs_shortest_path_length(G, cutoff=None):
     """ Compute the shortest path lengths between all nodes in G.
 
     Parameters
@@ -95,15 +95,13 @@ def all_pairs_shortest_path_length(G,cutoff=None):
     {0: 1, 1: 0, 2: 1, 3: 2, 4: 3}
 
     """
-    paths={}
+    paths = {}
     for n in G:
-        paths[n]=single_source_shortest_path_length(G,n,cutoff=cutoff)
+        paths[n] = single_source_shortest_path_length(G, n, cutoff=cutoff)
     return paths
 
 
-
-
-def bidirectional_shortest_path(G,source,target):
+def bidirectional_shortest_path(G, source, target):
     """Return a list of nodes in a shortest path between source and target.
 
     Parameters
@@ -135,22 +133,23 @@ def bidirectional_shortest_path(G,source,target):
     This algorithm is used by shortest_path(G,source,target).
     """
     # call helper to do the real work
-    results=_bidirectional_pred_succ(G,source,target)
-    pred,succ,w=results
+    results = _bidirectional_pred_succ(G, source, target)
+    pred, succ, w = results
 
     # build path from pred+w+succ
-    path=[]
+    path = []
     # from w to target
     while w is not None:
         path.append(w)
-        w=succ[w]
+        w = succ[w]
     # from source to w
-    w=pred[path[0]]
+    w = pred[path[0]]
     while w is not None:
-        path.insert(0,w)
-        w=pred[w]
+        path.insert(0, w)
+        w = pred[w]
 
     return path
+
 
 def _bidirectional_pred_succ(G, source, target):
     """Bidirectional shortest path helper.
@@ -161,48 +160,48 @@ def _bidirectional_pred_succ(G, source, target):
     """
     # does BFS from both source and target and meets in the middle
     if target == source:
-        return ({target:None},{source:None},source)
+        return ({target: None}, {source: None}, source)
 
     # handle either directed or undirected
     if G.is_directed():
-        Gpred=G.predecessors_iter
-        Gsucc=G.successors_iter
+        Gpred = G.predecessors_iter
+        Gsucc = G.successors_iter
     else:
-        Gpred=G.neighbors_iter
-        Gsucc=G.neighbors_iter
+        Gpred = G.neighbors_iter
+        Gsucc = G.neighbors_iter
 
     # predecesssor and successors in search
-    pred={source:None}
-    succ={target:None}
+    pred = {source: None}
+    succ = {target: None}
 
     # initialize fringes, start with forward
-    forward_fringe=[source]
-    reverse_fringe=[target]
+    forward_fringe = [source]
+    reverse_fringe = [target]
 
     while forward_fringe and reverse_fringe:
         if len(forward_fringe) <= len(reverse_fringe):
-            this_level=forward_fringe
-            forward_fringe=[]
+            this_level = forward_fringe
+            forward_fringe = []
             for v in this_level:
                 for w in Gsucc(v):
                     if w not in pred:
                         forward_fringe.append(w)
-                        pred[w]=v
-                    if w in succ:  return pred,succ,w # found path
+                        pred[w] = v
+                    if w in succ:  return pred, succ, w  # found path
         else:
-            this_level=reverse_fringe
-            reverse_fringe=[]
+            this_level = reverse_fringe
+            reverse_fringe = []
             for v in this_level:
                 for w in Gpred(v):
                     if w not in succ:
-                        succ[w]=v
+                        succ[w] = v
                         reverse_fringe.append(w)
-                    if w in pred:  return pred,succ,w # found path
+                    if w in pred:  return pred, succ, w  # found path
 
     raise nx.NetworkXNoPath("No path between %s and %s." % (source, target))
 
 
-def single_source_shortest_path(G,source,cutoff=None):
+def single_source_shortest_path(G, source, cutoff=None):
     """Compute shortest path between source
     and all other nodes reachable from source.
 
@@ -239,25 +238,25 @@ def single_source_shortest_path(G,source,cutoff=None):
     --------
     shortest_path
     """
-    level=0                  # the current level
-    nextlevel={source:1}       # list of nodes to check at next level
-    paths={source:[source]}  # paths dictionary  (paths to key from source)
-    if cutoff==0:
+    level = 0  # the current level
+    nextlevel = {source: 1}  # list of nodes to check at next level
+    paths = {source: [source]}  # paths dictionary  (paths to key from source)
+    if cutoff == 0:
         return paths
     while nextlevel:
-        thislevel=nextlevel
-        nextlevel={}
+        thislevel = nextlevel
+        nextlevel = {}
         for v in thislevel:
             for w in G[v]:
                 if w not in paths:
-                    paths[w]=paths[v]+[w]
-                    nextlevel[w]=1
-        level=level+1
+                    paths[w] = paths[v] + [w]
+                    nextlevel[w] = 1
+        level = level + 1
         if (cutoff is not None and cutoff <= level):  break
     return paths
 
 
-def all_pairs_shortest_path(G,cutoff=None):
+def all_pairs_shortest_path(G, cutoff=None):
     """ Compute shortest paths between all nodes.
 
     Parameters
@@ -284,15 +283,13 @@ def all_pairs_shortest_path(G,cutoff=None):
     floyd_warshall()
 
     """
-    paths={}
+    paths = {}
     for n in G:
-        paths[n]=single_source_shortest_path(G,n,cutoff=cutoff)
+        paths[n] = single_source_shortest_path(G, n, cutoff=cutoff)
     return paths
 
 
-
-
-def predecessor(G,source,target=None,cutoff=None,return_seen=None):
+def predecessor(G, source, target=None, cutoff=None, return_seen=None):
     """ Returns dictionary of predecessors for the path from source to all nodes in G.
 
 
@@ -325,35 +322,35 @@ def predecessor(G,source,target=None,cutoff=None,return_seen=None):
     {0: [], 1: [0], 2: [1], 3: [2]}
 
     """
-    level=0                  # the current level
-    nextlevel=[source]       # list of nodes to check at next level
-    seen={source:level}      # level (number of hops) when seen in BFS
-    pred={source:[]}         # predecessor dictionary
+    level = 0  # the current level
+    nextlevel = [source]  # list of nodes to check at next level
+    seen = {source: level}  # level (number of hops) when seen in BFS
+    pred = {source: []}  # predecessor dictionary
     while nextlevel:
-        level=level+1
-        thislevel=nextlevel
-        nextlevel=[]
+        level = level + 1
+        thislevel = nextlevel
+        nextlevel = []
         for v in thislevel:
             for w in G[v]:
                 if w not in seen:
-                    pred[w]=[v]
-                    seen[w]=level
+                    pred[w] = [v]
+                    seen[w] = level
                     nextlevel.append(w)
-                elif (seen[w]==level):# add v to predecessor list if it
-                    pred[w].append(v) # is at the correct level
+                elif (seen[w] == level):  # add v to predecessor list if it
+                    pred[w].append(v)  # is at the correct level
         if (cutoff and cutoff <= level):
             break
 
     if target is not None:
         if return_seen:
-            if not target in pred: return ([],-1)  # No predecessor
-            return (pred[target],seen[target])
+            if not target in pred: return ([], -1)  # No predecessor
+            return (pred[target], seen[target])
         else:
             if not target in pred: return []  # No predecessor
             return pred[target]
     else:
         if return_seen:
-            return (pred,seen)
+            return (pred, seen)
         else:
             return pred
 

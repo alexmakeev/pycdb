@@ -8,7 +8,7 @@ can be accessed, for example, as
 >>> networkx.utils.is_string_like('spam')
 True
 """
-#    Copyright (C) 2004-2011 by
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -18,9 +18,6 @@ import sys
 import subprocess
 import uuid
 
-import networkx as nx
-from networkx.external.decorator import decorator
-
 __author__ = '\n'.join(['Aric Hagberg (hagberg@lanl.gov)',
                         'Dan Schult(dschult@colgate.edu)',
                         'Ben Edwards(bedwards@cs.unm.edu)'])
@@ -28,7 +25,7 @@ __author__ = '\n'.join(['Aric Hagberg (hagberg@lanl.gov)',
 # used in deciding whether something is a bunch of nodes, edges, etc.
 # see G.add_nodes and others in Graph Class in networkx/base.py
 
-def is_string_like(obj): # from John Hunter, types-free version
+def is_string_like(obj):  # from John Hunter, types-free version
     """Check if obj is string."""
     try:
         obj + ''
@@ -36,14 +33,16 @@ def is_string_like(obj): # from John Hunter, types-free version
         return False
     return True
 
+
 def iterable(obj):
     """ Return True if obj is iterable with a well-defined len()."""
-    if hasattr(obj,"__iter__"): return True
+    if hasattr(obj, "__iter__"): return True
     try:
         len(obj)
     except:
         return False
     return True
+
 
 def flatten(obj, result=None):
     """ Return flattened version of (possibly nested) iterable object. """
@@ -58,17 +57,20 @@ def flatten(obj, result=None):
             flatten(item, result)
     return obj.__class__(result)
 
-def is_list_of_ints( intlist ):
+
+def is_list_of_ints(intlist):
     """ Return True if list is a list of ints. """
-    if not isinstance(intlist,list): return False
+    if not isinstance(intlist, list): return False
     for i in intlist:
-        if not isinstance(i,int): return False
+        if not isinstance(i, int): return False
     return True
+
 
 def make_str(t):
     """Return the string representation of t."""
     if is_string_like(t): return t
     return str(t)
+
 
 def cumulative_sum(numbers):
     """Yield cumulative sum of numbers.
@@ -82,9 +84,11 @@ def cumulative_sum(numbers):
         csum += n
         yield csum
 
+
 def generate_unique_node():
     """ Generate a unique node label."""
     return str(uuid.uuid1())
+
 
 def default_opener(filename):
     """Opens `filename` using system's default program.
@@ -102,25 +106,25 @@ def default_opener(filename):
     subprocess.call(cmd)
 
 
-def dict_to_numpy_array(d,mapping=None):
+def dict_to_numpy_array(d, mapping=None):
     """Convert a dictionary of dictionaries to a 2d numpy array 
     with optional mapping."""
     try:
-        import numpy 
+        import numpy
     except ImportError:
         raise ImportError(
-          "dict_to_numpy_array requires numpy : http://scipy.org/ ")
+            "dict_to_numpy_array requires numpy : http://scipy.org/ ")
     if mapping is None:
-        s=set(d.keys())
-        for k,v in d.items():
+        s = set(d.keys())
+        for k, v in d.items():
             s.update(v.keys())
-        mapping=dict(zip(s,range(len(s))))
-    n=len(mapping)
+        mapping = dict(zip(s, range(len(s))))
+    n = len(mapping)
     a = numpy.zeros((n, n))
     for k1, row in d.items():
         for k2, value in row.items():
-            i=mapping[k1]
-            j=mapping[k2]
-            a[i,j] = value 
+            i = mapping[k1]
+            j = mapping[k2]
+            a[i, j] = value
     return a
 

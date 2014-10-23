@@ -14,7 +14,7 @@ http://pyyaml.org/wiki/PyYAML
 
 """
 __author__ = """Aric Hagberg (hagberg@lanl.gov)"""
-#    Copyright (C) 2004-2010 by 
+# Copyright (C) 2004-2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -26,7 +26,8 @@ __all__ = ['read_yaml', 'write_yaml']
 import networkx as nx
 from networkx.utils import open_file
 
-@open_file(1,mode='w')
+
+@open_file(1, mode='w')
 def write_yaml(G, path, encoding='UTF-8', **kwds):
     """Write nxgraph G in YAML format to path.
 
@@ -57,8 +58,9 @@ def write_yaml(G, path, encoding='UTF-8', **kwds):
     except ImportError:
         raise ImportError("write_yaml() requires PyYAML: http://pyyaml.org/")
     yaml.dump(G, path, **kwds)
-    
-@open_file(0,mode='r')
+
+
+@open_file(0, mode='r')
 def read_yaml(path):
     """Read nxgraph in YAML format from path.
 
@@ -91,19 +93,22 @@ def read_yaml(path):
     except ImportError:
         raise ImportError("read_yaml() requires PyYAML: http://pyyaml.org/")
 
-    G=yaml.load(path)
+    G = yaml.load(path)
     return G
 
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import yaml
     except:
         raise SkipTest("PyYAML not available")
 
+
 # fixture for nose tests
 def teardown_module(module):
     import os
+
     os.unlink('test.yaml')

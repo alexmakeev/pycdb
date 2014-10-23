@@ -29,7 +29,7 @@ tar.gz file. This is why write_versionfile() includes an early escape.
 
 """
 
-#    Copyright (C) 2004-2011 by
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -45,6 +45,7 @@ import datetime
 import subprocess
 
 basedir = os.path.abspath(os.path.split(__file__)[0])
+
 
 def write_versionfile():
     """Creates a static file containing version information."""
@@ -83,7 +84,7 @@ vcs_info = %(vcs_info)r
     def writefile():
         fh = open(versionfile, 'w')
         subs = {
-            'dev' : dev,
+            'dev': dev,
             'version': version,
             'version_info': version_info,
             'date': date,
@@ -103,6 +104,7 @@ vcs_info = %(vcs_info)r
             # Grab the version so that setup can use it.
             sys.path.insert(0, basedir)
             from version import version
+
             del sys.path[0]
         else:
             # This is *bad*.  It means the user might have a tarball that
@@ -117,6 +119,7 @@ vcs_info = %(vcs_info)r
 
     return version
 
+
 def get_revision():
     """Returns revision and vcs information, dynamically obtained."""
     vcs, revision, tag = None, None, None
@@ -127,7 +130,7 @@ def get_revision():
     if os.path.isdir(hgdir):
         vcs = 'mercurial'
         try:
-            p = subprocess.Popen(['hg', 'id'], 
+            p = subprocess.Popen(['hg', 'id'],
                                  cwd=basedir,
                                  stdout=subprocess.PIPE)
         except OSError:
@@ -137,7 +140,7 @@ def get_revision():
             stdout = p.communicate()[0]
             # Force strings instead of unicode.
             x = list(map(str, stdout.decode().strip().split()))
-            
+
             if len(x) == 0:
                 # Somehow stdout was empty. This can happen, for example,
                 # if you're running in a terminal which has redirected stdout.
@@ -149,7 +152,7 @@ def get_revision():
             else:
                 revision = str(x[0])
                 tag = str(x[1])
-                
+
     elif os.path.isdir(gitdir):
         vcs = 'git'
         # For now, we are not bothering with revision and tag.
@@ -157,6 +160,7 @@ def get_revision():
     vcs_info = (vcs, (revision, tag))
 
     return revision, vcs_info
+
 
 def get_info(dynamic=True):
     ## Date information
@@ -208,43 +212,42 @@ minor = 7
 ## Change to False before tagging a release; then change back.
 dev = False
 
-
 description = "Python package for creating and manipulating graphs and networks"
 
 long_description = \
-"""
-NetworkX is a Python package for the creation, manipulation, and
-study of the structure, dynamics, and functions of complex networks.
+    """
+    NetworkX is a Python package for the creation, manipulation, and
+    study of the structure, dynamics, and functions of complex networks.
 
-"""
+    """
 license = 'BSD'
-authors = {'Hagberg' : ('Aric Hagberg','hagberg@lanl.gov'),
-           'Schult' : ('Dan Schult','dschult@colgate.edu'),
-           'Swart' : ('Pieter Swart','swart@lanl.gov')
-           }
+authors = {'Hagberg': ('Aric Hagberg', 'hagberg@lanl.gov'),
+           'Schult': ('Dan Schult', 'dschult@colgate.edu'),
+           'Swart': ('Pieter Swart', 'swart@lanl.gov')
+}
 maintainer = "NetworkX Developers"
 maintainer_email = "networkx-discuss@googlegroups.com"
 url = 'http://networkx.lanl.gov/'
-download_url="http://networkx.lanl.gov/download/networkx"
-platforms = ['Linux','Mac OSX','Windows','Unix']
+download_url = "http://networkx.lanl.gov/download/networkx"
+platforms = ['Linux', 'Mac OSX', 'Windows', 'Unix']
 keywords = ['Networks', 'Graph Theory', 'Mathematics', 'network', 'nxgraph', 'discrete mathematics', 'math']
 classifiers = [
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.1',
-        'Programming Language :: Python :: 3.2',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Scientific/Engineering :: Bio-Informatics',
-        'Topic :: Scientific/Engineering :: Information Analysis',
-        'Topic :: Scientific/Engineering :: Mathematics',
-        'Topic :: Scientific/Engineering :: Physics']
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: BSD License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.6',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.1',
+    'Programming Language :: Python :: 3.2',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
+    'Topic :: Scientific/Engineering :: Information Analysis',
+    'Topic :: Scientific/Engineering :: Mathematics',
+    'Topic :: Scientific/Engineering :: Physics']
 
 date, date_info, version, version_info, vcs_info = get_info()
 

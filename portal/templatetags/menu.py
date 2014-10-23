@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 
 from django.template.loader import render_to_string
+from django import template
+
 from portal.utils.str_resolver import StrResolver
 import settings
-from conf.local_alexmak_hare import CONFIGURATIONS
-from django import template
+
 
 register = template.Library()
 
@@ -16,12 +17,13 @@ def recursive_menu_render(item):
             subitems_html += [recursive_menu_render(subitem)]
 
     params = {
-        "item" : item,
-        "subitems_htmls" : subitems_html
+        "item": item,
+        "subitems_htmls": subitems_html
     }
     return render_to_string("tags/menu_recursive.html", params)
 
-@register.inclusion_tag('tags/menu.html', takes_context = True)
+
+@register.inclusion_tag('tags/menu.html', takes_context=True)
 def menu(context):
     request = context['request']
 
@@ -36,5 +38,4 @@ def menu(context):
     for subitem in menu_items:
         subitems_htmls += [recursive_menu_render(subitem)]
 
-
-    return {"subitems_htmls" : subitems_htmls}
+    return {"subitems_htmls": subitems_htmls}

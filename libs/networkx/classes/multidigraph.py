@@ -1,21 +1,23 @@
 """Base class for MultiDiGraph."""
-#    Copyright (C) 2004-2011 by
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 from copy import deepcopy
+
 import networkx as nx
-from networkx.classes.graph import Graph  # for doctests
 from networkx.classes.digraph import DiGraph
 from networkx.classes.multigraph import MultiGraph
 from networkx.exception import NetworkXError
+
 __author__ = """\n""".join(['Aric Hagberg (hagberg@lanl.gov)',
                             'Pieter Swart (swart@lanl.gov)',
                             'Dan Schult(dschult@colgate.edu)'])
 
-class MultiDiGraph(MultiGraph,DiGraph):
+
+class MultiDiGraph(MultiGraph, DiGraph):
     """A directed nxgraph class that can store multiedges.
 
     Multiedges are multiple edges between two nodes.  Each edge
@@ -171,6 +173,7 @@ class MultiDiGraph(MultiGraph,DiGraph):
 
     For details on these and other miscellaneous methods, see below.
     """
+
     def add_edge(self, u, v, key=None, attr_dict=None, **attr):
         """Add an edge between u and v.
 
@@ -226,12 +229,12 @@ class MultiDiGraph(MultiGraph,DiGraph):
         """
         # set up attribute dict
         if attr_dict is None:
-            attr_dict=attr
+            attr_dict = attr
         else:
             try:
                 attr_dict.update(attr)
             except AttributeError:
-                raise NetworkXError(\
+                raise NetworkXError( \
                     "The attr_dict argument must be a dictionary.")
         # add nodes
         if u not in self.succ:
@@ -243,23 +246,23 @@ class MultiDiGraph(MultiGraph,DiGraph):
             self.pred[v] = {}
             self.node[v] = {}
         if v in self.succ[u]:
-            keydict=self.adj[u][v]
+            keydict = self.adj[u][v]
             if key is None:
                 # find a unique integer key
                 # other methods might be better here?
-                key=len(keydict)
+                key = len(keydict)
                 while key in keydict:
-                    key+=1
-            datadict=keydict.get(key,{})
+                    key += 1
+            datadict = keydict.get(key, {})
             datadict.update(attr_dict)
-            keydict[key]=datadict
+            keydict[key] = datadict
         else:
             # selfloops work this way without special treatment
             if key is None:
-                key=0
-            datadict={}
+                key = 0
+            datadict = {}
             datadict.update(attr_dict)
-            keydict={key:datadict}
+            keydict = {key: datadict}
             self.succ[u][v] = keydict
             self.pred[v][u] = keydict
 
@@ -307,10 +310,10 @@ class MultiDiGraph(MultiGraph,DiGraph):
 
         """
         try:
-            d=self.adj[u][v]
+            d = self.adj[u][v]
         except (KeyError):
             raise NetworkXError(
-                "The edge %s-%s is not in the nxgraph."%(u,v))
+                "The edge %s-%s is not in the nxgraph." % (u, v))
         # remove the edge with specified data
         if key is None:
             d.popitem()
@@ -319,8 +322,8 @@ class MultiDiGraph(MultiGraph,DiGraph):
                 del d[key]
             except (KeyError):
                 raise NetworkXError(
-                "The edge %s-%s with key %s is not in the nxgraph."%(u,v,key))
-        if len(d)==0:
+                    "The edge %s-%s with key %s is not in the nxgraph." % (u, v, key))
+        if len(d) == 0:
             # remove the key entries if last edge
             del self.succ[u][v]
             del self.pred[v][u]
@@ -373,26 +376,26 @@ class MultiDiGraph(MultiGraph,DiGraph):
         if nbunch is None:
             nodes_nbrs = self.adj.items()
         else:
-            nodes_nbrs=((n,self.adj[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self.adj[n]) for n in self.nbunch_iter(nbunch))
         if data:
-            for n,nbrs in nodes_nbrs:
-                for nbr,keydict in nbrs.items():
-                    for key,data in keydict.items():
+            for n, nbrs in nodes_nbrs:
+                for nbr, keydict in nbrs.items():
+                    for key, data in keydict.items():
                         if keys:
-                            yield (n,nbr,key,data)
+                            yield (n, nbr, key, data)
                         else:
-                            yield (n,nbr,data)
+                            yield (n, nbr, data)
         else:
-            for n,nbrs in nodes_nbrs:
-                for nbr,keydict in nbrs.items():
-                    for key,data in keydict.items():
+            for n, nbrs in nodes_nbrs:
+                for nbr, keydict in nbrs.items():
+                    for key, data in keydict.items():
                         if keys:
-                            yield (n,nbr,key)
+                            yield (n, nbr, key)
                         else:
-                            yield (n,nbr)
+                            yield (n, nbr)
 
     # alias out_edges to edges
-    out_edges_iter=edges_iter
+    out_edges_iter = edges_iter
 
     def out_edges(self, nbunch=None, keys=False, data=False):
         """Return a list of the outgoing edges.
@@ -450,25 +453,25 @@ class MultiDiGraph(MultiGraph,DiGraph):
         edges_iter : return an iterator of edges
         """
         if nbunch is None:
-            nodes_nbrs=self.pred.items()
+            nodes_nbrs = self.pred.items()
         else:
-            nodes_nbrs=((n,self.pred[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self.pred[n]) for n in self.nbunch_iter(nbunch))
         if data:
-            for n,nbrs in nodes_nbrs:
-                for nbr,keydict in nbrs.items():
-                    for key,data in keydict.items():
+            for n, nbrs in nodes_nbrs:
+                for nbr, keydict in nbrs.items():
+                    for key, data in keydict.items():
                         if keys:
-                            yield (nbr,n,key,data)
+                            yield (nbr, n, key, data)
                         else:
-                            yield (nbr,n,data)
+                            yield (nbr, n, data)
         else:
-            for n,nbrs in nodes_nbrs:
-                for nbr,keydict in nbrs.items():
-                    for key,data in keydict.items():
+            for n, nbrs in nodes_nbrs:
+                for nbr, keydict in nbrs.items():
+                    for key, data in keydict.items():
                         if keys:
-                            yield (nbr,n,key)
+                            yield (nbr, n, key)
                         else:
-                            yield (nbr,n)
+                            yield (nbr, n)
 
     def in_edges(self, nbunch=None, keys=False, data=False):
         """Return a list of the incoming edges.
@@ -531,26 +534,26 @@ class MultiDiGraph(MultiGraph,DiGraph):
 
         """
         if nbunch is None:
-            nodes_nbrs=zip(iter(self.succ.items()),iter(self.pred.items()))
+            nodes_nbrs = zip(iter(self.succ.items()), iter(self.pred.items()))
         else:
-            nodes_nbrs=zip(
-                ((n,self.succ[n]) for n in self.nbunch_iter(nbunch)),
-                ((n,self.pred[n]) for n in self.nbunch_iter(nbunch)))
+            nodes_nbrs = zip(
+                ((n, self.succ[n]) for n in self.nbunch_iter(nbunch)),
+                ((n, self.pred[n]) for n in self.nbunch_iter(nbunch)))
 
         if weight is None:
-            for (n,succ),(n2,pred) in nodes_nbrs:
+            for (n, succ), (n2, pred) in nodes_nbrs:
                 indeg = sum([len(data) for data in pred.values()])
                 outdeg = sum([len(data) for data in succ.values()])
                 yield (n, indeg + outdeg)
         else:
-        # edge weighted nxgraph - degree is sum of nbr edge weights
-            for (n,succ),(n2,pred) in nodes_nbrs:
-                deg = sum([d.get(weight,1)
+            # edge weighted nxgraph - degree is sum of nbr edge weights
+            for (n, succ), (n2, pred) in nodes_nbrs:
+                deg = sum([d.get(weight, 1)
                            for data in pred.values()
                            for d in data.values()])
-                deg += sum([d.get(weight,1)
-                           for data in succ.values()
-                           for d in data.values()])
+                deg += sum([d.get(weight, 1)
+                            for data in succ.values()
+                            for d in data.values()])
                 yield (n, deg)
 
 
@@ -590,17 +593,17 @@ class MultiDiGraph(MultiGraph,DiGraph):
 
         """
         if nbunch is None:
-            nodes_nbrs=self.pred.items()
+            nodes_nbrs = self.pred.items()
         else:
-            nodes_nbrs=((n,self.pred[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self.pred[n]) for n in self.nbunch_iter(nbunch))
 
         if weight is None:
-            for n,nbrs in nodes_nbrs:
+            for n, nbrs in nodes_nbrs:
                 yield (n, sum([len(data) for data in nbrs.values()]) )
         else:
             # edge weighted nxgraph - degree is sum of nbr edge weights
-            for n,pred in nodes_nbrs:
-                deg = sum([d.get(weight,1)
+            for n, pred in nodes_nbrs:
+                deg = sum([d.get(weight, 1)
                            for data in pred.values()
                            for d in data.values()])
                 yield (n, deg)
@@ -642,16 +645,16 @@ class MultiDiGraph(MultiGraph,DiGraph):
 
         """
         if nbunch is None:
-            nodes_nbrs=self.succ.items()
+            nodes_nbrs = self.succ.items()
         else:
-            nodes_nbrs=((n,self.succ[n]) for n in self.nbunch_iter(nbunch))
+            nodes_nbrs = ((n, self.succ[n]) for n in self.nbunch_iter(nbunch))
 
         if weight is None:
-            for n,nbrs in nodes_nbrs:
+            for n, nbrs in nodes_nbrs:
                 yield (n, sum([len(data) for data in nbrs.values()]) )
         else:
-            for n,succ in nodes_nbrs:
-                deg = sum([d.get(weight,1)
+            for n, succ in nodes_nbrs:
+                deg = sum([d.get(weight, 1)
                            for data in succ.values()
                            for d in data.values()])
                 yield (n, deg)
@@ -739,22 +742,22 @@ class MultiDiGraph(MultiGraph,DiGraph):
         See the Python copy module for more information on shallow
         and deep copies, http://docs.python.org/library/copy.html.
         """
-        H=MultiGraph()
-        H.name=self.name
+        H = MultiGraph()
+        H.name = self.name
         H.add_nodes_from(self)
         if reciprocal is True:
-            H.add_edges_from( (u,v,key,deepcopy(data))
-                              for u,nbrs in self.adjacency_iter()
-                              for v,keydict in nbrs.items()
-                              for key,data in keydict.items()
-                              if self.has_edge(v,u,key))
+            H.add_edges_from((u, v, key, deepcopy(data))
+                             for u, nbrs in self.adjacency_iter()
+                             for v, keydict in nbrs.items()
+                             for key, data in keydict.items()
+                             if self.has_edge(v, u, key))
         else:
-            H.add_edges_from( (u,v,key,deepcopy(data))
-                              for u,nbrs in self.adjacency_iter()
-                              for v,keydict in nbrs.items()
-                              for key,data in keydict.items())
-        H.graph=deepcopy(self.graph)
-        H.node=deepcopy(self.node)
+            H.add_edges_from((u, v, key, deepcopy(data))
+                             for u, nbrs in self.adjacency_iter()
+                             for v, keydict in nbrs.items()
+                             for key, data in keydict.items())
+        H.graph = deepcopy(self.graph)
+        H.node = deepcopy(self.node)
         return H
 
     def subgraph(self, nbunch):
@@ -801,27 +804,27 @@ class MultiDiGraph(MultiGraph,DiGraph):
         H = self.__class__()
         # copy node and attribute dictionaries
         for n in bunch:
-            H.node[n]=self.node[n]
+            H.node[n] = self.node[n]
         # namespace shortcuts for speed
-        H_succ=H.succ
-        H_pred=H.pred
-        self_succ=self.succ
-        self_pred=self.pred
+        H_succ = H.succ
+        H_pred = H.pred
+        self_succ = self.succ
+        self_pred = self.pred
         # add nodes
         for n in H:
-            H_succ[n]={}
-            H_pred[n]={}
+            H_succ[n] = {}
+            H_pred[n] = {}
         # add edges
         for u in H_succ:
-            Hnbrs=H_succ[u]
-            for v,edgedict in self_succ[u].items():
+            Hnbrs = H_succ[u]
+            for v, edgedict in self_succ[u].items():
                 if v in H_succ:
                     # add both representations of edge: u-v and v-u
                     # they share the same edgedict
-                    ed=edgedict.copy()
-                    Hnbrs[v]=ed
-                    H_pred[v][u]=ed
-        H.graph=self.graph
+                    ed = edgedict.copy()
+                    Hnbrs[v] = ed
+                    H_pred[v][u] = ed
+        H.graph = self.graph
         return H
 
     def reverse(self, copy=True):
@@ -838,14 +841,14 @@ class MultiDiGraph(MultiGraph,DiGraph):
             the original nxgraph (this changes the original nxgraph).
         """
         if copy:
-            H = self.__class__(name="Reverse of (%s)"%self.name)
+            H = self.__class__(name="Reverse of (%s)" % self.name)
             H.add_nodes_from(self)
-            H.add_edges_from( (v,u,k,deepcopy(d)) for u,v,k,d 
-                              in self.edges(keys=True, data=True) )
-            H.graph=deepcopy(self.graph)
-            H.node=deepcopy(self.node)
+            H.add_edges_from((v, u, k, deepcopy(d)) for u, v, k, d
+                             in self.edges(keys=True, data=True))
+            H.graph = deepcopy(self.graph)
+            H.node = deepcopy(self.node)
         else:
-            self.pred,self.succ=self.succ,self.pred
-            self.adj=self.succ
-            H=self
+            self.pred, self.succ = self.succ, self.pred
+            self.adj = self.succ
+            H = self
         return H

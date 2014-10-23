@@ -10,13 +10,15 @@ in E is incident to at least one vertex in the subset.
 
 http://en.wikipedia.org/wiki/Vertex_cover
 """
-#   Copyright (C) 2011-2012 by
+# Copyright (C) 2011-2012 by
 #   Nicholas Mancuso <nick.mancuso@gmail.com>
 #   All rights reserved.
 #   BSD license.
 from networkx.utils import *
+
 __all__ = ["min_weighted_vertex_cover"]
 __author__ = """Nicholas Mancuso (nick.mancuso@gmail.com)"""
+
 
 @not_implemented_for('directed')
 def min_weighted_vertex_cover(graph, weight=None):
@@ -50,7 +52,7 @@ def min_weighted_vertex_cover(graph, weight=None):
     cost = dict((n, weight_func(nd)) for n, nd in graph.nodes(data=True))
 
     # while there are edges uncovered, continue
-    for u,v in graph.edges_iter():
+    for u, v in graph.edges_iter():
         # select some uncovered edge
         min_cost = min([cost[u], cost[v]])
         cost[u] -= min_cost

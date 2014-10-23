@@ -1,5 +1,6 @@
 from traceback import format_exception
 
+
 class SouthError(RuntimeError):
     pass
 
@@ -26,9 +27,10 @@ class InvalidMigrationModule(SouthError):
     def __init__(self, application, module):
         self.application = application
         self.module = module
-    
+
     def __str__(self):
-        return ('The migration module specified for %(application)s, %(module)r, is invalid; the parent module does not exist.' % self.__dict__)
+        return (
+        'The migration module specified for %(application)s, %(module)r, is invalid; the parent module does not exist.' % self.__dict__)
 
 
 class NoMigrations(SouthError):

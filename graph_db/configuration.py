@@ -2,25 +2,28 @@
 
 from copy import deepcopy
 import logging
-import sys
+
 logger = logging.getLogger(__name__)
+
 
 def makeAttribute(name, readable_name, description, data_type, default_value):
     ret = {
-        "name" : name,
-        "readable_name" : readable_name,
-        "description" : description,
-        "data_type" : data_type,
-        "default_value" : default_value,
+        "name": name,
+        "readable_name": readable_name,
+        "description": description,
+        "data_type": data_type,
+        "default_value": default_value,
     }
     return ret
 
+
 def makeAllowedRelation(descr_from, descr_to):
     ret = {
-        "from" : descr_from,
-        "to" : descr_to,
+        "from": descr_from,
+        "to": descr_to,
     }
     return ret
+
 
 class ConfigurationObject:
     def __init__(self, configuration=None, cname_or_cid=-1, id=-1):
@@ -42,33 +45,33 @@ class ConfigurationObject:
     def get_default_attribute_value(self, key):
         class_info = self.configuration.classes[self.cid]
 
-        #Check for entity its prototype existence and value
-        if class_info["type"]=="entity_class":
+        # Check for entity its prototype existence and value
+        if class_info["type"] == "entity_class":
             protos = self.configuration.getAllNeighbours(self, "prototypes", role="from")
             len_protos = len(protos)
             #print self.id, protos[0].id
             #if len_protos>1: raise Exception("Multiple prototypes of instance %s" % str(self.getId()))
-            if len_protos==1:
+            if len_protos == 1:
                 if protos[0].id != self.id:
                     return protos[0][key]
 
         #Check default value
         for attr in class_info["attributes"]:
-            if attr["name"]==key: return attr["default_value"]
+            if attr["name"] == key: return attr["default_value"]
         raise KeyError(key)
 
     def __getitem__(self, key):
-        if key=="id": return self.id
-        if key=="cid": return self.cid
-        #Check instance value
+        if key == "id": return self.id
+        if key == "cid": return self.cid
+        # Check instance value
         if key in self.attributes: return self.attributes[key]
         return self.get_default_attribute_value(key)
 
     def __setitem__(self, key, value):
         self.attributes[key] = value
 
-class Entity(ConfigurationObject):
 
+class Entity(ConfigurationObject):
     def save(self):
         return self.configuration.saveEntityAttributes(self)
 
@@ -88,7 +91,7 @@ class Entity(ConfigurationObject):
         return self.configuration.getAllNeighbours(self, relation_cname_or_cid, filter_func=filter_func, role="to")
 
     def getTitle(self, length=None):
-        ret_arr =  []
+        ret_arr = []
         attributes = self.configuration.classes[self.cid]["attributes"]
         for attr in attributes[:1]:
             attr_name = attr["name"]
@@ -96,19 +99,19 @@ class Entity(ConfigurationObject):
         ret = " ".join(ret_arr)
         protos = self.configuration.getAllNeighbours(self, "prototypes", role="from")
         len_protos = len(protos)
-        if len_protos>=1:
+        if len_protos >= 1:
             ret += " [" + protos[0].getTitle() + "]"
-        if length and len(ret)>length: ret = ret[:(length-3)] + "..."
+        if length and len(ret) > length: ret = ret[:(length - 3)] + "..."
         return ret
 
     def getDescription(self, length=None):
-        ret_arr =  []
+        ret_arr = []
         attributes = self.configuration.classes[self.cid]["attributes"]
         for attr in attributes[1:]:
             attr_name = attr["name"]
             ret_arr += [str(self[attr_name])]
         ret = " ".join(ret_arr)
-        if length and len(ret)>length: ret = ret[:(length-3)] + "..."
+        if length and len(ret) > length: ret = ret[:(length - 3)] + "..."
         return ret
 
     def __str__(self):
@@ -118,6 +121,7 @@ class Entity(ConfigurationObject):
         else:
             ret += "[Not loaded]"
         return ret
+
 
 class Relation(ConfigurationObject):
     def __init__(self, configuration, cname_or_cid=-1, ent_from_id=None, ent_to_id=None, id=-1):
@@ -140,6 +144,7 @@ class Relation(ConfigurationObject):
     def delete(self):
         return self.configuration.deleteRelation(self)
 
+
 class Configuration:
     MUL_ZERO_OR_ONE = "zero_or_one"
     MUL_ONE = "one"
@@ -153,7 +158,7 @@ class Configuration:
     TYPE_DICTIONARY = "dict"
 
     def __init__(self):
-        self.classes = {} ## cid to class header dict
+        self.classes = {}  # # cid to class header dict
         self.cnames_to_cids = {}
 
     def initialize(self, storage):
@@ -162,10 +167,10 @@ class Configuration:
         cids.sort()
         for cls_id in cids:
             cls_info = self.classes[cls_id]
-            if cls_info["type"] != "entity_class" : continue
+            if cls_info["type"] != "entity_class": continue
             allowed_rels += [makeAllowedRelation(
-                {"cname": cls_info["name"], "multiplicity" : self.MUL_ZERO_OR_MORE},
-                {"cname": cls_info["name"], "multiplicity" : self.MUL_ONE}
+                {"cname": cls_info["name"], "multiplicity": self.MUL_ZERO_OR_MORE},
+                {"cname": cls_info["name"], "multiplicity": self.MUL_ONE}
             )]
 
         self.addRelationClass(10001, "prototypes", "Prototypes", "Prototypes links", [
@@ -178,34 +183,39 @@ class Configuration:
         del self.storage
 
     def addEntityClass(self, cid, name, readable_name, description, attributes_list):
-        if cid in self.classes: logger.warning('Entity Class cid has been redefined: %s.%s = %s!' % (__name__, name, cid))
+        if cid in self.classes: logger.warning(
+            'Entity Class cid has been redefined: %s.%s = %s!' % (__name__, name, cid))
         self.classes[cid] = {
-            "type" : "entity_class",
-            "name" : name,
-            "readable_name" : readable_name,
-            "description" : description,
-            "attributes" : attributes_list,
-            }
-        if name in self.cnames_to_cids: logger.warning('Entity Class name has been redefined: %s.%s = %s!' % (__name__, name, cid))
+            "type": "entity_class",
+            "name": name,
+            "readable_name": readable_name,
+            "description": description,
+            "attributes": attributes_list,
+        }
+        if name in self.cnames_to_cids: logger.warning(
+            'Entity Class name has been redefined: %s.%s = %s!' % (__name__, name, cid))
         self.cnames_to_cids[name] = cid
         return True
 
     def addRelationClass(self, cid, name, readable_name, description, attributes_list, allowed_relations):
-        if cid in self.classes: logger.warning('Relation Class cid has been redefined: %s.%s = %s!' % (__name__, name, cid))
+        if cid in self.classes: logger.warning(
+            'Relation Class cid has been redefined: %s.%s = %s!' % (__name__, name, cid))
         for allowed_rel in allowed_relations:
             for role, cfg in allowed_rel.iteritems():
-                if cfg["cname"] not in self.cnames_to_cids: logger.warning('Entity Class name has not been found: %s!' % (cfg["cname"]))
+                if cfg["cname"] not in self.cnames_to_cids: logger.warning(
+                    'Entity Class name has not been found: %s!' % (cfg["cname"]))
                 cfg["cid"] = self.cnames_to_cids[cfg["cname"]]
 
         self.classes[cid] = {
-            "type" : "relation_class",
-            "name" : name,
-            "readable_name" : readable_name,
-            "description" : description,
-            "attributes" : attributes_list,
-            "allowed_relations" : allowed_relations,
-            }
-        if name in self.cnames_to_cids: logger.warning('Relation Class name has been redefined: %s.%s = %s!' % (__name__, name, cid))
+            "type": "relation_class",
+            "name": name,
+            "readable_name": readable_name,
+            "description": description,
+            "attributes": attributes_list,
+            "allowed_relations": allowed_relations,
+        }
+        if name in self.cnames_to_cids: logger.warning(
+            'Relation Class name has been redefined: %s.%s = %s!' % (__name__, name, cid))
         self.cnames_to_cids[name] = cid
         return True
 
@@ -215,7 +225,7 @@ class Configuration:
         if type(cid) == str: cid = self.cnames_to_cids[cname_or_cid]
         return cid
 
-    ################## ENTITIES
+    # ################# ENTITIES
 
     def makeEntity(self, cname_or_cid, id=-1):
         ret = Entity(self, cname_or_cid, id)
@@ -233,7 +243,7 @@ class Configuration:
 
     def deleteEntity(self, entity):
         eid = entity.getId()
-        self.storage.nxgraph.remove_node(eid) # All edges will be deleted also
+        self.storage.nxgraph.remove_node(eid)  # All edges will be deleted also
 
     def saveEntityAttributes(self, entity):
         if entity.id == -1:
@@ -253,8 +263,8 @@ class Configuration:
             if id not in self.storage.nxgraph.node: raise Exception("Object %s not found in the storage" % str(id))
             data = self.storage.nxgraph.node[id]
         entity.attributes = deepcopy(data)
-#        for (key, value) in data.iteritems():
-#            entity.attributes[key] = value
+        #        for (key, value) in data.iteritems():
+        #            entity.attributes[key] = value
         entity.is_loaded = True
         return True
 
@@ -270,9 +280,9 @@ class Configuration:
         cid = self.convertCNameIfNeeded(cname_or_cid)
         ents = [ent1, ent2]
         ret = []
-        for i in (0,1):
+        for i in (0, 1):
             t_ent1 = ents[i]
-            t_ent2 = ents[1-i]
+            t_ent2 = ents[1 - i]
             t_eid1 = t_ent1.getId()
             t_eid2 = t_ent2.getId()
             if t_eid2 not in self.storage.nxgraph[t_eid1]: continue
@@ -285,18 +295,18 @@ class Configuration:
     def loadRelation(self, cname_or_cid, id):
         cid = self.convertCNameIfNeeded(cname_or_cid)
         rid = (cid, id)
-        (eid1,eid2) =  self.storage.nxgraph.graph["edges_by_ids"][rid]
+        (eid1, eid2) = self.storage.nxgraph.graph["edges_by_ids"][rid]
         rel = self.makeRelation(cid, eid1, eid2, id)
         rel.load()
         return rel
 
     def deleteRelation(self, relation):
         rid = relation.getId()
-        (eid1, eid2) =  self.storage.nxgraph.graph["edges_by_ids"][rid]
+        (eid1, eid2) = self.storage.nxgraph.graph["edges_by_ids"][rid]
         self.storage.nxgraph.remove_edge(eid1, eid2, key=rid)
 
     def saveRelationAttributes(self, relation):
-        (cid,id) = relation.getId()
+        (cid, id) = relation.getId()
         if id == -1:
             max_ids = self.storage.nxgraph.graph["max_ids"]
             if cid not in max_ids: max_ids[cid] = 1
@@ -304,23 +314,23 @@ class Configuration:
             max_ids[cid] += 1
             self.storage.nxgraph.graph["edges_by_ids"][(cid, id)] = (relation.from_id, relation.to_id)
         # TODO: check for existence
-        self.storage.nxgraph.add_edge(relation.from_id, relation.to_id, key=(cid,id), attr_dict=relation.attributes)
+        self.storage.nxgraph.add_edge(relation.from_id, relation.to_id, key=(cid, id), attr_dict=relation.attributes)
         return True
 
     def loadRelationAttributes(self, relation, data=None):
         rid = relation.getId()
-        (eid1,eid2) =  self.storage.nxgraph.graph["edges_by_ids"][rid]
+        (eid1, eid2) = self.storage.nxgraph.graph["edges_by_ids"][rid]
         # TODO: check for existence relation.entity_from, relation.entity_to, key=rid
         if (data == None):
             if eid1 not in self.storage.nxgraph \
-                or eid2 not in self.storage.nxgraph[eid1] \
-                or rid not in self.storage.nxgraph[eid1][eid2]:
+                    or eid2 not in self.storage.nxgraph[eid1] \
+                    or rid not in self.storage.nxgraph[eid1][eid2]:
                 raise Exception("Edge %s = %s -> %s not found in the storage" % (rid, eid1, eid2))
             data = self.storage.nxgraph[eid1][eid2][rid]
         relation.attributes = deepcopy(data)
-#        self.__writeAttributesByClassInfo(relation)
-#        for (key, value) in data.iteritems():
-#            relation.attributes[key] = value
+        #        self.__writeAttributesByClassInfo(relation)
+        #        for (key, value) in data.iteritems():
+        #            relation.attributes[key] = value
         relation.is_loaded = True
         return True
 
@@ -336,25 +346,27 @@ class Configuration:
             will_add = True
             if cname_or_cid: will_add = will_add and node[0][0] == cid
             if filter_func:
-                params = {"cid" : node[0][0], "id" : node[0][1]} # Make a copy of dict for lame storage protection
+                params = {"cid": node[0][0], "id": node[0][1]}  # Make a copy of dict for lame storage protection
                 params.update(node[1])
                 try:
                     will_add = will_add and filter_func(params)
                 except KeyError:
                     continue
             if will_add:
-                if not load_instances: ret += [node[0]]
-                else: # Load instance without querying storage
+                if not load_instances:
+                    ret += [node[0]]
+                else:  # Load instance without querying storage
                     instance = self.makeEntity(node[0][0], node[0][1])
                     self.loadEntityAttributes(instance, node[1])
                     ret += [instance]
         return ret
 
-    def getAllRelations(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None, include_prototype_relations=True):
+    def getAllRelations(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None,
+                        include_prototype_relations=True):
         edges = []
-        if not role or role=="from":
+        if not role or role == "from":
             edges += self.storage.nxgraph.in_edges(entity.getId(), keys=True, data=True)
-        if not role or role=="to":
+        if not role or role == "to":
             edges += self.storage.nxgraph.out_edges(entity.getId(), keys=True, data=True)
 
         ret = []
@@ -365,34 +377,40 @@ class Configuration:
             will_add = True
             if relation_cname_or_cid: will_add = will_add and rel_id[0] == rcid
             if filter_func:
-                params = {"from_cid" : from_id[0], "from_id" : from_id[1],"to_cid" : to_id[0], "to_id" : to_id[1], "cid" : rel_id[0], "id" : rel_id[1]} # Make a copy of dict for lame storage protection
+                params = {"from_cid": from_id[0], "from_id": from_id[1], "to_cid": to_id[0], "to_id": to_id[1],
+                          "cid": rel_id[0], "id": rel_id[1]}  # Make a copy of dict for lame storage protection
                 params.update(data)
                 will_add = will_add and filter_func(params)
             if will_add:
-                if not load_instances: ret += [(rel_id, from_id, to_id)] # Rel_id, Ent1_id, Rnt2_id
-                else: # Load instance without querying storage
+                if not load_instances:
+                    ret += [(rel_id, from_id, to_id)]  # Rel_id, Ent1_id, Rnt2_id
+                else:  # Load instance without querying storage
                     relation = self.makeRelation(rel_id[0], from_id, to_id, rel_id[1])
                     self.loadRelationAttributes(relation, data)
                     ret += [relation]
         if include_prototype_relations:
             protos = self.getAllNeighbours(entity, "prototypes", role="from", include_prototype_relations=False)
             len_protos = len(protos)
-            if len_protos>=1:
-                ret +=  self.getAllRelations(protos[0], relation_cname_or_cid, filter_func, load_instances, role, include_prototype_relations)
+            if len_protos >= 1:
+                ret += self.getAllRelations(protos[0], relation_cname_or_cid, filter_func, load_instances, role,
+                                            include_prototype_relations)
         return ret
 
-    def getAllNeighbours(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None, include_prototype_relations=True):
+    def getAllNeighbours(self, entity, relation_cname_or_cid=None, filter_func=None, load_instances=True, role=None,
+                         include_prototype_relations=True):
         ret = []
-        if not role or role=="from":
-            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "from", include_prototype_relations)
+        if not role or role == "from":
+            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "from",
+                                             include_prototype_relations)
             for relation in relations:
                 will_add = True
                 neighbour = relation.getFromEntity()
                 if filter_func:
                     will_add = will_add and filter_func(neighbour)
                 if will_add: ret += [neighbour]
-        if not role or role=="to":
-            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "to", include_prototype_relations)
+        if not role or role == "to":
+            relations = self.getAllRelations(entity, relation_cname_or_cid, None, load_instances, "to",
+                                             include_prototype_relations)
             for relation in relations:
                 will_add = True
                 neighbour = relation.getToEntity()
@@ -408,7 +426,7 @@ class Configuration:
         rcid = self.convertCNameIfNeeded(relation_cname_or_cid)
         for cid in cids:
             if rcid and rcid != cid: continue
-            if self.classes[cid]["type"]!="relation_class": continue
+            if self.classes[cid]["type"] != "relation_class": continue
             t_cls = self.classes[cid]
             allowed_relations = t_cls["allowed_relations"]
             for allowed_rel in allowed_relations:
@@ -418,5 +436,6 @@ class Configuration:
                         will_add = False
                     if will_add:
                         if cid not in ret: ret[cid] = []
-                        ret[cid] += [{"entity_role" : role_pair[0], "neighbour_role" : role_pair[1], "neighbour" : allowed_rel[role_pair[1]]}]
+                        ret[cid] += [{"entity_role": role_pair[0], "neighbour_role": role_pair[1],
+                                      "neighbour": allowed_rel[role_pair[1]]}]
         return ret

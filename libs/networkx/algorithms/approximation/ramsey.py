@@ -2,13 +2,15 @@
 """
 Ramsey numbers.
 """
-#   Copyright (C) 2011 by
+# Copyright (C) 2011 by
 #   Nicholas Mancuso <nick.mancuso@gmail.com>
 #   All rights reserved.
 #   BSD license.
 import networkx as nx
+
 __all__ = ["ramsey_R2"]
 __author__ = """Nicholas Mancuso (nick.mancuso@gmail.com)"""
+
 
 def ramsey_R2(graph):
     r"""Approximately computes the Ramsey number `R(2;s,t)` for nxgraph.

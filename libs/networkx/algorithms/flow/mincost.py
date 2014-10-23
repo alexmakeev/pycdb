@@ -18,8 +18,9 @@ __all__ = ['network_simplex',
 import networkx as nx
 from networkx.utils import generate_unique_node
 
-def _initial_tree_solution(G, demand = 'demand', capacity = 'capacity',
-                           weight = 'weight'):
+
+def _initial_tree_solution(G, demand='demand', capacity='capacity',
+                           weight='weight'):
     """Find a initial tree solution rooted at r.
 
     The initial tree solution is obtained by considering edges (r, v)
@@ -41,13 +42,13 @@ def _initial_tree_solution(G, demand = 'demand', capacity = 'capacity',
 
     n = H.number_of_nodes()
     try:
-        maxWeight = max(abs(d[weight]) for u, v, d in H.edges(data = True)
+        maxWeight = max(abs(d[weight]) for u, v, d in H.edges(data=True)
                         if weight in d)
     except ValueError:
         maxWeight = 0
     hugeWeight = 1 + n * maxWeight
 
-    for v, d in H.nodes(data = True)[1:]:
+    for v, d in H.nodes(data=True)[1:]:
         vDemand = d.get(demand, 0)
         if vDemand >= 0:
             if not (r, v) in H.edges():
@@ -57,7 +58,7 @@ def _initial_tree_solution(G, demand = 'demand', capacity = 'capacity',
                 T.add_edge(r, v)
                 flowCost += vDemand * H[r][v].get(weight, 0)
 
-            else: # (r, v) in H.edges()
+            else:  # (r, v) in H.edges()
                 if (not capacity in H[r][v]
                     or vDemand <= H[r][v][capacity]):
                     H[r][v]['flow'] = vDemand
@@ -65,7 +66,7 @@ def _initial_tree_solution(G, demand = 'demand', capacity = 'capacity',
                     T.add_edge(r, v)
                     flowCost += vDemand * H[r][v].get(weight, 0)
 
-                else: # existing edge does not have enough capacity
+                else:  # existing edge does not have enough capacity
                     newLabel = generate_unique_node()
                     H.add_edge(r, newLabel, {weight: hugeWeight, 'flow': vDemand})
                     H.add_edge(newLabel, v, {weight: hugeWeight, 'flow': vDemand})
@@ -77,7 +78,7 @@ def _initial_tree_solution(G, demand = 'demand', capacity = 'capacity',
                     T.add_edge(newLabel, v)
                     flowCost += 2 * vDemand * hugeWeight
 
-        else: # vDemand < 0
+        else:  # vDemand < 0
             if not (v, r) in H.edges():
                 H.add_edge(v, r, {weight: hugeWeight, 'flow': -vDemand})
                 artificialEdges.append((v, r))
@@ -92,7 +93,7 @@ def _initial_tree_solution(G, demand = 'demand', capacity = 'capacity',
                     y[v] = -H[v][r].get(weight, 0)
                     T.add_edge(v, r)
                     flowCost += -vDemand * H[v][r].get(weight, 0)
-                else: # existing edge does not have enough capacity
+                else:  # existing edge does not have enough capacity
                     newLabel = generate_unique_node()
                     H.add_edge(v, newLabel,
                                {weight: hugeWeight, 'flow': -vDemand})
@@ -105,11 +106,11 @@ def _initial_tree_solution(G, demand = 'demand', capacity = 'capacity',
                     T.add_edge(v, newLabel)
                     T.add_edge(newLabel, r)
                     flowCost += 2 * -vDemand * hugeWeight
-            
+
     return H, T, y, artificialEdges, flowCost, r
 
 
-def _find_entering_edge(H, c, capacity = 'capacity'):
+def _find_entering_edge(H, c, capacity='capacity'):
     """Find an edge which creates a negative cost cycle in the actual
     tree solution.
 
@@ -123,7 +124,7 @@ def _find_entering_edge(H, c, capacity = 'capacity'):
     main loop of the algorithm to terminate.
     """
     newEdge = ()
-    for u, v, d in H.edges_iter(data = True):
+    for u, v, d in H.edges_iter(data=True):
         if d.get('flow', 0) == 0:
             if c[(u, v)] < 0:
                 newEdge = (u, v)
@@ -137,7 +138,7 @@ def _find_entering_edge(H, c, capacity = 'capacity'):
     return newEdge
 
 
-def _find_leaving_edge(H, T, cycle, newEdge, capacity = 'capacity'):
+def _find_leaving_edge(H, T, cycle, newEdge, capacity='capacity'):
     """Find an edge that will leave the basis and the value by which we
     can increase or decrease the flow on that edge.
 
@@ -166,11 +167,11 @@ def _find_leaving_edge(H, T, cycle, newEdge, capacity = 'capacity'):
         edgeCapacity = False
         edge = ()
         v = cycle[index + 1]
-        if (u, v) in T.edges() + [newEdge]: #forward edge
-            if capacity in H[u][v]: # edge (u, v) has finite capacity
+        if (u, v) in T.edges() + [newEdge]:  # forward edge
+            if capacity in H[u][v]:  # edge (u, v) has finite capacity
                 edgeCapacity = H[u][v][capacity] - H[u][v].get('flow', 0)
                 edge = (u, v)
-        else: #reverse edge
+        else:  # reverse edge
             edgeCapacity = H[v][u].get('flow', 0)
             edge = (v, u)
 
@@ -186,8 +187,8 @@ def _find_leaving_edge(H, T, cycle, newEdge, capacity = 'capacity'):
 
     if not leavingEdge:
         raise nx.NetworkXUnbounded(
-                "Negative cost cycle of infinite capacity found. "
-                + "Min cost flow unbounded below.")
+            "Negative cost cycle of infinite capacity found. "
+            + "Min cost flow unbounded below.")
 
     return leavingEdge, eps
 
@@ -205,8 +206,8 @@ def _create_flow_dict(G, H):
     return flowDict
 
 
-def network_simplex(G, demand = 'demand', capacity = 'capacity',
-                    weight = 'weight'):
+def network_simplex(G, demand='demand', capacity='capacity',
+                    weight='weight'):
     """Find a minimum cost flow satisfying all demands in digraph G.
     
     This is a primal network simplex algorithm that uses the leaving
@@ -360,18 +361,18 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
         raise nx.NetworkXError("Not connected nxgraph not supported.")
     if G.is_multigraph():
         raise nx.NetworkXError("MultiDiGraph not supported.")
-    if sum(d[demand] for v, d in G.nodes(data = True) 
+    if sum(d[demand] for v, d in G.nodes(data=True)
            if demand in d) != 0:
         raise nx.NetworkXUnfeasible("Sum of the demands should be 0.")
 
     # Fix an arbitrarily chosen root node and find an initial tree solution.
     H, T, y, artificialEdges, flowCost, r = \
-            _initial_tree_solution(G, demand = demand, capacity = capacity,
-                                   weight = weight)
+        _initial_tree_solution(G, demand=demand, capacity=capacity,
+                               weight=weight)
 
     # Initialize the reduced costs.
     c = {}
-    for u, v, d in H.edges_iter(data = True):
+    for u, v, d in H.edges_iter(data=True):
         c[(u, v)] = d.get(weight, 0) + y[u] - y[v]
 
     # Print stuff for debugging.
@@ -382,7 +383,7 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
     # print('Tree solution: %s' % T.edges())
     # print(' Edge %11s%10s' % ('Flow', 'Red Cost'))
     # for u, v, d in H.edges(data = True):
-    #     flag = ''
+    # flag = ''
     #     if (u, v) in artificialEdges:
     #         flag = '*'
     #     print('(%s, %s)%1s%10d%10d' % (u, v, flag, d.get('flow', 0),
@@ -391,9 +392,9 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
 
     # Main loop.
     while True:
-        newEdge = _find_entering_edge(H, c, capacity = capacity)
+        newEdge = _find_entering_edge(H, c, capacity=capacity)
         if not newEdge:
-            break # Optimal basis found. Main loop is over.
+            break  # Optimal basis found. Main loop is over.
         cycleCost = abs(c[newEdge])
 
         # Find the cycle created by adding newEdge to T.
@@ -411,14 +412,14 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
         if H[newEdge[0]][newEdge[1]].get('flow', 0) == 0:
             path2.reverse()
             cycle = path1 + path2
-        else: # newEdge is at capacity
+        else:  # newEdge is at capacity
             path1.reverse()
             cycle = path2 + path1
 
         # Find the leaving edge. Will stop here if cycle is an infinite
         # capacity negative cost cycle.
         leavingEdge, eps = _find_leaving_edge(H, T, cycle, newEdge,
-                                              capacity = capacity)
+                                              capacity=capacity)
 
         # Actual augmentation happens here. If eps = 0, don't bother.
         if eps:
@@ -432,7 +433,7 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
                     v = cycle[index + 1]
                     if (u, v) in T.edges() + [newEdge]:
                         H[u][v]['flow'] = H[u][v].get('flow', 0) + eps
-                    else: # (v, u) in T.edges():
+                    else:  # (v, u) in T.edges():
                         H[v][u]['flow'] -= eps
 
         # Update tree solution.
@@ -444,7 +445,7 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
             forest = nx.DiGraph(T)
             forest.remove_edge(*newEdge)
             R, notR = nx.connected_component_subgraphs(forest.to_undirected())
-            if r in notR.nodes(): # make sure r is in R
+            if r in notR.nodes():  # make sure r is in R
                 R, notR = notR, R
             if newEdge[0] in R.nodes():
                 for v in notR.nodes():
@@ -456,23 +457,23 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
                 if u in notR.nodes() or v in notR.nodes():
                     c[(u, v)] = H[u][v].get(weight, 0) + y[u] - y[v]
 
-        # Print stuff for debugging.
-        # print('-' * 78)
-        # print('Iteration %d' % nbIter)
-        # nbIter += 1
-        # print('Tree solution: %s' % T.edges())
-        # print('New edge:      (%s, %s)' % (newEdge[0], newEdge[1]))
-        # print('Leaving edge:  (%s, %s)' % (leavingEdge[0], leavingEdge[1]))
-        # print('Cycle:         %s' % cycle)
-        # print('eps:           %d' % eps)
-        # print(' Edge %11s%10s' % ('Flow', 'Red Cost'))
-        # for u, v, d in H.edges(data = True):
-        #     flag = ''
-        #     if (u, v) in artificialEdges:
-        #         flag = '*'
-        #     print('(%s, %s)%1s%10d%10d' % (u, v, flag, d.get('flow', 0),
-        #                                    c[(u, v)]))
-        # print('Distances: %s' % y)
+                    # Print stuff for debugging.
+                    # print('-' * 78)
+                    # print('Iteration %d' % nbIter)
+                    # nbIter += 1
+                    # print('Tree solution: %s' % T.edges())
+                    # print('New edge:      (%s, %s)' % (newEdge[0], newEdge[1]))
+                    # print('Leaving edge:  (%s, %s)' % (leavingEdge[0], leavingEdge[1]))
+                    # print('Cycle:         %s' % cycle)
+                    # print('eps:           %d' % eps)
+                    # print(' Edge %11s%10s' % ('Flow', 'Red Cost'))
+                    # for u, v, d in H.edges(data = True):
+                    #     flag = ''
+                    #     if (u, v) in artificialEdges:
+                    #         flag = '*'
+                    #     print('(%s, %s)%1s%10d%10d' % (u, v, flag, d.get('flow', 0),
+                    #                                    c[(u, v)]))
+                    # print('Distances: %s' % y)
 
 
     # If an artificial edge has positive flow, the initial problem was
@@ -491,8 +492,8 @@ def network_simplex(G, demand = 'demand', capacity = 'capacity',
     return flowCost, flowDict
 
 
-def min_cost_flow_cost(G, demand = 'demand', capacity = 'capacity',
-                        weight = 'weight'):
+def min_cost_flow_cost(G, demand='demand', capacity='capacity',
+                       weight='weight'):
     """Find the cost of a minimum cost flow satisfying all demands in digraph G.
     
     G is a digraph with edge costs and capacities and in which nodes
@@ -570,12 +571,12 @@ def min_cost_flow_cost(G, demand = 'demand', capacity = 'capacity',
     >>> flowCost
     24
     """
-    return network_simplex(G, demand = demand, capacity = capacity,
-                           weight = weight)[0]
+    return network_simplex(G, demand=demand, capacity=capacity,
+                           weight=weight)[0]
 
 
-def min_cost_flow(G, demand = 'demand', capacity = 'capacity',
-                  weight = 'weight'):
+def min_cost_flow(G, demand='demand', capacity='capacity',
+                  weight='weight'):
     """Return a minimum cost flow satisfying all demands in digraph G.
     
     G is a digraph with edge costs and capacities and in which nodes
@@ -654,11 +655,11 @@ def min_cost_flow(G, demand = 'demand', capacity = 'capacity',
     >>> flowDict
     {'a': {'c': 1, 'b': 4}, 'c': {'d': 1}, 'b': {'d': 4}, 'd': {}}
     """
-    return network_simplex(G, demand = demand, capacity = capacity,
-                           weight = weight)[1]
+    return network_simplex(G, demand=demand, capacity=capacity,
+                           weight=weight)[1]
 
 
-def cost_of_flow(G, flowDict, weight = 'weight'):
+def cost_of_flow(G, flowDict, weight='weight'):
     """Compute the cost of the flow given by flowDict on nxgraph G.
 
     Note that this function does not check for the validity of the
@@ -692,10 +693,10 @@ def cost_of_flow(G, flowDict, weight = 'weight'):
     max_flow_min_cost, min_cost_flow, min_cost_flow_cost, network_simplex
     """
     return sum((flowDict[u][v] * d.get(weight, 0)
-                for u, v, d in G.edges_iter(data = True)))
+                for u, v, d in G.edges_iter(data=True)))
 
 
-def max_flow_min_cost(G, s, t, capacity = 'capacity', weight = 'weight'):
+def max_flow_min_cost(G, s, t, capacity='capacity', weight='weight'):
     """Return a maximum (s, t)-flow of minimum cost.
     
     G is a digraph with edge costs and capacities. There is a source
@@ -778,9 +779,9 @@ def max_flow_min_cost(G, s, t, capacity = 'capacity', weight = 'weight'):
     
     
     """
-    maxFlow = nx.max_flow(G, s, t, capacity = capacity)
+    maxFlow = nx.max_flow(G, s, t, capacity=capacity)
     H = nx.DiGraph(G)
-    H.add_node(s, demand = -maxFlow)
-    H.add_node(t, demand = maxFlow)
-    return min_cost_flow(H, capacity = capacity, weight = weight)
+    H.add_node(s, demand=-maxFlow)
+    H.add_node(t, demand=maxFlow)
+    return min_cost_flow(H, capacity=capacity, weight=weight)
 

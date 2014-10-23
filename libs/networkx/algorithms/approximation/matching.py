@@ -9,13 +9,15 @@ edges; that is, no two edges share a common vertex.
 
 http://en.wikipedia.org/wiki/Matching_(graph_theory)
 """
-#   Copyright (C) 2011-2012 by
+# Copyright (C) 2011-2012 by
 #   Nicholas Mancuso <nick.mancuso@gmail.com>
 #   All rights reserved.
 #   BSD license.
 import networkx as nx
+
 __all__ = ["min_maximal_matching"]
 __author__ = """Nicholas Mancuso (nick.mancuso@gmail.com)"""
+
 
 def min_maximal_matching(graph):
     """Returns a set of edges such that no two edges share a common endpoint

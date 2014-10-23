@@ -1,6 +1,6 @@
 """Stocastic graph."""
 import networkx as nx
-#    Copyright (C) 2010 by 
+# Copyright (C) 2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -8,6 +8,7 @@ import networkx as nx
 #    BSD license.
 __author__ = "Aric Hagberg <hagberg@lanl.gov>"
 __all__ = ['stochastic_graph']
+
 
 def stochastic_graph(G, copy=True, weight='weight'):
     """Return a right-stochastic representation of G.
@@ -25,7 +26,7 @@ def stochastic_graph(G, copy=True, weight='weight'):
 
     weight : key (optional)
       Edge data key used for weight.  If None all weights are set to 1.
-    """        
+    """
     if type(G) == nx.MultiGraph or type(G) == nx.MultiDiGraph:
         raise Exception("stochastic_graph not implemented for multigraphs")
 
@@ -33,11 +34,11 @@ def stochastic_graph(G, copy=True, weight='weight'):
         raise Exception("stochastic_graph not defined for undirected graphs")
 
     if copy:
-        W=nx.DiGraph(G)
+        W = nx.DiGraph(G)
     else:
-        W=G # reference original nxgraph, no copy
+        W = G  # reference original nxgraph, no copy
 
-    degree=W.out_degree(weight=weight)
-    for (u,v,d) in W.edges(data=True):
-        d[weight]=d.get(weight,1.0)/degree[u]
+    degree = W.out_degree(weight=weight)
+    for (u, v, d) in W.edges(data=True):
+        d[weight] = d.get(weight, 1.0) / degree[u]
     return W

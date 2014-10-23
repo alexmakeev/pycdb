@@ -2,7 +2,7 @@ from django import template
 
 __author__ = "SmileyChris"
 
-#==============================================================================
+# ==============================================================================
 # Calculation objects
 #==============================================================================
 
@@ -135,7 +135,7 @@ class IfParser(object):
         if not self.at_end():
             op_token = self.get_token(lookahead=True)[0]
             if isinstance(op_token, basestring) and (op_token not in
-                                                     BOOL_OPERATORS):
+                                                         BOOL_OPERATORS):
                 op, negate = self.get_operator()
                 return op(var, self.get_var(), negate=negate)
         return var

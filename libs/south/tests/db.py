@@ -1,19 +1,21 @@
 import unittest
 
-from south.db import db
 from django.db import connection, models
+
+from south.db import db
 
 # Create a list of error classes from the various database libraries
 errors = []
 try:
     from psycopg2 import ProgrammingError
+
     errors.append(ProgrammingError)
 except ImportError:
     pass
 errors = tuple(errors)
 
-class TestOperations(unittest.TestCase):
 
+class TestOperations(unittest.TestCase):
     """
     Tests if the various DB abstraction calls work.
     Can only test a limited amount due to DB differences.
@@ -23,7 +25,7 @@ class TestOperations(unittest.TestCase):
         db.debug = False
         db.clear_deferred_sql()
         db.start_transaction()
-    
+
     def tearDown(self):
         db.rollback_transaction()
 
@@ -45,7 +47,7 @@ class TestOperations(unittest.TestCase):
             self.fail("Non-existent table could be selected!")
         except:
             pass
-    
+
     def test_delete(self):
         """
         Test deletion of tables.
@@ -58,7 +60,7 @@ class TestOperations(unittest.TestCase):
             self.fail("Just-deleted table could be selected!")
         except:
             pass
-    
+
     def test_nonexistent_delete(self):
         """
         Test deletion of nonexistent tables.
@@ -68,7 +70,7 @@ class TestOperations(unittest.TestCase):
             self.fail("Non-existent table could be deleted!")
         except:
             pass
-    
+
     def test_foreign_keys(self):
         """
         Tests foreign key creation, especially uppercase (see #61)
@@ -82,7 +84,7 @@ class TestOperations(unittest.TestCase):
             ('UNIQUE', models.ForeignKey(Test)),
         ])
         db.execute_deferred_sql()
-    
+
     def test_rename(self):
         """
         Test column renaming
@@ -104,7 +106,7 @@ class TestOperations(unittest.TestCase):
         db.rollback_transaction()
         db.delete_table("test_rn")
         db.start_transaction()
-    
+
     def test_dry_rename(self):
         """
         Test column renaming while --dry-zrun is turned on (should do nothing)
@@ -129,7 +131,7 @@ class TestOperations(unittest.TestCase):
         db.rollback_transaction()
         db.delete_table("test_drn")
         db.start_transaction()
-    
+
     def test_table_rename(self):
         """
         Test column renaming
@@ -151,7 +153,7 @@ class TestOperations(unittest.TestCase):
         db.rollback_transaction()
         db.delete_table("testtr2")
         db.start_transaction()
-    
+
     def test_percents_in_defaults(self):
         """
         Test that % in a default gets escaped to %%.
@@ -162,7 +164,7 @@ class TestOperations(unittest.TestCase):
         except IndexError:
             self.fail("% was not properly escaped in column SQL.")
         db.delete_table("testpind")
-    
+
     def test_index(self):
         """
         Test the index operations
@@ -183,12 +185,12 @@ class TestOperations(unittest.TestCase):
         if db.backend_name != "sqlite3":
             db.delete_unique("test3", ["eggs"])
         db.delete_table("test3")
-    
+
     def test_primary_key(self):
         """
         Test the primary key operations
         """
-        
+
         db.create_table("test_pk", [
             ('id', models.IntegerField(primary_key=True)),
             ('new_pkey', models.IntegerField()),
@@ -202,17 +204,17 @@ class TestOperations(unittest.TestCase):
         db.execute("INSERT INTO test_pk (id, new_pkey, eggs) VALUES (1, 2, 3)")
         db.execute("INSERT INTO test_pk (id, new_pkey, eggs) VALUES (1, 3, 4)")
         db.delete_table("test_pk")
-    
+
     def test_primary_key_implicit(self):
         """
         Tests changing primary key implicitly.
         """
-        
+
         # This is ONLY important for SQLite. It's not a feature we support, but
         # not implementing it means SQLite fails (due to the table-copying weirdness).
         if db.backend_name != "sqlite3":
             return
-        
+
         db.create_table("test_pki", [
             ('id', models.IntegerField(primary_key=True)),
             ('new_pkey', models.IntegerField()),
@@ -226,8 +228,8 @@ class TestOperations(unittest.TestCase):
         db.execute("INSERT INTO test_pki (id, new_pkey, eggs) VALUES (1, 2, 3)")
         db.execute("INSERT INTO test_pki (id, new_pkey, eggs) VALUES (1, 3, 4)")
         db.delete_table("test_pki")
-        
-    
+
+
     def test_add_columns(self):
         """
         Test adding columns
@@ -239,7 +241,8 @@ class TestOperations(unittest.TestCase):
         # Add a column
         db.add_column("test_addc", "add1", models.IntegerField(default=3), keep_default=False)
         # Add a FK with keep_default=False (#69)
-        User = db.mock_model(model_name='User', db_table='auth_user', db_tablespace='', pk_field_name='id', pk_field_type=models.AutoField, pk_field_args=[], pk_field_kwargs={})
+        User = db.mock_model(model_name='User', db_table='auth_user', db_tablespace='', pk_field_name='id',
+                             pk_field_type=models.AutoField, pk_field_args=[], pk_field_kwargs={})
         # insert some data so we can test the default value of the added fkey
         db.execute("INSERT INTO test_addc (eggs, add1) VALUES (1, 2)")
         db.add_column("test_addc", "user", models.ForeignKey(User, null=True), keep_default=False)
@@ -248,7 +251,7 @@ class TestOperations(unittest.TestCase):
         self.assertEquals(val, None)
         db.delete_column("test_addc", "add1")
         db.delete_table("test_addc")
-    
+
     def test_alter_columns(self):
         """
         Test altering columns
@@ -260,7 +263,7 @@ class TestOperations(unittest.TestCase):
         # Change eggs to be a FloatField
         db.alter_column("test_alterc", "eggs", models.FloatField())
         db.delete_table("test_alterc")
-    
+
     def test_mysql_defaults(self):
         """
         Test MySQL default handling for BLOB and TEXT.
@@ -272,7 +275,7 @@ class TestOperations(unittest.TestCase):
         # Change eggs to be a FloatField
         db.alter_column("test_altermyd", "eggs", models.TextField(null=True))
         db.delete_table("test_altermyd")
-    
+
     def test_alter_column_postgres_multiword(self):
         """
         Tests altering columns with multiple words in Postgres types (issue #125)
@@ -284,7 +287,7 @@ class TestOperations(unittest.TestCase):
             ('col_smallint', models.PositiveSmallIntegerField(null=True)),
             ('col_float', models.FloatField(null=True)),
         ])
-        
+
         # test if 'double precision' is preserved
         db.alter_column('test_multiword', 'col_float', models.FloatField('float', null=True))
 
@@ -299,7 +302,7 @@ class TestOperations(unittest.TestCase):
             assert db.execute("SELECT col_datetime = '2009-04-24 14:20:55+02' FROM test_multiword")[0][0]
 
         db.delete_table("test_multiword")
-    
+
     def test_alter_constraints(self):
         """
         Tests that going from a PostiveIntegerField to an IntegerField drops
@@ -331,16 +334,16 @@ class TestOperations(unittest.TestCase):
         db.delete_table("test_alterc")
         # We need to match up for tearDown
         db.start_transaction()
-    
+
     def test_unique(self):
         """
         Tests creating/deleting unique constraints.
         """
-        
+
         # SQLite backend doesn't support this yet.
         if db.backend_name == "sqlite3":
             return
-        
+
         db.create_table("test_unique2", [
             ('id', models.AutoField(primary_key=True)),
         ])
@@ -359,7 +362,7 @@ class TestOperations(unittest.TestCase):
         db.create_unique("test_unique", ["spam"])
         db.commit_transaction()
         db.start_transaction()
-        
+
         # Test it works
         db.execute("INSERT INTO test_unique2 (id) VALUES (1)")
         db.execute("INSERT INTO test_unique2 (id) VALUES (2)")
@@ -371,13 +374,13 @@ class TestOperations(unittest.TestCase):
             db.rollback_transaction()
         else:
             self.fail("Could insert non-unique item.")
-        
+
         # Drop that, add one only on eggs
         db.delete_unique("test_unique", ["spam"])
         db.execute("DELETE FROM test_unique")
         db.create_unique("test_unique", ["eggs"])
         db.start_transaction()
-        
+
         # Test similarly
         db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (true, 0, 1)")
         db.execute("INSERT INTO test_unique (spam, eggs, ham_id) VALUES (false, 1, 2)")
@@ -387,7 +390,7 @@ class TestOperations(unittest.TestCase):
             db.rollback_transaction()
         else:
             self.fail("Could insert non-unique item.")
-        
+
         # Drop those, test combined constraints
         db.delete_unique("test_unique", ["eggs"])
         db.execute("DELETE FROM test_unique")
@@ -404,7 +407,7 @@ class TestOperations(unittest.TestCase):
             self.fail("Could insert non-unique pair.")
         db.delete_unique("test_unique", ["spam", "eggs", "ham_id"])
         db.start_transaction()
-    
+
     def test_capitalised_constraints(self):
         """
         Under PostgreSQL at least, capitalised constrains must be quoted.
@@ -414,7 +417,7 @@ class TestOperations(unittest.TestCase):
         ])
         # Alter it so it's not got the check constraint
         db.alter_column("test_capconst", "SOMECOL", models.IntegerField())
-    
+
     def test_text_default(self):
         """
         MySQL cannot have blank defaults on TEXT columns.
@@ -422,7 +425,7 @@ class TestOperations(unittest.TestCase):
         db.create_table("test_textdef", [
             ('textcol', models.TextField(blank=True)),
         ])
-    
+
     def test_add_unique_fk(self):
         """
         Test adding a ForeignKey with unique=True or a OneToOneField
@@ -430,8 +433,9 @@ class TestOperations(unittest.TestCase):
         db.create_table("test_add_unique_fk", [
             ('spam', models.BooleanField(default=False))
         ])
-        
-        db.add_column("test_add_unique_fk", "mock1", models.ForeignKey(db.mock_model('Mock', 'mock'), null=True, unique=True))
+
+        db.add_column("test_add_unique_fk", "mock1",
+                      models.ForeignKey(db.mock_model('Mock', 'mock'), null=True, unique=True))
         db.add_column("test_add_unique_fk", "mock2", models.OneToOneField(db.mock_model('Mock', 'mock'), null=True))
-        
+
         db.delete_table("test_add_unique_fk")

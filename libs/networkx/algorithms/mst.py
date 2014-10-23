@@ -3,7 +3,7 @@
 Computes minimum spanning tree of a weighted nxgraph.
 
 """
-#    Copyright (C) 2009-2010 by 
+# Copyright (C) 2009-2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -16,10 +16,12 @@ __all__ = ['kruskal_mst',
            'minimum_spanning_tree',
            'prim_mst_edges', 'prim_mst']
 
-import networkx as nx
 from heapq import heappop, heappush
 
-def minimum_spanning_edges(G,weight='weight',data=True):
+import networkx as nx
+
+
+def minimum_spanning_edges(G, weight='weight', data=True):
     """Generate edges in a minimum spanning forest of an undirected 
     weighted nxgraph.
 
@@ -69,22 +71,23 @@ def minimum_spanning_edges(G,weight='weight',data=True):
     # implement once UnionFind exists, and second, because the only slow
     # part (the sort) is sped up by being built in to Python.
     from networkx.utils import UnionFind
+
     if G.is_directed():
         raise nx.NetworkXError(
             "Mimimum spanning tree not defined for directed graphs.")
 
     subtrees = UnionFind()
-    edges = sorted(G.edges(data=True),key=lambda t: t[2].get(weight,1))
-    for u,v,d in edges:
+    edges = sorted(G.edges(data=True), key=lambda t: t[2].get(weight, 1))
+    for u, v, d in edges:
         if subtrees[u] != subtrees[v]:
             if data:
-                yield (u,v,d)
+                yield (u, v, d)
             else:
-                yield (u,v)
-            subtrees.union(u,v)
+                yield (u, v)
+            subtrees.union(u, v)
 
 
-def minimum_spanning_tree(G,weight='weight'):
+def minimum_spanning_tree(G, weight='weight'):
     """Return a minimum spanning tree or forest of an undirected 
     weighted nxgraph.
 
@@ -122,19 +125,21 @@ def minimum_spanning_tree(G,weight='weight'):
     If the nxgraph edges do not have a weight attribute a default weight of 1
     will be used.
     """
-    T=nx.Graph(nx.minimum_spanning_edges(G,weight=weight,data=True))
+    T = nx.Graph(nx.minimum_spanning_edges(G, weight=weight, data=True))
     # Add isolated nodes
-    if len(T)!=len(G):
-        T.add_nodes_from([n for n,d in G.degree().items() if d==0])
+    if len(T) != len(G):
+        T.add_nodes_from([n for n, d in G.degree().items() if d == 0])
     # Add node and nxgraph attributes as shallow copy
     for n in T:
-        T.node[n]=G.node[n].copy()
-    T.graph=G.graph.copy()
+        T.node[n] = G.node[n].copy()
+    T.graph = G.graph.copy()
     return T
 
-kruskal_mst=minimum_spanning_tree
 
-def prim_mst_edges(G, weight = 'weight', data = True):
+kruskal_mst = minimum_spanning_tree
+
+
+def prim_mst_edges(G, weight='weight', data=True):
     """Generate edges in a minimum spanning forest of an undirected 
     weighted nxgraph.
 
@@ -194,7 +199,7 @@ def prim_mst_edges(G, weight = 'weight', data = True):
                 continue
             visited.append(v)
             nodes.remove(v)
-            for v, w  in G.edges(v):
+            for v, w in G.edges(v):
                 if not w in visited:
                     heappush(frontier, (G[v][w].get(weight, 1), v, w))
             if data:
@@ -203,7 +208,7 @@ def prim_mst_edges(G, weight = 'weight', data = True):
                 yield u, v
 
 
-def prim_mst(G, weight = 'weight'):
+def prim_mst(G, weight='weight'):
     """Return a minimum spanning tree or forest of an undirected 
     weighted nxgraph.
 
@@ -242,13 +247,13 @@ def prim_mst(G, weight = 'weight'):
     will be used.
     """
 
-    T=nx.Graph(nx.prim_mst_edges(G,weight=weight,data=True))
+    T = nx.Graph(nx.prim_mst_edges(G, weight=weight, data=True))
     # Add isolated nodes
-    if len(T)!=len(G):
-        T.add_nodes_from([n for n,d in G.degree().items() if d==0])
+    if len(T) != len(G):
+        T.add_nodes_from([n for n, d in G.degree().items() if d == 0])
     # Add node and nxgraph attributes as shallow copy
     for n in T:
-        T.node[n]=G.node[n].copy()
-    T.graph=G.graph.copy()
+        T.node[n] = G.node[n].copy()
+    T.graph = G.graph.copy()
     return T
 

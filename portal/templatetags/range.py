@@ -5,6 +5,7 @@ from django.template import Library, Node, TemplateSyntaxError
 
 register = Library()
 
+
 class RangeNode(Node):
     def __init__(self, range_args, context_name):
         self.range_args = range_args
@@ -13,6 +14,7 @@ class RangeNode(Node):
     def render(self, context):
         context[self.context_name] = range(*self.range_args)
         return ""
+
 
 @register.tag
 def mkrange(parser, token):
@@ -39,9 +41,9 @@ def mkrange(parser, token):
     fnctl = tokens.pop(0)
 
     def error():
-        raise TemplateSyntaxError, "%s accepts the syntax: {%% %s [start,] " +\
-                                   "stop[, step] as context_name %%}, where 'start', 'stop' " +\
-                                   "and 'step' must all be integers." %(fnctl, fnctl)
+        raise TemplateSyntaxError, "%s accepts the syntax: {%% %s [start,] " + \
+                                   "stop[, step] as context_name %%}, where 'start', 'stop' " + \
+                                   "and 'step' must all be integers." % (fnctl, fnctl)
 
     range_args = []
     while True:

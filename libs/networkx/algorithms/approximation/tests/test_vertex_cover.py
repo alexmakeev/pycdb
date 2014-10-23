@@ -3,8 +3,8 @@ from nose.tools import *
 import networkx as nx
 from  networkx.algorithms import approximation as a
 
-class TestMWVC:
 
+class TestMWVC:
     def test_min_vertex_cover(self):
         # create a simple star nxgraph
         size = 50
@@ -26,10 +26,10 @@ class TestMWVC:
         wg.add_edge(0, 3)
         wg.add_edge(0, 4)
 
-        wg.add_edge(1,2)
-        wg.add_edge(2,3)
-        wg.add_edge(3,4)
-        wg.add_edge(4,1)
+        wg.add_edge(1, 2)
+        wg.add_edge(2, 3)
+        wg.add_edge(3, 4)
+        wg.add_edge(4, 1)
 
         cover = a.min_weighted_vertex_cover(wg, weight="weight")
         csum = sum(wg.node[node]["weight"] for node in cover)

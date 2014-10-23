@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 """Generate graphs with given degree and triangle sequence.
 """
-#    Copyright (C) 2004-2011 by 
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import random
+
 import networkx as nx
+
 __author__ = "\n".join(['Aric Hagberg (hagberg@lanl.gov)',
                         'Joel Miller (joel.c.miller.research@gmail.com)'])
 
@@ -97,7 +99,7 @@ def random_clustered_graph(joint_degree_sequence, create_using=None, seed=None):
     joint_degree_sequence = list(joint_degree_sequence)
 
     N = len(joint_degree_sequence)
-    G = nx.empty_graph(N,create_using)
+    G = nx.empty_graph(N, create_using)
 
     ilist = []
     tlist = []
@@ -108,18 +110,18 @@ def random_clustered_graph(joint_degree_sequence, create_using=None, seed=None):
         for tcount in range(degrees[1]):
             tlist.append(n)
 
-    if len(ilist)%2 != 0 or len(tlist)%3 != 0:
+    if len(ilist) % 2 != 0 or len(tlist) % 3 != 0:
         raise nx.NetworkXError('Invalid degree sequence')
 
     random.shuffle(ilist)
     random.shuffle(tlist)
     while ilist:
-        G.add_edge(ilist.pop(),ilist.pop())
+        G.add_edge(ilist.pop(), ilist.pop())
     while tlist:
         n1 = tlist.pop()
         n2 = tlist.pop()
         n3 = tlist.pop()
-        G.add_edges_from([(n1,n2),(n1,n3),(n2,n3)])
-    G.name = "random_clustered %d nodes %d edges"%(G.order(),G.size())
+        G.add_edges_from([(n1, n2), (n1, n3), (n2, n3)])
+    G.name = "random_clustered %d nodes %d edges" % (G.order(), G.size())
     return G
 

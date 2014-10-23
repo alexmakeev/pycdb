@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 """Generate graphs with a given degree sequence or expected degree sequence.
 """
-#    Copyright (C) 2004-2011 by 
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
-import heapq
-from itertools import combinations, permutations
+from itertools import combinations
 import math
 from operator import itemgetter
 import random
+
 import networkx as nx
 from networkx.utils import random_weighted_sample
+
 
 __author__ = "\n".join(['Aric Hagberg <aric.hagberg@gmail.com>',
                         'Pieter Swart <swart@lanl.gov>',
@@ -29,7 +30,7 @@ __all__ = ['configuration_model',
            'random_degree_sequence_graph']
 
 
-def configuration_model(deg_sequence,create_using=None,seed=None):
+def configuration_model(deg_sequence, create_using=None, seed=None):
     """Return a random nxgraph with the given degree sequence.
 
     The configuration model generates a random pseudograph (nxgraph with
@@ -95,7 +96,7 @@ def configuration_model(deg_sequence,create_using=None,seed=None):
 
     >>> G.remove_edges_from(G.selfloop_edges())
     """
-    if not sum(deg_sequence)%2 ==0:
+    if not sum(deg_sequence) % 2 == 0:
         raise nx.NetworkXError('Invalid degree sequence')
 
     if create_using is None:
@@ -107,19 +108,19 @@ def configuration_model(deg_sequence,create_using=None,seed=None):
         random.seed(seed)
 
     # start with empty N-node nxgraph
-    N=len(deg_sequence)
+    N = len(deg_sequence)
 
     # allow multiedges and selfloops
-    G=nx.empty_graph(N,create_using)
+    G = nx.empty_graph(N, create_using)
 
-    if N==0 or max(deg_sequence)==0: # done if no edges
-        return G 
+    if N == 0 or max(deg_sequence) == 0:  # done if no edges
+        return G
 
-    # build stublist, a list of available degree-repeated stubs
+        # build stublist, a list of available degree-repeated stubs
     # e.g. for deg_sequence=[3,2,1,1,1]
     # initially, stublist=[1,1,1,2,2,3,4,5]
     # i.e., node 1 has degree=3 and is repeated 3 times, etc.
-    stublist=[]
+    stublist = []
     for n in G:
         for i in range(deg_sequence[n]):
             stublist.append(n)
@@ -129,15 +130,15 @@ def configuration_model(deg_sequence,create_using=None,seed=None):
     while stublist:
         n1 = stublist.pop()
         n2 = stublist.pop()
-        G.add_edge(n1,n2)
+        G.add_edge(n1, n2)
 
-    G.name="configuration_model %d nodes %d edges"%(G.order(),G.size())
+    G.name = "configuration_model %d nodes %d edges" % (G.order(), G.size())
     return G
 
 
 def directed_configuration_model(in_degree_sequence,
                                  out_degree_sequence,
-                                 create_using=None,seed=None):
+                                 create_using=None, seed=None):
     """Return a directed_random nxgraph with the given degree sequences.
 
     The configuration model generates a random directed pseudograph
@@ -219,34 +220,34 @@ def directed_configuration_model(in_degree_sequence,
     if not seed is None:
         random.seed(seed)
 
-    nin=len(in_degree_sequence)
-    nout=len(out_degree_sequence)
+    nin = len(in_degree_sequence)
+    nout = len(out_degree_sequence)
 
     # pad in- or out-degree sequence with zeros to match lengths
-    if nin>nout:
-        out_degree_sequence.extend((nin-nout)*[0])
+    if nin > nout:
+        out_degree_sequence.extend((nin - nout) * [0])
     else:
-        in_degree_sequence.extend((nout-nin)*[0])
+        in_degree_sequence.extend((nout - nin) * [0])
 
     # start with empty N-node nxgraph
-    N=len(in_degree_sequence)
+    N = len(in_degree_sequence)
 
     # allow multiedges and selfloops
-    G=nx.empty_graph(N,create_using)
+    G = nx.empty_graph(N, create_using)
 
-    if N==0 or max(in_degree_sequence)==0: # done if no edges
+    if N == 0 or max(in_degree_sequence) == 0:  # done if no edges
         return G
 
     # build stublists of available degree-repeated stubs
     # e.g. for degree_sequence=[3,2,1,1,1]
     # initially, stublist=[1,1,1,2,2,3,4,5]
     # i.e., node 1 has degree=3 and is repeated 3 times, etc.
-    in_stublist=[]
+    in_stublist = []
     for n in G:
         for i in range(in_degree_sequence[n]):
             in_stublist.append(n)
 
-    out_stublist=[]
+    out_stublist = []
     for n in G:
         for i in range(out_degree_sequence[n]):
             out_stublist.append(n)
@@ -257,9 +258,9 @@ def directed_configuration_model(in_degree_sequence,
     while in_stublist and out_stublist:
         source = out_stublist.pop()
         target = in_stublist.pop()
-        G.add_edge(source,target)
+        G.add_edge(source, target)
 
-    G.name="directed configuration_model %d nodes %d edges"%(G.order(),G.size())
+    G.name = "directed configuration_model %d nodes %d edges" % (G.order(), G.size())
     return G
 
 
@@ -335,43 +336,44 @@ def expected_degree_graph(w, seed=None, selfloops=True):
        pp. 115-126, 2011.
     """
     n = len(w)
-    G=nx.empty_graph(n)
-    if n==0 or max(w)==0: # done if no edges
+    G = nx.empty_graph(n)
+    if n == 0 or max(w) == 0:  # done if no edges
         return G
     if seed is not None:
         random.seed(seed)
-    rho = 1/float(sum(w))
+    rho = 1 / float(sum(w))
     # sort weights, largest first
     # preserve order of weights for integer node label mapping
-    order = sorted(enumerate(w),key=itemgetter(1),reverse=True)
-    mapping = dict((c,uv[0]) for c,uv in enumerate(order))
-    seq = [v for u,v in order]
-    last=n
+    order = sorted(enumerate(w), key=itemgetter(1), reverse=True)
+    mapping = dict((c, uv[0]) for c, uv in enumerate(order))
+    seq = [v for u, v in order]
+    last = n
     if not selfloops:
-        last-=1
+        last -= 1
     for u in range(last):
         v = u
         if not selfloops:
             v += 1
         factor = seq[u] * rho
-        p = seq[v]*factor
-        if p>1:
+        p = seq[v] * factor
+        if p > 1:
             p = 1
-        while v<n and p>0:
+        while v < n and p > 0:
             if p != 1:
                 r = random.random()
-                v += int(math.floor(math.log(r)/math.log(1-p)))
+                v += int(math.floor(math.log(r) / math.log(1 - p)))
             if v < n:
-                q = seq[v]*factor
-                if q>1:
+                q = seq[v] * factor
+                if q > 1:
                     q = 1
-                if random.random() < q/p:
-                    G.add_edge(mapping[u],mapping[v])
+                if random.random() < q / p:
+                    G.add_edge(mapping[u], mapping[v])
                 v += 1
                 p = q
     return G
 
-def havel_hakimi_graph(deg_sequence,create_using=None):
+
+def havel_hakimi_graph(deg_sequence, create_using=None):
     """Return a simple nxgraph with given degree sequence constructed
     using the Havel-Hakimi algorithm.
 
@@ -414,35 +416,35 @@ def havel_hakimi_graph(deg_sequence,create_using=None):
         if create_using.is_multigraph():
             raise nx.NetworkXError("Havel-Hakimi requires simple nxgraph")
 
-    N=len(deg_sequence)
-    G=nx.empty_graph(N,create_using)
+    N = len(deg_sequence)
+    G = nx.empty_graph(N, create_using)
 
-    if N==0 or max(deg_sequence)==0: # done if no edges
+    if N == 0 or max(deg_sequence) == 0:  # done if no edges
         return G
 
     # form list of [stubs,name] for each node.
-    stublist=[ [deg_sequence[n],n] for n in G]
+    stublist = [[deg_sequence[n], n] for n in G]
     #  Now connect the stubs
     while stublist:
         stublist.sort()
-        if stublist[0][0]<0: # took too many off some vertex
-            return False     # should not happen if deg_seq is valid
+        if stublist[0][0] < 0:  # took too many off some vertex
+            return False  # should not happen if deg_seq is valid
 
-        (freestubs,source) = stublist.pop() # the node with the most stubs
-        if freestubs==0: break          # the rest must also be 0 --Done!
+        (freestubs, source) = stublist.pop()  # the node with the most stubs
+        if freestubs == 0: break  # the rest must also be 0 --Done!
         if freestubs > len(stublist):  # Trouble--can't make that many edges
-            return False               # should not happen if deg_seq is valid
+            return False  # should not happen if deg_seq is valid
 
         # attach edges to biggest nodes
         for stubtarget in stublist[-freestubs:]:
             G.add_edge(source, stubtarget[1])
             stubtarget[0] -= 1  # updating stublist on the fly
 
-    G.name="havel_hakimi_graph %d nodes %d edges"%(G.order(),G.size())
+    G.name = "havel_hakimi_graph %d nodes %d edges" % (G.order(), G.size())
     return G
 
 
-def degree_sequence_tree(deg_sequence,create_using=None):
+def degree_sequence_tree(deg_sequence, create_using=None):
     """Make a tree for the given degree sequence.
 
     A tree has #nodes-#edges=1 so
@@ -450,36 +452,37 @@ def degree_sequence_tree(deg_sequence,create_using=None):
     len(deg_sequence)-sum(deg_sequence)/2=1
     """
 
-    if not len(deg_sequence)-sum(deg_sequence)/2.0 == 1.0:
+    if not len(deg_sequence) - sum(deg_sequence) / 2.0 == 1.0:
         raise nx.NetworkXError("Degree sequence invalid")
     if create_using is not None and create_using.is_directed():
         raise nx.NetworkXError("Directed Graph not supported")
 
     # single node tree
-    if len(deg_sequence)==1:
-        G=nx.empty_graph(0,create_using)
+    if len(deg_sequence) == 1:
+        G = nx.empty_graph(0, create_using)
         return G
 
     # all degrees greater than 1
-    deg=[s for s in deg_sequence if s>1]
+    deg = [s for s in deg_sequence if s > 1]
     deg.sort(reverse=True)
 
     # make path nxgraph as backbone
-    n=len(deg)+2
-    G=nx.path_graph(n,create_using)
-    last=n
+    n = len(deg) + 2
+    G = nx.path_graph(n, create_using)
+    last = n
 
     # add the leaves
-    for source in range(1,n-1):
-        nedges=deg.pop()-2
-        for target in range(last,last+nedges):
+    for source in range(1, n - 1):
+        nedges = deg.pop() - 2
+        for target in range(last, last + nedges):
             G.add_edge(source, target)
-        last+=nedges
+        last += nedges
 
     # in case we added one too many
-    if len(G.degree())>len(deg_sequence):
+    if len(G.degree()) > len(deg_sequence):
         G.remove_node(0)
     return G
+
 
 def random_degree_sequence_graph(sequence, seed=None, tries=10):
     r"""Return a simple random nxgraph with the given degree sequence.
@@ -539,7 +542,8 @@ def random_degree_sequence_graph(sequence, seed=None, tries=10):
             return DSRG.generate()
         except nx.NetworkXUnfeasible:
             pass
-    raise nx.NetworkXError('failed to generate nxgraph in %d tries'%tries)
+    raise nx.NetworkXError('failed to generate nxgraph in %d tries' % tries)
+
 
 class DegreeSequenceRandomGraph(object):
     # class to generate random graphs with a given degree sequence
@@ -551,9 +555,9 @@ class DegreeSequenceRandomGraph(object):
             random.seed(seed)
         self.degree = list(degree)
         # node labels are integers 0,...,n-1
-        self.m = sum(self.degree)/2.0 # number of edges
+        self.m = sum(self.degree) / 2.0  # number of edges
         try:
-            self.dmax = max(self.degree) # maximum degree
+            self.dmax = max(self.degree)  # maximum degree
         except ValueError:
             self.dmax = 0
 
@@ -564,11 +568,11 @@ class DegreeSequenceRandomGraph(object):
         self.graph = nx.Graph()
         self.graph.add_nodes_from(self.remaining_degree)
         # remove zero degree nodes
-        for n,d in list(self.remaining_degree.items()):
+        for n, d in list(self.remaining_degree.items()):
             if d == 0:
                 del self.remaining_degree[n]
         if len(self.remaining_degree) > 0:
-        # build nxgraph in three phases according to how many unmatched edges
+            # build nxgraph in three phases according to how many unmatched edges
             self.phase1()
             self.phase2()
             self.phase3()
@@ -578,7 +582,7 @@ class DegreeSequenceRandomGraph(object):
         # decrement remaining nodes, modify auxilliary nxgraph if in phase3
         if aux_graph is not None:
             # remove edges from auxilliary nxgraph
-            aux_graph.remove_edge(u,v)
+            aux_graph.remove_edge(u, v)
         if self.remaining_degree[u] == 1:
             del self.remaining_degree[u]
             if aux_graph is not None:
@@ -592,63 +596,63 @@ class DegreeSequenceRandomGraph(object):
         else:
             self.remaining_degree[v] -= 1
 
-    def p(self,u,v):
+    def p(self, u, v):
         # degree probability
-        return 1 - self.degree[u]*self.degree[v]/(4.0*self.m)
+        return 1 - self.degree[u] * self.degree[v] / (4.0 * self.m)
 
-    def q(self,u,v):
+    def q(self, u, v):
         # remaining degree probability
-        norm = float(max(self.remaining_degree.values()))**2
-        return self.remaining_degree[u]*self.remaining_degree[v]/norm
+        norm = float(max(self.remaining_degree.values())) ** 2
+        return self.remaining_degree[u] * self.remaining_degree[v] / norm
 
     def suitable_edge(self):
         # Check if there is a suitable edge that is not in the nxgraph
         # True if an (arbitrary) remaining node has at least one possible 
         # connection to another remaining node
         nodes = iter(self.remaining_degree)
-        u = next(nodes) # one arbitrary node
-        for v in nodes: # loop over all other remaining nodes
+        u = next(nodes)  # one arbitrary node
+        for v in nodes:  # loop over all other remaining nodes
             if not self.graph.has_edge(u, v):
                 return True
         return False
 
     def phase1(self):
         # choose node pairs from (degree) weighted distribution
-        while sum(self.remaining_degree.values()) >= 2 * self.dmax**2:
-            u,v = sorted(random_weighted_sample(self.remaining_degree, 2))
-            if self.graph.has_edge(u,v):
+        while sum(self.remaining_degree.values()) >= 2 * self.dmax ** 2:
+            u, v = sorted(random_weighted_sample(self.remaining_degree, 2))
+            if self.graph.has_edge(u, v):
                 continue
-            if random.random() < self.p(u,v):  # accept edge
-                self.graph.add_edge(u,v)
-                self.update_remaining(u,v)
+            if random.random() < self.p(u, v):  # accept edge
+                self.graph.add_edge(u, v)
+                self.update_remaining(u, v)
 
     def phase2(self):
         # choose remaining nodes uniformly at random and use rejection sampling
         while len(self.remaining_degree) >= 2 * self.dmax:
-            norm = float(max(self.remaining_degree.values()))**2
+            norm = float(max(self.remaining_degree.values())) ** 2
             while True:
-                u,v = sorted(random.sample(self.remaining_degree.keys(), 2))
-                if self.graph.has_edge(u,v):
+                u, v = sorted(random.sample(self.remaining_degree.keys(), 2))
+                if self.graph.has_edge(u, v):
                     continue
-                if random.random() < self.q(u,v):
+                if random.random() < self.q(u, v):
                     break
-            if random.random() < self.p(u,v):  # accept edge
-                self.graph.add_edge(u,v)
-                self.update_remaining(u,v)
+            if random.random() < self.p(u, v):  # accept edge
+                self.graph.add_edge(u, v)
+                self.update_remaining(u, v)
 
     def phase3(self):
         # build potential remaining edges and choose with rejection sampling
         potential_edges = combinations(self.remaining_degree, 2)
         # build auxilliary nxgraph of potential edges not already in nxgraph
-        H = nx.Graph([(u,v) for (u,v) in potential_edges
-                      if not self.graph.has_edge(u,v)])
+        H = nx.Graph([(u, v) for (u, v) in potential_edges
+                      if not self.graph.has_edge(u, v)])
         while self.remaining_degree:
             if not self.suitable_edge():
                 raise nx.NetworkXUnfeasible('no suitable edges left')
             while True:
-                u,v = sorted(random.choice(H.edges()))
-                if random.random() < self.q(u,v):
+                u, v = sorted(random.choice(H.edges()))
+                if random.random() < self.q(u, v):
                     break
-            if random.random() < self.p(u,v): # accept edge
-                self.graph.add_edge(u,v)
-                self.update_remaining(u,v, aux_graph=H)
+            if random.random() < self.p(u, v):  # accept edge
+                self.graph.add_edge(u, v)
+                self.update_remaining(u, v, aux_graph=H)

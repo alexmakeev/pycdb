@@ -4,24 +4,27 @@ Cycle finding algorithms
 ========================
 
 """
-#    Copyright (C) 2010 by 
+# Copyright (C) 2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
+from collections import defaultdict
+
 import networkx as nx
 from networkx.utils import *
-from collections import defaultdict 
 
-__all__ = ['cycle_basis','simple_cycles']
 
-__author__ = "\n".join(['Jon Olav Vik <jonovik@gmail.com>', 
+__all__ = ['cycle_basis', 'simple_cycles']
+
+__author__ = "\n".join(['Jon Olav Vik <jonovik@gmail.com>',
                         'Aric Hagberg <hagberg@lanl.gov>'])
+
 
 @not_implemented_for('directed')
 @not_implemented_for('multigraph')
-def cycle_basis(G,root=None):
+def cycle_basis(G, root=None):
     """ Returns a list of cycles which form a basis for cycles of G.
 
     A basis for cycles of a network is a minimal collection of 
@@ -70,36 +73,36 @@ def cycle_basis(G,root=None):
     #     e='cycle_basis() not implemented for multigraphs'
     #     raise Exception(e)
 
-    gnodes=set(G.nodes())
-    cycles=[]
+    gnodes = set(G.nodes())
+    cycles = []
     while gnodes:  # loop over connected components
         if root is None:
-            root=gnodes.pop()
-        stack=[root]
-        pred={root:root} 
-        used={root:set()}
+            root = gnodes.pop()
+        stack = [root]
+        pred = {root: root}
+        used = {root: set()}
         while stack:  # walk the spanning tree finding cycles
-            z=stack.pop()  # use last-in so cycles easier to find
-            zused=used[z]
+            z = stack.pop()  # use last-in so cycles easier to find
+            zused = used[z]
             for nbr in G[z]:
-                if nbr not in used:   # new node 
-                    pred[nbr]=z
+                if nbr not in used:  # new node
+                    pred[nbr] = z
                     stack.append(nbr)
-                    used[nbr]=set([z])
-                elif nbr is z:        # self loops
-                    cycles.append([z]) 
-                elif nbr not in zused:# found a cycle
-                    pn=used[nbr]
-                    cycle=[nbr,z]
-                    p=pred[z]
+                    used[nbr] = set([z])
+                elif nbr is z:  # self loops
+                    cycles.append([z])
+                elif nbr not in zused:  # found a cycle
+                    pn = used[nbr]
+                    cycle = [nbr, z]
+                    p = pred[z]
                     while p not in pn:
                         cycle.append(p)
-                        p=pred[p]
+                        p = pred[p]
                     cycle.append(p)
                     cycles.append(cycle)
                     used[nbr].add(z)
-        gnodes-=set(pred)
-        root=None
+        gnodes -= set(pred)
+        root = None
     return cycles
 
 
@@ -155,12 +158,12 @@ def simple_cycles(G):
             blocked[thisnode] = False
             while B[thisnode]:
                 _unblock(B[thisnode].pop())
-    
+
     def circuit(thisnode, startnode, component):
-        closed = False # set to True if elementary path is closed
+        closed = False  # set to True if elementary path is closed
         path.append(thisnode)
         blocked[thisnode] = True
-        for nextnode in component[thisnode]: # direct successors of thisnode
+        for nextnode in component[thisnode]:  # direct successors of thisnode
             if nextnode == startnode:
                 result.append(path + [startnode])
                 closed = True
@@ -171,37 +174,37 @@ def simple_cycles(G):
             _unblock(thisnode)
         else:
             for nextnode in component[thisnode]:
-                if thisnode not in B[nextnode]: # TODO: use set for speedup?
+                if thisnode not in B[nextnode]:  # TODO: use set for speedup?
                     B[nextnode].append(thisnode)
-        path.pop() # remove thisnode from path
+        path.pop()  # remove thisnode from path
         return closed
-    
-#    if not G.is_directed():
-#        raise nx.NetworkXError(\
-#            "simple_cycles() not implemented for undirected graphs.")
-    path = [] # stack of nodes in current path
-    blocked = defaultdict(bool) # vertex: blocked from search?
-    B = defaultdict(list) # nxgraph portions that yield no elementary circuit
-    result = [] # list to accumulate the circuits found
+
+    #    if not G.is_directed():
+    #        raise nx.NetworkXError(\
+    #            "simple_cycles() not implemented for undirected graphs.")
+    path = []  # stack of nodes in current path
+    blocked = defaultdict(bool)  # vertex: blocked from search?
+    B = defaultdict(list)  # nxgraph portions that yield no elementary circuit
+    result = []  # list to accumulate the circuits found
     # Johnson's algorithm requires some ordering of the nodes.
     # They might not be sortable so we assign an arbitrary ordering.
-    ordering=dict(zip(G,range(len(G))))
+    ordering = dict(zip(G, range(len(G))))
     for s in ordering:
         # Build the subgraph induced by s and following nodes in the ordering
-        subgraph = G.subgraph(node for node in G 
+        subgraph = G.subgraph(node for node in G
                               if ordering[node] >= ordering[s])
         # Find the strongly connected component in the subgraph 
         # that contains the least node according to the ordering
         strongcomp = nx.strongly_connected_components(subgraph)
-        mincomp=min(strongcomp, 
-                    key=lambda nodes: min(ordering[n] for n in nodes))
+        mincomp = min(strongcomp,
+                      key=lambda nodes: min(ordering[n] for n in nodes))
         component = G.subgraph(mincomp)
         if component:
             # smallest node in the component according to the ordering
-            startnode = min(component,key=ordering.__getitem__) 
+            startnode = min(component, key=ordering.__getitem__)
             for node in component:
                 blocked[node] = False
                 B[node][:] = []
-            dummy=circuit(startnode, startnode, component)
+            dummy = circuit(startnode, startnode, component)
 
     return result

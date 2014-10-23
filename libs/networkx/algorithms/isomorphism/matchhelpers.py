@@ -3,7 +3,9 @@ edge_match functions to use during isomorphism checks.
 """
 from itertools import permutations
 import types
+
 import networkx as nx
+
 
 __all__ = ['categorical_node_match',
            'categorical_edge_match',
@@ -14,7 +16,7 @@ __all__ = ['categorical_node_match',
            'generic_node_match',
            'generic_edge_match',
            'generic_multiedge_match',
-          ]
+]
 
 
 def copyfunc(f, name=None):
@@ -25,6 +27,7 @@ def copyfunc(f, name=None):
     except AttributeError:
         return types.FunctionType(f.__code__, f.__globals__, name or f.name,
                                   f.__defaults__, f.__closure__)
+
 
 def allclose(x, y, rtol=1.0000000000000001e-05, atol=1e-08):
     """Returns True if x and y are sufficiently close, elementwise.
@@ -38,8 +41,8 @@ def allclose(x, y, rtol=1.0000000000000001e-05, atol=1e-08):
 
     """
     # assume finite weights, see numpy.allclose() for reference
-    for xi, yi in zip(x,y):
-        if not ( abs(xi-yi) <= atol + rtol * abs(yi) ):
+    for xi, yi in zip(x, y):
+        if not ( abs(xi - yi) <= atol + rtol * abs(yi) ):
             return False
     return True
 
@@ -56,7 +59,7 @@ def close(x, y, rtol=1.0000000000000001e-05, atol=1e-08):
 
     """
     # assume finite weights, see numpy.allclose() for reference
-    return abs(x-y) <= atol + rtol * abs(y)
+    return abs(x - y) <= atol + rtol * abs(y)
 
 
 categorical_doc = """
@@ -88,19 +91,23 @@ Examples
 
 """
 
+
 def categorical_node_match(attr, default):
     if nx.utils.is_string_like(attr):
         def match(data1, data2):
             return data1.get(attr, default) == data2.get(attr, default)
     else:
-        attrs = list(zip(attr, default)) # Python 3
+        attrs = list(zip(attr, default))  # Python 3
+
         def match(data1, data2):
             values1 = set([data1.get(attr, d) for attr, d in attrs])
             values2 = set([data2.get(attr, d) for attr, d in attrs])
             return values1 == values2
     return match
 
+
 categorical_edge_match = copyfunc(categorical_node_match, 'categorical_edge_match')
+
 
 def categorical_multiedge_match(attr, default):
     if nx.utils.is_string_like(attr):
@@ -109,15 +116,16 @@ def categorical_multiedge_match(attr, default):
             values2 = set([data.get(attr, default) for data in datasets2.values()])
             return values1 == values2
     else:
-        attrs = list(zip(attr, default)) # Python 3
+        attrs = list(zip(attr, default))  # Python 3
+
         def match(datasets1, datasets2):
             values1 = set([])
             for data1 in datasets1.values():
-                x = tuple( data1.get(attr, d) for attr, d in attrs )
+                x = tuple(data1.get(attr, d) for attr, d in attrs)
                 values1.add(x)
             values2 = set([])
             for data2 in datasets2.values():
-                x = tuple( data2.get(attr, d) for attr, d in attrs )
+                x = tuple(data2.get(attr, d) for attr, d in attrs)
                 values2.add(x)
             return values1 == values2
     return match
@@ -128,7 +136,6 @@ categorical_edge_match.__doc__ = categorical_doc.replace('node', 'edge')
 tmpdoc = categorical_doc.replace('node', 'edge')
 tmpdoc = tmpdoc.replace('categorical_edge_match', 'categorical_multiedge_match')
 categorical_multiedge_match.__doc__ = tmpdoc
-
 
 numerical_doc = """
 Returns a comparison function for a numerical node attribute.
@@ -163,6 +170,7 @@ Examples
 
 """
 
+
 def numerical_node_match(attr, default, rtol=1.0000000000000001e-05, atol=1e-08):
     if nx.utils.is_string_like(attr):
         def match(data1, data2):
@@ -170,14 +178,17 @@ def numerical_node_match(attr, default, rtol=1.0000000000000001e-05, atol=1e-08)
                          data2.get(attr, default),
                          rtol=rtol, atol=atol)
     else:
-        attrs = list(zip(attr, default)) # Python 3
+        attrs = list(zip(attr, default))  # Python 3
+
         def match(data1, data2):
             values1 = [data1.get(attr, d) for attr, d in attrs]
             values2 = [data2.get(attr, d) for attr, d in attrs]
             return allclose(values1, values2, rtol=rtol, atol=atol)
     return match
 
+
 numerical_edge_match = copyfunc(numerical_node_match, 'numerical_edge_match')
+
 
 def numerical_multiedge_match(attr, default, rtol=1.0000000000000001e-05, atol=1e-08):
     if nx.utils.is_string_like(attr):
@@ -187,14 +198,15 @@ def numerical_multiedge_match(attr, default, rtol=1.0000000000000001e-05, atol=1
             return allclose(values1, values2, rtol=rtol, atol=atol)
     else:
         attrs = list(zip(attr, default))  # Python 3
+
         def match(datasets1, datasets2):
             values1 = []
             for data1 in datasets1.values():
-                x = tuple( data1.get(attr, d) for attr, d in attrs )
+                x = tuple(data1.get(attr, d) for attr, d in attrs)
                 values1.append(x)
             values2 = []
             for data2 in datasets2.values():
-                x = tuple( data2.get(attr, d) for attr, d in attrs )
+                x = tuple(data2.get(attr, d) for attr, d in attrs)
                 values2.append(x)
             values1.sort()
             values2.sort()
@@ -211,7 +223,6 @@ numerical_edge_match.__doc__ = numerical_doc.replace('node', 'edge')
 tmpdoc = numerical_doc.replace('node', 'edge')
 tmpdoc = tmpdoc.replace('numerical_edge_match', 'numerical_multiedge_match')
 numerical_multiedge_match.__doc__ = tmpdoc
-
 
 generic_doc = """
 Returns a comparison function for a generic attribute.
@@ -248,12 +259,14 @@ Examples
 
 """
 
+
 def generic_node_match(attr, default, op):
     if nx.utils.is_string_like(attr):
         def match(data1, data2):
             return op(data1.get(attr, default), data2.get(attr, default))
     else:
-        attrs = list(zip(attr, default, op)) # Python 3
+        attrs = list(zip(attr, default, op))  # Python 3
+
         def match(data1, data2):
             for attr, d, operator in attrs:
                 if not operator(data1.get(attr, d), data2.get(attr, d)):
@@ -262,7 +275,9 @@ def generic_node_match(attr, default, op):
                 return True
     return match
 
+
 generic_edge_match = copyfunc(generic_node_match, 'generic_edge_match')
+
 
 def generic_multiedge_match(attr, default, op):
     """Returns a comparison function for a generic attribute.
@@ -322,15 +337,16 @@ def generic_multiedge_match(attr, default, op):
                 # Then there are no isomorphisms between the multiedges.
                 return False
     else:
-        attrs = list(zip(attr, default)) # Python 3
+        attrs = list(zip(attr, default))  # Python 3
+
         def match(datasets1, datasets2):
             values1 = []
             for data1 in datasets1.values():
-                x = tuple( data1.get(attr, d) for attr, d in attrs )
+                x = tuple(data1.get(attr, d) for attr, d in attrs)
                 values1.append(x)
             values2 = []
             for data2 in datasets2.values():
-                x = tuple( data2.get(attr, d) for attr, d in attrs )
+                x = tuple(data2.get(attr, d) for attr, d in attrs)
                 values2.append(x)
             for vals2 in permutations(values2):
                 for xi, yi, operator in zip(values1, vals2, op):

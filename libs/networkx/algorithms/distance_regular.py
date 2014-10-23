@@ -3,16 +3,18 @@
 Distance-regular graphs
 =======================
 """
-#    Copyright (C) 2011 by 
+# Copyright (C) 2011 by
 #    Dheeraj M R <dheerajrav@gmail.com>
 #    Aric Hagberg <aric.hagberg@gmail.com>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = """\n""".join(['Dheeraj M R <dheerajrav@gmail.com>',
                             'Aric Hagberg <aric.hagberg@gmail.com>'])
 
-__all__ = ['is_distance_regular','intersection_array','global_parameters']
+__all__ = ['is_distance_regular', 'intersection_array', 'global_parameters']
+
 
 def is_distance_regular(G):
     """Returns True if the nxgraph is distance regular, False otherwise.
@@ -55,12 +57,13 @@ def is_distance_regular(G):
 
     """
     try:
-        a=intersection_array(G)
+        a = intersection_array(G)
         return True
     except nx.NetworkXError:
         return False
 
-def global_parameters(b,c):
+
+def global_parameters(b, c):
     """Return global parameters for a given intersection array.
 
     Given a distance-regular nxgraph G with integers b_i, c_i,i = 0,....,d
@@ -98,14 +101,14 @@ def global_parameters(b,c):
     --------
     intersection_array 
     """
-    d=len(b)
-    ba=b[:]
-    ca=c[:]
+    d = len(b)
+    ba = b[:]
+    ca = c[:]
     ba.append(0)
-    ca.insert(0,0)
+    ca.insert(0, 0)
     k = ba[0]
-    aa = [k-x-y for x,y in zip(ba,ca)]
-    return zip(*[ca,aa,ba])
+    aa = [k - x - y for x, y in zip(ba, ca)]
+    return zip(*[ca, aa, ba])
 
 
 def intersection_array(G):
@@ -149,15 +152,15 @@ def intersection_array(G):
                                    'or multiedge graphs.')
     # test for regular nxgraph (all degrees must be equal)
     degree = G.degree_iter()
-    (_,k) = next(degree)
-    for _,knext in degree:
+    (_, k) = next(degree)
+    for _, knext in degree:
         if knext != k:
             raise nx.NetworkXError('Graph is not distance regular.')
         k = knext
-    path_length = nx.all_pairs_shortest_path_length(G)  
+    path_length = nx.all_pairs_shortest_path_length(G)
     diameter = max([max(path_length[n].values()) for n in path_length])
-    bint = {} # 'b' intersection array
-    cint = {} # 'c' intersection array
+    bint = {}  # 'b' intersection array
+    cint = {}  # 'c' intersection array
     for u in G:
         for v in G:
             try:
@@ -165,15 +168,15 @@ def intersection_array(G):
             except KeyError:  # nxgraph must be connected
                 raise nx.NetworkXError('Graph is not distance regular.')
             # number of neighbors of v at a distance of i-1 from u
-            c = len([n for n in G[v] if path_length[n][u]==i-1])
+            c = len([n for n in G[v] if path_length[n][u] == i - 1])
             # number of neighbors of v at a distance of i+1 from u
-            b = len([n for n in G[v] if path_length[n][u]==i+1])
+            b = len([n for n in G[v] if path_length[n][u] == i + 1])
             # b,c are independent of u and v
-            if cint.get(i,c) != c or bint.get(i,b) != b:
+            if cint.get(i, c) != c or bint.get(i, b) != b:
                 raise nx.NetworkXError('Graph is not distance regular')
-            bint[i] = b 
-            cint[i] = c 
-    return ([bint.get(i,0) for i in range(diameter)],
-            [cint.get(i+1,0) for i in range(diameter)])
+            bint[i] = b
+            cint[i] = c
+    return ([bint.get(i, 0) for i in range(diameter)],
+            [cint.get(i + 1, 0) for i in range(diameter)])
 
 

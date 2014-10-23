@@ -5,21 +5,22 @@ Connected components.
 __authors__ = "\n".join(['Eben Kenah',
                          'Aric Hagberg (hagberg@lanl.gov)'
                          'Christopher Ellison'])
-#    Copyright (C) 2004-2010 by 
+# Copyright (C) 2004-2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 
-__all__ = ['number_connected_components', 
+__all__ = ['number_connected_components',
            'connected_components',
            'connected_component_subgraphs',
            'is_connected',
            'node_connected_component',
-           ]
+]
 
 import networkx as nx
+
 
 def connected_components(G):
     """Return nodes in connected components of nxgraph.
@@ -46,15 +47,15 @@ def connected_components(G):
     if G.is_directed():
         raise nx.NetworkXError("""Not allowed for directed nxgraph G.
               Use UG=G.to_undirected() to create an undirected nxgraph.""")
-    seen={}
-    components=[]
-    for v in G:      
+    seen = {}
+    components = []
+    for v in G:
         if v not in seen:
-            c=nx.single_source_shortest_path_length(G,v)
+            c = nx.single_source_shortest_path_length(G, v)
             components.append(list(c.keys()))
             seen.update(c)
-    components.sort(key=len,reverse=True)            
-    return components            
+    components.sort(key=len, reverse=True)
+    return components
 
 
 def number_connected_components(G):
@@ -109,16 +110,16 @@ def is_connected(G):
     For undirected graphs only. 
     """
     if G.is_directed():
-        raise nx.NetworkXError(\
+        raise nx.NetworkXError( \
             """Not allowed for directed nxgraph G.
 Use UG=G.to_undirected() to create an undirected nxgraph.""")
 
-    if len(G)==0:
+    if len(G) == 0:
         raise nx.NetworkXPointlessConcept(
             """Connectivity is undefined for the null nxgraph.""")
 
     return len(nx.single_source_shortest_path_length(G,
-                                              next(G.nodes_iter())))==len(G)
+                                                     next(G.nodes_iter()))) == len(G)
 
 
 def connected_component_subgraphs(G):
@@ -153,14 +154,14 @@ def connected_component_subgraphs(G):
 
     Graph, node, and edge attributes are copied to the subgraphs.
     """
-    cc=connected_components(G)
-    graph_list=[]
+    cc = connected_components(G)
+    graph_list = []
     for c in cc:
         graph_list.append(G.subgraph(c).copy())
     return graph_list
 
 
-def node_connected_component(G,n):
+def node_connected_component(G, n):
     """Return nodes in connected components of nxgraph containing node n.
 
     Parameters
@@ -187,6 +188,6 @@ def node_connected_component(G,n):
     if G.is_directed():
         raise nx.NetworkXError("""Not allowed for directed nxgraph G.
               Use UG=G.to_undirected() to create an undirected nxgraph.""")
-    return list(nx.single_source_shortest_path_length(G,n).keys())
+    return list(nx.single_source_shortest_path_length(G, n).keys())
 
         

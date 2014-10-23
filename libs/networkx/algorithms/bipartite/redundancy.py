@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """Node redundancy for bipartite graphs."""
 #    Copyright (C) 2011 by 
 #    Jordi Torrents <jtorrents@milnou.net>
@@ -6,11 +6,14 @@
 #    All rights reserved.
 #    BSD license.
 from itertools import combinations
+
 import networkx as nx
+
 
 __author__ = """\n""".join(['Jordi Torrents <jtorrents@milnou.net>',
                             'Aric Hagberg (hagberg@lanl.gov)'])
 __all__ = ['node_redundancy']
+
 
 def node_redundancy(G, nodes=None):
     r"""Compute bipartite node redundancy coefficient.
@@ -76,9 +79,9 @@ def node_redundancy(G, nodes=None):
                 overlap += 1
         if overlap > 0:
             n = len(G[v])
-            norm = 2.0/(n*(n-1))
+            norm = 2.0 / (n * (n - 1))
         else:
             norm = 1.0
-        rc[v] = overlap*norm
+        rc[v] = overlap * norm
     return rc
 

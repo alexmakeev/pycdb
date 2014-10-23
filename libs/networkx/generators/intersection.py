@@ -2,20 +2,23 @@
 """
 Generators for random intersection graphs.
 """
-#    Copyright (C) 2011 by 
+# Copyright (C) 2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import random
+
 import networkx as nx
+
 __author__ = "\n".join(['Aric Hagberg (hagberg@lanl.gov)'])
 
 __all__ = ['uniform_random_intersection_graph',
            'k_random_intersection_graph',
            'general_random_intersection_graph',
-           ]
+]
+
 
 def uniform_random_intersection_graph(n, m, p, seed=None):
     """Return a uniform random intersection nxgraph.
@@ -44,10 +47,11 @@ def uniform_random_intersection_graph(n, m, p, seed=None):
        An equivalence theorem relating the evolution of the g(n, m, p)
        and g(n, p) models. Random Struct. Algorithms 16, 2 (2000), 156–176.
     """
-    G=nx.bipartite_random_graph(n, m, p, seed=seed)
-    return nx.projected_graph(G, range(n)) 
+    G = nx.bipartite_random_graph(n, m, p, seed=seed)
+    return nx.projected_graph(G, range(n))
 
-def k_random_intersection_graph(n,m,k):
+
+def k_random_intersection_graph(n, m, k):
     """Return a intersection nxgraph with randomly chosen attribute sets for
     each node that are of equal size (k). 
 
@@ -73,13 +77,14 @@ def k_random_intersection_graph(n,m,k):
        Electronic Notes in Discrete Mathematics 10 (2001), 129--132.
     """
     G = nx.empty_graph(n + m)
-    mset = range(n,n+m)
+    mset = range(n, n + m)
     for v in range(n):
         targets = random.sample(mset, k)
-        G.add_edges_from(zip([v]*len(targets), targets))
+        G.add_edges_from(zip([v] * len(targets), targets))
     return nx.projected_graph(G, range(n))
 
-def general_random_intersection_graph(n,m,p):
+
+def general_random_intersection_graph(n, m, p):
     """Return a random intersection nxgraph with independent probabilities
     for connections between node and attribute sets.
 
@@ -106,13 +111,13 @@ def general_random_intersection_graph(n,m,p):
        J. Karhum¨aki, A. Lepist¨o, and D. Sannella, Eds., vol. 3142
        of Lecture Notes in Computer Science, Springer, pp. 1029–1040.
     """
-    if len(p)!=m:
+    if len(p) != m:
         raise ValueError("Probability list p must have m elements.")
     G = nx.empty_graph(n + m)
-    mset = range(n,n+m)
+    mset = range(n, n + m)
     for u in range(n):
-        for v,q in zip(mset,p):
-            if random.random()<q:
-                G.add_edge(u,v)
+        for v, q in zip(mset, p):
+            if random.random() < q:
+                G.add_edge(u, v)
     return nx.projected_graph(G, range(n))
 

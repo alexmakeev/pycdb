@@ -1,10 +1,11 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #    Copyright (C) 2011 by 
 #    Jordi Torrents <jtorrents@milnou.net>
 #    Aric Hagberg <hagberg@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = """\n""".join(['Jordi Torrents <jtorrents@milnou.net>',
                             'Aric Hagberg (hagberg@lanl.gov)'])
 __all__ = ["average_neighbor_degree"]
@@ -13,17 +14,18 @@ __all__ = ["average_neighbor_degree"]
 def _average_nbr_deg(G, source_degree, target_degree, nodes=None, weight=None):
     # average degree of neighbors
     avg = {}
-    for n,deg in source_degree(nodes,weight=weight).items():
+    for n, deg in source_degree(nodes, weight=weight).items():
         # normalize but not by zero degree
         if deg == 0:
             deg = 1
         nbrdeg = target_degree(G[n])
         if weight is None:
-            avg[n] = sum(nbrdeg.values())/float(deg)
+            avg[n] = sum(nbrdeg.values()) / float(deg)
         else:
-            avg[n] = sum((G[n][nbr].get(weight,1)*d 
-                          for nbr,d in nbrdeg.items()))/float(deg)
+            avg[n] = sum((G[n][nbr].get(weight, 1) * d
+                          for nbr, d in nbrdeg.items())) / float(deg)
     return avg
+
 
 def average_neighbor_degree(G, source='out', target='out',
                             nodes=None, weight=None):
@@ -111,11 +113,11 @@ def average_neighbor_degree(G, source='out', target='out',
     source_degree = G.degree
     target_degree = G.degree
     if G.is_directed():
-        direction = {'out':G.out_degree,
-                     'in':G.in_degree}
+        direction = {'out': G.out_degree,
+                     'in': G.in_degree}
         source_degree = direction[source]
         target_degree = direction[target]
-    return _average_nbr_deg(G, source_degree, target_degree, 
+    return _average_nbr_deg(G, source_degree, target_degree,
                             nodes=nodes, weight=weight)
 
 # obsolete

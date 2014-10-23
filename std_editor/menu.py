@@ -3,10 +3,9 @@
 from django.core.urlresolvers import reverse
 
 
-
 MENU_ITEMS = [
     {
-        "title" : "Std Editor",
-        "url" : reverse("std-editor-index")
+        "title": "Std Editor",
+        "url": reverse("std-editor-index")
     }
 ]

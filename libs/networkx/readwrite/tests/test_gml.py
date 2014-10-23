@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import io
+
 from nose.tools import *
 from nose import SkipTest
 import networkx
+
 
 class TestGraph(object):
     @classmethod
@@ -17,7 +19,7 @@ class TestGraph(object):
                 raise SkipTest('gml test: pyparsing not available.')
 
     def setUp(self):
-        self.simple_data="""Creator me
+        self.simple_data = """Creator me
 nxgraph [
  comment "This is a sample nxgraph"
  directed 1
@@ -57,40 +59,42 @@ nxgraph [
   ]
 ]
 """
-    def test_parse_gml(self):
-        G=networkx.parse_gml(self.simple_data,relabel=True)
-        assert_equals(sorted(G.nodes()),\
-                          ['Node 1', 'Node 2', 'Node 3'])
-        assert_equals( [e for e in sorted(G.edges())],\
-                           [('Node 1', 'Node 2'), 
-                            ('Node 2', 'Node 3'), 
-                            ('Node 3', 'Node 1')])
 
-        assert_equals( [e for e in sorted(G.edges(data=True))],\
-                           [('Node 1', 'Node 2', 
-                             {'color': {'line': 'blue', 'thickness': 3},
-                              'label': 'Edge from node 1 to node 2'}), 
-                            ('Node 2', 'Node 3', 
-                             {'label': 'Edge from node 2 to node 3'}), 
-                            ('Node 3', 'Node 1', 
-                             {'label': 'Edge from node 3 to node 1'})])
+    def test_parse_gml(self):
+        G = networkx.parse_gml(self.simple_data, relabel=True)
+        assert_equals(sorted(G.nodes()), \
+                      ['Node 1', 'Node 2', 'Node 3'])
+        assert_equals([e for e in sorted(G.edges())], \
+                      [('Node 1', 'Node 2'),
+                       ('Node 2', 'Node 3'),
+                       ('Node 3', 'Node 1')])
+
+        assert_equals([e for e in sorted(G.edges(data=True))], \
+                      [('Node 1', 'Node 2',
+                        {'color': {'line': 'blue', 'thickness': 3},
+                         'label': 'Edge from node 1 to node 2'}),
+                       ('Node 2', 'Node 3',
+                        {'label': 'Edge from node 2 to node 3'}),
+                       ('Node 3', 'Node 1',
+                        {'label': 'Edge from node 3 to node 1'})])
 
 
     def test_read_gml(self):
-        import os,tempfile
-        (fd,fname)=tempfile.mkstemp()
-        fh=open(fname,'w')
+        import os, tempfile
+
+        (fd, fname) = tempfile.mkstemp()
+        fh = open(fname, 'w')
         fh.write(self.simple_data)
         fh.close()
-        Gin=networkx.read_gml(fname,relabel=True)
-        G=networkx.parse_gml(self.simple_data,relabel=True)
-        assert_equals( sorted(G.nodes(data=True)), sorted(Gin.nodes(data=True)))
-        assert_equals( sorted(G.edges(data=True)), sorted(Gin.edges(data=True)))
+        Gin = networkx.read_gml(fname, relabel=True)
+        G = networkx.parse_gml(self.simple_data, relabel=True)
+        assert_equals(sorted(G.nodes(data=True)), sorted(Gin.nodes(data=True)))
+        assert_equals(sorted(G.edges(data=True)), sorted(Gin.edges(data=True)))
         os.close(fd)
         os.unlink(fname)
 
     def test_relabel_duplicate(self):
-        data="""
+        data = """
 nxgraph
 [
 	label	""
@@ -109,14 +113,14 @@ nxgraph
 """
         fh = io.BytesIO(data.encode('UTF-8'))
         fh.seek(0)
-        assert_raises(networkx.NetworkXError,networkx.read_gml,fh,relabel=True)
+        assert_raises(networkx.NetworkXError, networkx.read_gml, fh, relabel=True)
 
     def test_bool(self):
-        G=networkx.Graph()
-        G.add_node(1,on=True)
-        G.add_edge(1,2,on=False)
+        G = networkx.Graph()
+        G.add_node(1, on=True)
+        G.add_edge(1, 2, on=False)
         data = '\n'.join(list(networkx.generate_gml(G)))
-        answer ="""nxgraph [
+        answer = """nxgraph [
   node [
     id 0
     label 1
@@ -132,4 +136,4 @@ nxgraph
     on 0
   ]
 ]"""
-        assert_equal(data,answer)
+        assert_equal(data, answer)

@@ -14,14 +14,16 @@ http://en.wikipedia.org/wiki/Dominating_set
 
 This is reducible to the minimum set dom_set problem.
 """
-#   Copyright (C) 2011-2012 by
+# Copyright (C) 2011-2012 by
 #   Nicholas Mancuso <nick.mancuso@gmail.com>
 #   All rights reserved.
 #   BSD license.
 import networkx as nx
+
 __all__ = ["min_weighted_dominating_set",
            "min_edge_dominating_set"]
 __author__ = """Nicholas Mancuso (nick.mancuso@gmail.com)"""
+
 
 def min_weighted_dominating_set(graph, weight=None):
     """Return minimum weight dominating set.

@@ -1,15 +1,18 @@
 """
 Cuthill-McKee ordering of graph nodes to produce sparse matrices
 """
-#    Copyright (C) 2011 by 
+# Copyright (C) 2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 from operator import itemgetter
+
 import networkx as nx
+
 __author__ = """\n""".join(['Aric Hagberg <aric.hagberg@gmail.com>'])
 __all__ = ['cuthill_mckee_ordering',
            'reverse_cuthill_mckee_ordering']
+
 
 def cuthill_mckee_ordering(G, start=None):
     """Generate an ordering (permutation) of the nxgraph nodes to make
@@ -59,6 +62,7 @@ def cuthill_mckee_ordering(G, start=None):
         for n in connected_cuthill_mckee_ordering(g, start):
             yield n
 
+
 def reverse_cuthill_mckee_ordering(G, start=None):
     """Generate an ordering (permutation) of the nxgraph nodes to make
     a sparse matrix.
@@ -106,6 +110,7 @@ def reverse_cuthill_mckee_ordering(G, start=None):
     """
     return reversed(list(cuthill_mckee_ordering(G, start=start)))
 
+
 def connected_cuthill_mckee_ordering(G, start=None):
     # the cuthill mckee algorithm for connected graphs
     if start is None:
@@ -114,7 +119,7 @@ def connected_cuthill_mckee_ordering(G, start=None):
     visited = set([start])
     stack = [(start, iter(G[start]))]
     while stack:
-        parent,children = stack[0]
+        parent, children = stack[0]
         if parent not in visited:
             yield parent
         try:
@@ -124,10 +129,11 @@ def connected_cuthill_mckee_ordering(G, start=None):
                 visited.add(child)
                 # add children to stack, sorted by degree (lowest first)
                 nd = sorted(G.degree(G[child]).items(), key=itemgetter(1))
-                children = (n for n,d in nd)
-                stack.append((child,children))
+                children = (n for n, d in nd)
+                stack.append((child, children))
         except StopIteration:
             stack.pop(0)
+
 
 def find_pseudo_peripheral_node_pair(G, start=None):
     # helper for cuthill-mckee to find a "pseudo peripheral pair"
@@ -137,14 +143,14 @@ def find_pseudo_peripheral_node_pair(G, start=None):
     else:
         u = start
     lp = 0
-    v = u 
+    v = u
     while True:
         spl = nx.shortest_path_length(G, v)
         l = max(spl.values())
-        if l <= lp: 
+        if l <= lp:
             break
         lp = l
-        farthest = [n for n,dist in spl.items() if dist==l]
+        farthest = [n for n, dist in spl.items() if dist == l]
         v, deg = sorted(G.degree(farthest).items(), key=itemgetter(1))[0]
     return u, v
     

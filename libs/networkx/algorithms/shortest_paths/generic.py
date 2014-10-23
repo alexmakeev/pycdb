@@ -8,18 +8,20 @@ For directed graphs the paths can be computed in the reverse
 order by first flipping the edge orientation using R=G.reverse(copy=False).
 
 """
-#    Copyright (C) 2004-2012 by
+# Copyright (C) 2004-2012 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = """\n""".join(['Aric Hagberg <aric.hagberg@gmail.com>',
                             'Sérgio Nery Simões <sergionery@gmail.com>'])
 __all__ = ['shortest_path', 'all_shortest_paths',
            'shortest_path_length', 'average_shortest_path_length',
            'has_path']
+
 
 def has_path(G, source, target):
     """Return True if G has a path from source to target, False otherwise.
@@ -35,10 +37,11 @@ def has_path(G, source, target):
        Ending node for path
     """
     try:
-        sp = nx.shortest_path(G,source, target)
+        sp = nx.shortest_path(G, source, target)
     except nx.NetworkXNoPath:
         return False
     return True
+
 
 def shortest_path(G, source=None, target=None, weight=None):
     """Compute shortest paths in the nxgraph.
@@ -102,24 +105,24 @@ def shortest_path(G, source=None, target=None, weight=None):
     if source is None:
         if target is None:
             if weight is None:
-                paths=nx.all_pairs_shortest_path(G)
+                paths = nx.all_pairs_shortest_path(G)
             else:
-                paths=nx.all_pairs_dijkstra_path(G,weight=weight)
+                paths = nx.all_pairs_dijkstra_path(G, weight=weight)
         else:
-            raise nx.NetworkXError(\
+            raise nx.NetworkXError( \
                 "Target given but no source specified.")
-    else: # source specified
+    else:  # source specified
         if target is None:
             if weight is None:
-                paths=nx.single_source_shortest_path(G,source)
+                paths = nx.single_source_shortest_path(G, source)
             else:
-                paths=nx.single_source_dijkstra_path(G,source,weight=weight)
+                paths = nx.single_source_dijkstra_path(G, source, weight=weight)
         else:
             # shortest source-target path
             if weight is None:
-                paths=nx.bidirectional_shortest_path(G,source,target)
+                paths = nx.bidirectional_shortest_path(G, source, target)
             else:
-                paths=nx.dijkstra_path(G,source,target,weight)
+                paths = nx.dijkstra_path(G, source, target, weight)
 
     return paths
 
@@ -194,24 +197,24 @@ def shortest_path_length(G, source=None, target=None, weight=None):
     if source is None:
         if target is None:
             if weight is None:
-                paths=nx.all_pairs_shortest_path_length(G)
+                paths = nx.all_pairs_shortest_path_length(G)
             else:
-                paths=nx.all_pairs_dijkstra_path_length(G, weight=weight)
+                paths = nx.all_pairs_dijkstra_path_length(G, weight=weight)
         else:
             raise nx.NetworkXError("Target given but no source specified.")
-    else: # source specified
+    else:  # source specified
         if target is None:
             if weight is None:
-                paths=nx.single_source_shortest_path_length(G,source)
+                paths = nx.single_source_shortest_path_length(G, source)
             else:
-                paths=nx.single_source_dijkstra_path_length(G,source,weight=weight)
+                paths = nx.single_source_dijkstra_path_length(G, source, weight=weight)
         else:
             # shortest source-target path
             if weight is None:
-                p=nx.bidirectional_shortest_path(G,source,target)
-                paths=len(p)-1
+                p = nx.bidirectional_shortest_path(G, source, target)
+                paths = len(p) - 1
             else:
-                paths=nx.dijkstra_path_length(G,source,target,weight)
+                paths = nx.dijkstra_path_length(G, source, target, weight)
     return paths
 
 
@@ -263,17 +266,17 @@ def average_shortest_path_length(G, weight=None):
     else:
         if not nx.is_connected(G):
             raise nx.NetworkXError("Graph is not connected.")
-    avg=0.0
+    avg = 0.0
     if weight is None:
         for node in G:
-            path_length=nx.single_source_shortest_path_length(G, node)
+            path_length = nx.single_source_shortest_path_length(G, node)
             avg += sum(path_length.values())
     else:
         for node in G:
-            path_length=nx.single_source_dijkstra_path_length(G, node, weight=weight)
+            path_length = nx.single_source_dijkstra_path_length(G, node, weight=weight)
             avg += sum(path_length.values())
-    n=len(G)
-    return avg/(n*(n-1))
+    n = len(G)
+    return avg / (n * (n - 1))
 
 
 def all_shortest_paths(G, source, target, weight=None):
@@ -318,23 +321,23 @@ def all_shortest_paths(G, source, target, weight=None):
     all_pairs_shortest_path()
     """
     if weight is not None:
-        pred,dist = nx.dijkstra_predecessor_and_distance(G,source,weight=weight)
+        pred, dist = nx.dijkstra_predecessor_and_distance(G, source, weight=weight)
     else:
-        pred = nx.predecessor(G,source)
+        pred = nx.predecessor(G, source)
     if target not in pred:
         raise nx.NetworkXNoPath()
-    stack = [[target,0]]
+    stack = [[target, 0]]
     top = 0
     while top >= 0:
-        node,i = stack[top]
+        node, i = stack[top]
         if node == source:
-          yield [p for p,n in reversed(stack[:top+1])]
+            yield [p for p, n in reversed(stack[:top + 1])]
         if len(pred[node]) > i:
             top += 1
             if top == len(stack):
-                stack.append([pred[node][i],0])
+                stack.append([pred[node][i], 0])
             else:
-                stack[top] = [pred[node][i],0]
+                stack[top] = [pred[node][i], 0]
         else:
-            stack[top-1][1] += 1
+            stack[top - 1][1] += 1
             top -= 1

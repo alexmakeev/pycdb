@@ -1,10 +1,11 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """Generators of  x-y pairs of node data."""
 import networkx as nx
-from networkx.utils import dict_to_numpy_array
+
 __author__ = ' '.join(['Aric Hagberg <aric.hagberg@gmail.com>'])
 __all__ = ['node_attribute_xy',
            'node_degree_xy']
+
 
 def node_attribute_xy(G, attribute, nodes=None):
     """Return iterator of node-attribute pairs for all edges in G.
@@ -44,20 +45,20 @@ def node_attribute_xy(G, attribute, nodes=None):
         nodes = set(G)
     else:
         nodes = set(nodes)
-    node = G.node 
-    for u,nbrsdict in G.adjacency_iter():
+    node = G.node
+    for u, nbrsdict in G.adjacency_iter():
         if u not in nodes:
             continue
-        uattr = node[u].get(attribute,None)
+        uattr = node[u].get(attribute, None)
         if G.is_multigraph():
-            for v,keys in nbrsdict.items():
-                vattr = node[v].get(attribute,None)                
-                for k,d in keys.items():
-                    yield (uattr,vattr)
+            for v, keys in nbrsdict.items():
+                vattr = node[v].get(attribute, None)
+                for k, d in keys.items():
+                    yield (uattr, vattr)
         else:
-            for v,eattr in nbrsdict.items():
-                vattr = node[v].get(attribute,None)
-                yield (uattr,vattr)
+            for v, eattr in nbrsdict.items():
+                vattr = node[v].get(attribute, None)
+                yield (uattr, vattr)
 
 
 def node_degree_xy(G, x='out', y='in', weight=None, nodes=None):
@@ -110,20 +111,21 @@ def node_degree_xy(G, x='out', y='in', weight=None, nodes=None):
     xdeg = G.degree_iter
     ydeg = G.degree_iter
     if G.is_directed():
-        direction = {'out':G.out_degree_iter,
-                     'in':G.in_degree_iter}
+        direction = {'out': G.out_degree_iter,
+                     'in': G.in_degree_iter}
         xdeg = direction[x]
         ydeg = direction[y]
 
-    for u,degu in xdeg(nodes, weight=weight):
-        neighbors = (nbr for _,nbr in G.edges_iter(u) if nbr in nodes)
-        for v,degv in ydeg(neighbors, weight=weight):
-            yield degu,degv
- 
+    for u, degu in xdeg(nodes, weight=weight):
+        neighbors = (nbr for _, nbr in G.edges_iter(u) if nbr in nodes)
+        for v, degv in ydeg(neighbors, weight=weight):
+            yield degu, degv
+
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import numpy
     except:

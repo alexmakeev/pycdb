@@ -7,8 +7,6 @@ import datetime
 import re
 import decimal
 
-from south.utils import get_attribute, auto_through
-
 from django.db import models
 from django.db.models.base import ModelBase, Model
 from django.db.models.fields import NOT_PROVIDED
@@ -18,6 +16,9 @@ from django.contrib.contenttypes import generic
 from django.utils.datastructures import SortedDict
 from django.utils import datetime_safe
 
+from south.utils import get_attribute, auto_through
+
+
 NOISY = False
 
 # Gives information about how to introspect certain fields.
@@ -26,7 +27,7 @@ NOISY = False
 # the second is a list of positional argument descriptors, and the third
 # is a list of keyword argument descriptors.
 # Descriptors are of the form:
-#  [attrname, options]
+# [attrname, options]
 # Where attrname is the attribute on the field to get the value from, and options
 # is an optional dict.
 #
@@ -37,7 +38,7 @@ introspection_details = [
         [],
         {
             "null": ["null", {"default": False}],
-            "blank": ["blank", {"default": False, "ignore_if":"primary_key"}],
+            "blank": ["blank", {"default": False, "ignore_if": "primary_key"}],
             "primary_key": ["primary_key", {"default": False}],
             "max_length": ["max_length", {"default": None}],
             "unique": ["_unique", {"default": False}],
@@ -90,7 +91,7 @@ introspection_details = [
         [],
         {
             "default": ["default", {"default": NOT_PROVIDED, "converter": bool}],
-            "blank": ["blank", {"default": True, "ignore_if":"primary_key"}],
+            "blank": ["blank", {"default": True, "ignore_if": "primary_key"}],
         },
     ),
     (
@@ -148,11 +149,13 @@ def add_introspection_rules(rules=[], patterns=[]):
     allowed_fields.extend(patterns)
     introspection_details.extend(rules)
 
+
 def add_ignored_fields(patterns):
     "Allows you to add some ignore field patterns."
     assert isinstance(patterns, (list, tuple))
     ignored_fields.extend(patterns)
-    
+
+
 def can_ignore(field):
     """
     Returns True if we know for certain that we can ignore this field, False
@@ -163,6 +166,7 @@ def can_ignore(field):
         if re.match(regex, full_name):
             return True
     return False
+
 
 def can_introspect(field):
     """
@@ -263,7 +267,8 @@ def get_value(field, descriptor):
     if isinstance(value, Model):
         if options.get("ignore_dynamics", False):
             raise IsDefault
-        return "orm['%s.%s'].objects.get(pk=%r)" % (value.__class__._meta.app_label, value.__class__._meta.object_name, value.pk)
+        return "orm['%s.%s'].objects.get(pk=%r)" % (
+        value.__class__._meta.app_label, value.__class__._meta.object_name, value.pk)
     # Make sure Decimal is converted down into a string
     if isinstance(value, decimal.Decimal):
         value = str(value)
@@ -304,22 +309,22 @@ def get_model_fields(model, m2m=False):
     """
     Given a model class, returns a dict of {field_name: field_triple} defs.
     """
-    
+
     field_defs = SortedDict()
     inherited_fields = {}
-    
+
     # Go through all bases (that are themselves models, but not Model)
     for base in model.__bases__:
         if base != models.Model and issubclass(base, models.Model):
             if not base._meta.abstract:
                 # Looks like we need their fields, Ma.
                 inherited_fields.update(get_model_fields(base))
-    
+
     # Now, go through all the fields and try to get their definition
     source = model._meta.local_fields[:]
     if m2m:
         source += model._meta.local_many_to_many
-    
+
     for field in source:
         # Can we ignore it completely?
         if can_ignore(field):
@@ -345,12 +350,12 @@ def get_model_fields(model, m2m=False):
             if NOISY:
                 print " ( Nodefing field: %s" % field.name
             field_defs[field.name] = None
-    
+
     # If they've used the horrific hack that is order_with_respect_to, deal with
     # it.
     if model._meta.order_with_respect_to:
         field_defs['_order'] = ("django.db.models.fields.IntegerField", [], {"default": "0"})
-    
+
     return field_defs
 
 
@@ -358,7 +363,7 @@ def get_model_meta(model):
     """
     Given a model class, will return the dict representing the Meta class.
     """
-    
+
     # Get the introspected attributes
     meta_def = {}
     for kwd, defn in meta_details.items():
@@ -366,7 +371,7 @@ def get_model_meta(model):
             meta_def[kwd] = get_value(model._meta, defn)
         except IsDefault:
             pass
-    
+
     # Also, add on any non-abstract model base classes.
     # This is called _ormbases as the _bases variable was previously used
     # for a list of full class paths to bases, so we can't conflict.
@@ -380,9 +385,8 @@ def get_model_meta(model):
                     base._meta.app_label,
                     base._meta.object_name,
                 ))
-    
+
     return meta_def
 
 
 # Now, load the built-in South introspection plugins
-import south.introspection_plugins

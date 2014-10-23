@@ -1,13 +1,12 @@
 # -*- encoding: utf-8 -*-
 
-from annoying.decorators import render_to
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
-from portal.input_widgets.dictionary_input import GetHtmlDictionaryInput
+
+from annoying.decorators import render_to
 from portal.input_widgets.entity_id_selector import GetHtmlEntityIdSelector
 from std_editor.forms import EditInstanceForm
-
 
 
 @render_to("std_editor/index.html")
@@ -18,22 +17,24 @@ def index(request):
     cids.sort()
     for cls_id in cids:
         cls_info = request.configuration.classes[cls_id]
-        if cls_info["type"] != "entity_class" : continue
+        if cls_info["type"] != "entity_class": continue
         classes_list += [{
-            "id" : cls_id,
-            "title" : cls_info["readable_name"],
-            "description" : cls_info["description"],
-            "count" : len(request.configuration.getAllEntities(cls_id)),
-        }]
+                             "id": cls_id,
+                             "title": cls_info["readable_name"],
+                             "description": cls_info["description"],
+                             "count": len(request.configuration.getAllEntities(cls_id)),
+                         }]
 
-    return {"classes_list" : classes_list}
+    return {"classes_list": classes_list}
+
 
 def add_instance(request, cid):
     cid = int(cid)
     new_inst = request.configuration.makeEntity(cid)
     new_inst.save()
     new_id = new_inst.id
-    return HttpResponseRedirect(reverse("std-editor-edit-instance", kwargs={"cid" : cid, "id" : new_id}))
+    return HttpResponseRedirect(reverse("std-editor-edit-instance", kwargs={"cid": cid, "id": new_id}))
+
 
 def delete_instance(request, cid, id):
     cid = int(cid)
@@ -41,7 +42,8 @@ def delete_instance(request, cid, id):
     entity = request.configuration.loadEntity(cid, id)
     entity.delete()
     messages.success(request, 'Instance deleted.')
-    return HttpResponseRedirect(reverse("std-editor-list", kwargs={"cid" : cid}))
+    return HttpResponseRedirect(reverse("std-editor-list", kwargs={"cid": cid}))
+
 
 @render_to("std_editor/edit.html")
 def edit_instance(request, cid, id):
@@ -51,12 +53,12 @@ def edit_instance(request, cid, id):
     entity = request.configuration.loadEntity(cid, id)
 
     if request.method == "POST":
-        #print request.POST
+        # print request.POST
         form = EditInstanceForm(request.configuration, class_info["attributes"], entity, request.POST)
         if form.is_valid():
             for attr in class_info["attributes"]:
                 key = attr["name"]
-                entity.attributes[key]=form.cleaned_data[key]
+                entity.attributes[key] = form.cleaned_data[key]
                 if key + "_proto" in request.POST: del entity.attributes[key]
             form = EditInstanceForm(request.configuration, class_info["attributes"], entity)
 
@@ -64,7 +66,7 @@ def edit_instance(request, cid, id):
             for key in request.POST:
                 if not key.startswith("new_rel_"): continue
                 cid_or_id_value = int(request.POST[key])
-                if cid_or_id_value <= 0 : continue
+                if cid_or_id_value <= 0: continue
                 vals = key[8:].split("_")
                 #print key, key[8:], vals
                 cid = int(vals[0])
@@ -85,14 +87,14 @@ def edit_instance(request, cid, id):
                 for rel_dict in new_relations.values():
                     ent1 = entity
                     ent2 = request.configuration.loadEntity(rel_dict["cid"], rel_dict["id"])
-                    if rel_dict["entity_role"] != "from": (ent1, ent2) = (ent2, ent1) #swap
+                    if rel_dict["entity_role"] != "from": (ent1, ent2) = (ent2, ent1)  #swap
                     #print "adding rel:", ent1.getId(), ent2.getId()
                     rel = request.configuration.makeRelation(rel_dict["rcid"], ent1, ent2)
                     rel.save()
 
                 messages.success(request, 'Relations saved.')
             if "save_and_return" in request.POST:
-                return HttpResponseRedirect(reverse("std-editor-list", kwargs={"cid" : cid}))
+                return HttpResponseRedirect(reverse("std-editor-list", kwargs={"cid": cid}))
         else:
             messages.error(request, 'Please, fix the errors below.')
     else:
@@ -108,7 +110,7 @@ def edit_instance(request, cid, id):
     relations = request.configuration.getAllRelations(entity)
 
     relations_real = request.configuration.getAllRelations(entity, include_prototype_relations=False)
-    relations.sort(lambda a,b: cmp(a.id, b.id))
+    relations.sort(lambda a, b: cmp(a.id, b.id))
 
     cids = allowed_neighbours.keys()
     cids.sort()
@@ -121,41 +123,41 @@ def edit_instance(request, cid, id):
     relations_infos = []
     for t_cid in cids:
         relation_info_by_cids = {
-            "cid" : t_cid,
-            "title" : request.configuration.classes[t_cid]["readable_name"],
-            "relations" : [],
-            "allowed_neighbours" : []
+            "cid": t_cid,
+            "title": request.configuration.classes[t_cid]["readable_name"],
+            "relations": [],
+            "allowed_neighbours": []
         }
         relations_dict = {}
         proto_rel_num = 0
         real_entity = entity
         for rel in relations:
             if rel.cid != t_cid: continue
-            if rel.from_id!=entity.getId() and rel.to_id!=entity.getId():
+            if rel.from_id != entity.getId() and rel.to_id != entity.getId():
                 real_entity = entity
-                proto_rel = request.configuration.getAllRelations(entity,relation_cname_or_cid='logical' )
+                proto_rel = request.configuration.getAllRelations(entity, relation_cname_or_cid='logical')
                 rel = proto_rel[proto_rel_num]
                 entity = rel.getFromEntity()
-                proto_rel_num+= 1
+                proto_rel_num += 1
             t_role = "to"
             other_id = rel.to_id
-            if rel.from_id!=entity.getId():
+            if rel.from_id != entity.getId():
                 t_role = "from"
                 other_id = rel.from_id
 
-            if rel.from_id!=real_entity.getId() and rel.to_id!=real_entity.getId():
+            if rel.from_id != real_entity.getId() and rel.to_id != real_entity.getId():
                 entity = real_entity
             other = request.configuration.loadEntityByEntityId(other_id)
             t_rel = {
-                "role" : t_role,
-                "id" : rel.id,
-                "cid" : rel.cid,
-                "is_real" : rel.id in real_rel_ids,
-                "other_cid" : other.cid,
-                "other_id" : other.id,
-                "title" : other.getTitle(),
-                "description" : other.getDescription(),
-                "class_name" : request.configuration.classes[other.cid]["readable_name"]
+                "role": t_role,
+                "id": rel.id,
+                "cid": rel.cid,
+                "is_real": rel.id in real_rel_ids,
+                "other_cid": other.cid,
+                "other_id": other.id,
+                "title": other.getTitle(),
+                "description": other.getDescription(),
+                "class_name": request.configuration.classes[other.cid]["readable_name"]
             }
             key = (other.cid, t_role)
             if key not in relations_dict: relations_dict[key] = []
@@ -165,7 +167,7 @@ def edit_instance(request, cid, id):
         keys.sort()
         for key in keys:
             relations_list = relations_dict[key]
-            relations_list.sort(lambda a,b: cmp(a["title"], b["title"]))
+            relations_list.sort(lambda a, b: cmp(a["title"], b["title"]))
             relation_info_by_cids["relations"] += relations_list + [None]
 
         for neighbour_info in allowed_neighbours[t_cid]:
@@ -176,17 +178,21 @@ def edit_instance(request, cid, id):
             # callback to be saved in runtime memory to be reused by AJAX queries
             # Function is needed because lambda context has to be copied. So it is function that returns function with copied context =)
             def neighbour_filter(cid):
-                return lambda ent: ent["cid"]==cid
+                return lambda ent: ent["cid"] == cid
 
             cls_info = request.configuration.classes[neighbour_filter_data["cid"]]
 
             neighbour = {
-                "title" : "%s %s" % (neighbour_role, cls_info["readable_name"]),
-                "input_widget" : GetHtmlEntityIdSelector(request, "new_rel_%s_%s_me_%s_%s" % (t_cid, entity_role, neighbour_role, cls_info["name"]), filter_func=neighbour_filter(neighbour_filter_data["cid"]))
+                "title": "%s %s" % (neighbour_role, cls_info["readable_name"]),
+                "input_widget": GetHtmlEntityIdSelector(request, "new_rel_%s_%s_me_%s_%s" % (
+                t_cid, entity_role, neighbour_role, cls_info["name"]),
+                                                        filter_func=neighbour_filter(neighbour_filter_data["cid"]))
             }
             relation_info_by_cids["allowed_neighbours"] += [neighbour]
         relations_infos += [relation_info_by_cids]
-    return {"cid" : cid, "id" : id, "form" : form, "entity" : entity, "relations_infos" : relations_infos, "protos" : protos, "protos_values" : protos_values}
+    return {"cid": cid, "id": id, "form": form, "entity": entity, "relations_infos": relations_infos, "protos": protos,
+            "protos_values": protos_values}
+
 
 def delete_relation(request, rcid, id):
     rel = request.configuration.loadRelation(int(rcid), int(id))
@@ -196,12 +202,13 @@ def delete_relation(request, rcid, id):
         return HttpResponseRedirect(request.GET["next"])
     return HttpResponse("Ok")
 
+
 @render_to("std_editor/list.html")
 def list(request, cid):
     cid = int(cid)
     entities = request.configuration.getAllEntities(cid)
     class_info = request.configuration.classes[cid]
 
-    entities.sort(lambda a,b: cmp(a.getTitle(), b.getTitle()))
+    entities.sort(lambda a, b: cmp(a.getTitle(), b.getTitle()))
 
-    return {"cid" : cid, "entities" : entities, "class_info" : class_info}
+    return {"cid": cid, "entities": entities, "class_info": class_info}

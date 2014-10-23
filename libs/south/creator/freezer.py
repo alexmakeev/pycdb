@@ -7,9 +7,9 @@ import sys
 from django.db import models
 from django.contrib.contenttypes.generic import GenericRelation
 
-from south.orm import FakeORM
 from south.utils import auto_model
 from south import modelsinspector
+
 
 def freeze_apps(apps):
     """
@@ -42,7 +42,8 @@ def freeze_apps(apps):
                 model_class = model_classes[key]
                 field_class = model_class._meta.get_field_by_name(field_name)[0]
                 print " ! Cannot freeze field '%s.%s'" % (key, field_name)
-                print " ! (this field has class %s.%s)" % (field_class.__class__.__module__, field_class.__class__.__name__)
+                print " ! (this field has class %s.%s)" % (
+                field_class.__class__.__module__, field_class.__class__.__name__)
     if missing_fields:
         print ""
         print " ! South cannot introspect some fields; this is probably because they are custom"
@@ -50,17 +51,20 @@ def freeze_apps(apps):
         print " ! models parser (it often broke things)."
         print " ! To fix this, read http://south.aeracode.org/wiki/MyFieldsDontWork"
         sys.exit(1)
-    
+
     return model_defs
-    
+
+
 def freeze_apps_to_string(apps):
     return pprint_frozen_models(freeze_apps(apps))
-    
-### 
+
+
+# ##
 
 def model_key(model):
     "For a given model, return 'appname.modelname'."
     return "%s.%s" % (model._meta.app_label, model._meta.object_name.lower())
+
 
 def prep_for_freeze(model):
     """
@@ -74,10 +78,11 @@ def prep_for_freeze(model):
     # See if there's a Meta
     fields['Meta'] = remove_useless_meta(modelsinspector.get_model_meta(model))
     # Add in our own special items to track the object name and managed
-    fields['Meta']['object_name'] = model._meta.object_name # Special: not eval'able.
+    fields['Meta']['object_name'] = model._meta.object_name  # Special: not eval'able.
     if not getattr(model._meta, "managed", True):
         fields['Meta']['managed'] = repr(model._meta.managed)
     return fields
+
 
 ### Dependency resolvers
 
@@ -111,6 +116,7 @@ def model_dependencies(model, checked_models=None):
             depends.add(dep)
     return depends
 
+
 def field_dependencies(field, checked_models=None):
     checked_models = checked_models or set()
     depends = set()
@@ -123,13 +129,14 @@ def field_dependencies(field, checked_models=None):
         # Also include M2M throughs
         if isinstance(field, models.ManyToManyField):
             if field.rel.through:
-                if hasattr(field.rel, "through_model"): # 1.1 and below
+                if hasattr(field.rel, "through_model"):  # 1.1 and below
                     depends.add(field.rel.through_model)
                 else:
                     # Make sure it's not an automatic one
                     if not auto_model(field.rel.through):
-                        depends.add(field.rel.through) # 1.2 and up
+                        depends.add(field.rel.through)  # 1.2 and up
     return depends
+
 
 ### Prettyprinters
 
@@ -138,6 +145,7 @@ def pprint_frozen_models(models):
         "%r: %s" % (name, pprint_fields(fields))
         for name, fields in sorted(models.items())
     ])
+
 
 def pprint_fields(fields):
     return "{\n            %s\n        }" % ",\n            ".join([
@@ -148,8 +156,9 @@ def pprint_fields(fields):
 ### Output sanitisers
 
 USELESS_KEYWORDS = ["choices", "help_text", "verbose_name"]
-USELESS_DB_KEYWORDS = ["related_name", "default", "blank"] # Important for ORM, not for DB.
+USELESS_DB_KEYWORDS = ["related_name", "default", "blank"]  # Important for ORM, not for DB.
 INDEX_KEYWORDS = ["db_index"]
+
 
 def remove_useless_attributes(field, db=False, indexes=False):
     "Removes useless (for database) attributes from the field's defn."
@@ -165,7 +174,10 @@ def remove_useless_attributes(field, db=False, indexes=False):
                 del field[2][name]
     return field
 
+
 USELESS_META = ["verbose_name", "verbose_name_plural"]
+
+
 def remove_useless_meta(meta):
     "Removes useless (for database) attributes from the table's meta."
     if meta:

@@ -1,14 +1,17 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #    Copyright (C) 2011 by 
 #    Conrad Lee <conradlee@gmail.com>
 #    Aric Hagberg <hagberg@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 from collections import defaultdict
+
 import networkx as nx
+
 __author__ = """\n""".join(['Conrad Lee <conradlee@gmail.com>',
                             'Aric Hagberg <aric.hagberg@gmail.com>'])
 __all__ = ['k_clique_communities']
+
 
 def k_clique_communities(G, k, cliques=None):
     """Find k-clique communities in nxgraph using the percolation method.
@@ -49,7 +52,7 @@ def k_clique_communities(G, k, cliques=None):
        doi:10.1038/nature03607
     """
     if k < 2:
-        raise nx.NetworkXError("k=%d, k must be greater than 1."%k)
+        raise nx.NetworkXError("k=%d, k must be greater than 1." % k)
     if cliques is None:
         cliques = nx.find_cliques(G)
     cliques = [frozenset(c) for c in cliques if len(c) >= k]
@@ -71,7 +74,8 @@ def k_clique_communities(G, k, cliques=None):
     # Connected components of clique nxgraph with perc edges
     # are the percolated cliques
     for component in nx.connected_components(perc_graph):
-        yield(frozenset.union(*component))
+        yield (frozenset.union(*component))
+
 
 def _get_adjacent_cliques(clique, membership_dict):
     adjacent_cliques = set()

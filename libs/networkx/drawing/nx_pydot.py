@@ -13,7 +13,7 @@ Pydot: http://code.google.com/p/pydot/
 Graphviz:	   http://www.research.att.com/sw/tools/graphviz/
 DOT Language:  http://www.graphviz.org/doc/info/lang.html
 """
-#    Copyright (C) 2004-2011 by 
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -21,12 +21,14 @@ DOT Language:  http://www.graphviz.org/doc/info/lang.html
 #    BSD license.
 from networkx.utils import open_file, make_str
 import networkx as nx
+
 __author__ = """Aric Hagberg (hagberg@lanl.gov)"""
 __all__ = ['write_dot', 'read_dot', 'graphviz_layout', 'pydot_layout',
            'to_pydot', 'from_pydot']
 
-@open_file(1,mode='w')
-def write_dot(G,path):
+
+@open_file(1, mode='w')
+def write_dot(G, path):
     """Write NetworkX nxgraph G to Graphviz dot format on path.
 
     Path can be a string or a file handle.
@@ -36,11 +38,12 @@ def write_dot(G,path):
     except ImportError:
         raise ImportError("write_dot() requires pydot",
                           "http://code.google.com/p/pydot/")
-    P=to_pydot(G)
+    P = to_pydot(G)
     path.write(P.to_string())
     return
 
-@open_file(0,mode='r')
+
+@open_file(0, mode='r')
 def read_dot(path):
     """Return a NetworkX MultiGraph or MultiDiGraph from a dot file on path.
 
@@ -64,9 +67,10 @@ def read_dot(path):
         raise ImportError("read_dot() requires pydot",
                           "http://code.google.com/p/pydot/")
 
-    data=path.read()        
-    P=pydot.graph_from_dot_data(data)
+    data = path.read()
+    P = pydot.graph_from_dot_data(data)
     return from_pydot(P)
+
 
 def from_pydot(P):
     """Return a NetworkX nxgraph from a Pydot nxgraph.
@@ -89,51 +93,52 @@ def from_pydot(P):
     >>> G=nx.Graph(nx.from_pydot(A)) # make a Graph instead of MultiGraph
 
     """
-    if P.get_strict(None): # pydot bug: get_strict() shouldn't take argument 
-        multiedges=False
+    if P.get_strict(None):  # pydot bug: get_strict() shouldn't take argument
+        multiedges = False
     else:
-        multiedges=True
-        
-    if P.get_type()=='nxgraph': # undirected
+        multiedges = True
+
+    if P.get_type() == 'nxgraph':  # undirected
         if multiedges:
-            create_using=nx.MultiGraph()
+            create_using = nx.MultiGraph()
         else:
-            create_using=nx.Graph()
+            create_using = nx.Graph()
     else:
         if multiedges:
-            create_using=nx.MultiDiGraph()
+            create_using = nx.MultiDiGraph()
         else:
-            create_using=nx.DiGraph()
+            create_using = nx.DiGraph()
 
     # assign defaults        
-    N=nx.empty_graph(0,create_using)
-    N.name=P.get_name()
+    N = nx.empty_graph(0, create_using)
+    N.name = P.get_name()
 
     # add nodes, attributes to N.node_attr
     for p in P.get_node_list():
-        n=p.get_name().strip('"')
-        if n in ('node','nxgraph','edge'):
+        n = p.get_name().strip('"')
+        if n in ('node', 'nxgraph', 'edge'):
             continue
-        N.add_node(n,**p.get_attributes())
+        N.add_node(n, **p.get_attributes())
 
     # add edges
     for e in P.get_edge_list():
-        u=e.get_source().strip('"')
-        v=e.get_destination().strip('"')
-        attr=e.get_attributes()
-        N.add_edge(u,v,**attr)
+        u = e.get_source().strip('"')
+        v = e.get_destination().strip('"')
+        attr = e.get_attributes()
+        N.add_edge(u, v, **attr)
 
     # add default attributes for nxgraph, nodes, edges
-    N.graph['nxgraph']=P.get_attributes()
+    N.graph['nxgraph'] = P.get_attributes()
     try:
-        N.graph['node']=P.get_node_defaults()[0]
-    except:# IndexError,TypeError:
-        N.graph['node']={}
+        N.graph['node'] = P.get_node_defaults()[0]
+    except:  # IndexError,TypeError:
+        N.graph['node'] = {}
     try:
-        N.graph['edge']=P.get_edge_defaults()[0]
-    except:# IndexError,TypeError:
-        N.graph['edge']={}
-    return N        
+        N.graph['edge'] = P.get_edge_defaults()[0]
+    except:  # IndexError,TypeError:
+        N.graph['edge'] = {}
+    return N
+
 
 def to_pydot(N, strict=True):
     """Return a pydot nxgraph from a NetworkX nxgraph N.
@@ -160,17 +165,17 @@ def to_pydot(N, strict=True):
 
     # set Graphviz nxgraph type
     if N.is_directed():
-        graph_type='digraph'
+        graph_type = 'digraph'
     else:
-        graph_type='nxgraph'
-    strict=N.number_of_selfloops()==0 and not N.is_multigraph() 
-    
+        graph_type = 'nxgraph'
+    strict = N.number_of_selfloops() == 0 and not N.is_multigraph()
+
     name = N.graph.get('name')
-    graph_defaults=N.graph.get('nxgraph',{})
+    graph_defaults = N.graph.get('nxgraph', {})
     if name is None:
-        P = pydot.Dot(graph_type=graph_type,strict=strict,**graph_defaults)
+        P = pydot.Dot(graph_type=graph_type, strict=strict, **graph_defaults)
     else:
-        P = pydot.Dot('"%s"'%name,graph_type=graph_type,strict=strict,
+        P = pydot.Dot('"%s"' % name, graph_type=graph_type, strict=strict,
                       **graph_defaults)
     try:
         P.set_node_defaults(**N.graph['node'])
@@ -181,21 +186,21 @@ def to_pydot(N, strict=True):
     except KeyError:
         pass
 
-    for n,nodedata in N.nodes_iter(data=True):
-        str_nodedata=dict((k,make_str(v)) for k,v in nodedata.items())
-        p=pydot.Node(make_str(n),**str_nodedata)
+    for n, nodedata in N.nodes_iter(data=True):
+        str_nodedata = dict((k, make_str(v)) for k, v in nodedata.items())
+        p = pydot.Node(make_str(n), **str_nodedata)
         P.add_node(p)
 
     if N.is_multigraph():
-        for u,v,key,edgedata in N.edges_iter(data=True,keys=True):
-            str_edgedata=dict((k,make_str(v)) for k,v in edgedata.items())
-            edge=pydot.Edge(make_str(u),make_str(v),key=make_str(key),**str_edgedata)
+        for u, v, key, edgedata in N.edges_iter(data=True, keys=True):
+            str_edgedata = dict((k, make_str(v)) for k, v in edgedata.items())
+            edge = pydot.Edge(make_str(u), make_str(v), key=make_str(key), **str_edgedata)
             P.add_edge(edge)
-        
+
     else:
-        for u,v,edgedata in N.edges_iter(data=True):
-            str_edgedata=dict((k,make_str(v)) for k,v in edgedata.items())
-            edge=pydot.Edge(make_str(u),make_str(v),**str_edgedata)
+        for u, v, edgedata in N.edges_iter(data=True):
+            str_edgedata = dict((k, make_str(v)) for k, v in edgedata.items())
+            edge = pydot.Edge(make_str(u), make_str(v), **str_edgedata)
             P.add_edge(edge)
 
     return P
@@ -204,17 +209,21 @@ def to_pydot(N, strict=True):
 def pydot_from_networkx(N):
     """Create a Pydot nxgraph from a NetworkX nxgraph."""
     from warnings import warn
+
     warn('pydot_from_networkx is replaced by to_pydot', DeprecationWarning)
     return to_pydot(N)
+
 
 def networkx_from_pydot(D, create_using=None):
     """Create a NetworkX nxgraph from a Pydot nxgraph."""
     from warnings import warn
-    warn('networkx_from_pydot is replaced by from_pydot', 
+
+    warn('networkx_from_pydot is replaced by from_pydot',
          DeprecationWarning)
     return from_pydot(D)
 
-def graphviz_layout(G,prog='neato',root=None, **kwds):
+
+def graphviz_layout(G, prog='neato', root=None, **kwds):
     """Create node positions using Pydot and Graphviz.
 
     Returns a dictionary of positions keyed by node.
@@ -230,10 +239,10 @@ def graphviz_layout(G,prog='neato',root=None, **kwds):
     This is a wrapper for pydot_layout.
 
     """
-    return pydot_layout(G=G,prog=prog,root=root,**kwds)
+    return pydot_layout(G=G, prog=prog, root=root, **kwds)
 
 
-def pydot_layout(G,prog='neato',root=None, **kwds):
+def pydot_layout(G, prog='neato', root=None, **kwds):
     """Create node positions using Pydot and Graphviz.
 
     Returns a dictionary of positions keyed by node.
@@ -251,39 +260,41 @@ def pydot_layout(G,prog='neato',root=None, **kwds):
         raise ImportError('pydot_layout() requires pydot ',
                           'http://code.google.com/p/pydot/')
 
-    P=to_pydot(G)
-    if root is not None :
-        P.set("root",make_str(root))
+    P = to_pydot(G)
+    if root is not None:
+        P.set("root", make_str(root))
 
-    D=P.create_dot(prog=prog)
+    D = P.create_dot(prog=prog)
 
-    if D=="":  # no data returned
-        print("Graphviz layout with %s failed"%(prog))
+    if D == "":  # no data returned
+        print("Graphviz layout with %s failed" % (prog))
         print()
         print("To debug what happened try:")
         print("P=pydot_from_networkx(G)")
         print("P.write_dot(\"file.dot\")")
-        print("And then run %s on file.dot"%(prog))
+        print("And then run %s on file.dot" % (prog))
         return
 
-    Q=pydot.graph_from_dot_data(D)
+    Q = pydot.graph_from_dot_data(D)
 
-    node_pos={}
+    node_pos = {}
     for n in G.nodes():
         pydot_node = pydot.Node(make_str(n)).get_name().encode('utf-8')
-        node=Q.get_node(pydot_node)
+        node = Q.get_node(pydot_node)
 
-        if isinstance(node,list):
-            node=node[0]
-        pos=node.get_pos()[1:-1] # strip leading and trailing double quotes
+        if isinstance(node, list):
+            node = node[0]
+        pos = node.get_pos()[1:-1]  # strip leading and trailing double quotes
         if pos != None:
-            xx,yy=pos.split(",")
-            node_pos[n]=(float(xx),float(yy))
+            xx, yy = pos.split(",")
+            node_pos[n] = (float(xx), float(yy))
     return node_pos
+
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import pydot
     except:

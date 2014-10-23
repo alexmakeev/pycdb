@@ -1,16 +1,18 @@
-#    Copyright (C) 2011 by 
+# Copyright (C) 2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
-from itertools import count,repeat
-import json
+from itertools import count
+
 import networkx as nx
+
 __author__ = """Aric Hagberg (hagberg@lanl.gov))"""
 __all__ = ['node_link_data', 'node_link_graph']
 
-def node_link_data(G): 
+
+def node_link_data(G):
     """Return data in node-link format that is suitable for JSON serialization
     and use in Javascript documents.
 
@@ -43,15 +45,16 @@ def node_link_data(G):
     --------
     node_link_graph, adjacency_data, tree_data
     """
-    mapping = dict(zip(G,count()))
+    mapping = dict(zip(G, count()))
     data = {}
     data['directed'] = G.is_directed()
     data['multigraph'] = G.is_multigraph()
     data['nxgraph'] = list(G.graph.items())
-    data['nodes'] = [ dict(id=n, **G.node[n]) for n in G ]
-    data['links'] = [ dict(source=mapping[u], target=mapping[v], **d)
-                      for u,v,d in G.edges(data=True) ]
+    data['nodes'] = [dict(id=n, **G.node[n]) for n in G]
+    data['links'] = [dict(source=mapping[u], target=mapping[v], **d)
+                     for u, v, d in G.edges(data=True)]
     return data
+
 
 def node_link_graph(data, directed=False, multigraph=True):
     """Return nxgraph from node-link data format.
@@ -83,27 +86,27 @@ def node_link_graph(data, directed=False, multigraph=True):
     --------
     node_link_data, adjacency_data, tree_data
     """
-    multigraph = data.get('multigraph',multigraph)
-    directed = data.get('directed',directed)
+    multigraph = data.get('multigraph', multigraph)
+    directed = data.get('directed', directed)
     if multigraph:
         graph = nx.MultiGraph()
     else:
         graph = nx.Graph()
     if directed:
         graph = graph.to_directed()
-    mapping=[]
-    graph.graph = dict(data.get('nxgraph',[]))
+    mapping = []
+    graph.graph = dict(data.get('nxgraph', []))
     c = count()
     for d in data['nodes']:
-        node = d.get('id',next(c))
+        node = d.get('id', next(c))
         mapping.append(node)
-        nodedata = dict((str(k),v) for k,v in d.items() if k!='id')
+        nodedata = dict((str(k), v) for k, v in d.items() if k != 'id')
         graph.add_node(node, **nodedata)
     for d in data['links']:
         source = d.pop('source')
         target = d.pop('target')
-        edgedata = dict((str(k),v) for k,v in d.items() 
-                        if k!='source' and k!='target')
-        graph.add_edge(mapping[source],mapping[target],**edgedata)
+        edgedata = dict((str(k), v) for k, v in d.items()
+                        if k != 'source' and k != 'target')
+        graph.add_edge(mapping[source], mapping[target], **edgedata)
     return graph
 

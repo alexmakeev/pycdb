@@ -26,6 +26,7 @@ class RedirectMiddleware(object):
     to make work Redirect exception. All arguments passed to
     Redirect will be passed to django built in redirect function.
     """
+
     def process_exception(self, request, exception):
         if not isinstance(exception, Redirect):
             return

@@ -3,10 +3,9 @@
 from django.core.urlresolvers import reverse
 
 
-
 MENU_ITEMS = [
     {
-        "title" : "Home",
-        "url" : reverse("index")
+        "title": "Home",
+        "url": reverse("index")
     }
 ]

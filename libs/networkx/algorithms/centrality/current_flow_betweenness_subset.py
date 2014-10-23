@@ -1,7 +1,7 @@
 """
 Current-flow betweenness centrality measures for subsets of nodes.
 """
-#    Copyright (C) 2010-2011 by 
+# Copyright (C) 2010-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -12,12 +12,11 @@ __author__ = """Aric Hagberg (hagberg@lanl.gov)"""
 __all__ = ['current_flow_betweenness_centrality_subset',
            'edge_current_flow_betweenness_centrality_subset']
 
-import itertools
 import networkx as nx
 from networkx.algorithms.centrality.flow_matrix import *
 
 
-def current_flow_betweenness_centrality_subset(G,sources,targets,
+def current_flow_betweenness_centrality_subset(G, sources, targets,
                                                normalized=True,
                                                weight='weight',
                                                dtype=float, solver='lu'):
@@ -95,14 +94,15 @@ def current_flow_betweenness_centrality_subset(G,sources,targets,
     .. [2] A measure of betweenness centrality based on random walks,
        M. E. J. Newman, Social Networks 27, 39-54 (2005).
     """
-    from networkx.utils import reverse_cuthill_mckee_ordering 
+    from networkx.utils import reverse_cuthill_mckee_ordering
+
     try:
         import numpy as np
     except ImportError:
         raise ImportError('current_flow_betweenness_centrality requires NumPy ',
                           'http://scipy.org/')
     try:
-        import scipy 
+        import scipy
     except ImportError:
         raise ImportError('current_flow_betweenness_centrality requires SciPy ',
                           'http://scipy.org/')
@@ -115,28 +115,28 @@ def current_flow_betweenness_centrality_subset(G,sources,targets,
     ordering = list(reverse_cuthill_mckee_ordering(G))
     # make a copy with integer labels according to rcm ordering
     # this could be done without a copy if we really wanted to
-    mapping=dict(zip(ordering,range(n)))
-    H = nx.relabel_nodes(G,mapping)
-    betweenness = dict.fromkeys(H,0.0) # b[v]=0 for v in H
-    for row,(s,t) in flow_matrix_row(H, weight=weight, dtype=dtype, 
-                                     solver=solver):
+    mapping = dict(zip(ordering, range(n)))
+    H = nx.relabel_nodes(G, mapping)
+    betweenness = dict.fromkeys(H, 0.0)  # b[v]=0 for v in H
+    for row, (s, t) in flow_matrix_row(H, weight=weight, dtype=dtype,
+                                       solver=solver):
         for ss in sources:
-            i=mapping[ss]
+            i = mapping[ss]
             for tt in targets:
-                j=mapping[tt]
-                betweenness[s]+=0.5*np.abs(row[i]-row[j]) 
-                betweenness[t]+=0.5*np.abs(row[i]-row[j]) 
+                j = mapping[tt]
+                betweenness[s] += 0.5 * np.abs(row[i] - row[j])
+                betweenness[t] += 0.5 * np.abs(row[i] - row[j])
     if normalized:
-        nb=(n-1.0)*(n-2.0) # normalization factor
+        nb = (n - 1.0) * (n - 2.0)  # normalization factor
     else:
-        nb=2.0
+        nb = 2.0
     for v in H:
-        betweenness[v]=betweenness[v]/nb+1.0/(2-n)
-    return dict((ordering[k],v) for k,v in betweenness.items())
+        betweenness[v] = betweenness[v] / nb + 1.0 / (2 - n)
+    return dict((ordering[k], v) for k, v in betweenness.items())
 
 
 def edge_current_flow_betweenness_centrality_subset(G, sources, targets,
-                                                    normalized=True, 
+                                                    normalized=True,
                                                     weight='weight',
                                                     dtype=float, solver='lu'):
     """Compute current-flow betweenness centrality for edges using subsets 
@@ -213,14 +213,15 @@ def edge_current_flow_betweenness_centrality_subset(G, sources, targets,
     .. [2] A measure of betweenness centrality based on random walks, 
        M. E. J. Newman, Social Networks 27, 39-54 (2005).
     """
-    from networkx.utils import reverse_cuthill_mckee_ordering 
+    from networkx.utils import reverse_cuthill_mckee_ordering
+
     try:
         import numpy as np
     except ImportError:
         raise ImportError('current_flow_betweenness_centrality requires NumPy ',
                           'http://scipy.org/')
     try:
-        import scipy 
+        import scipy
     except ImportError:
         raise ImportError('current_flow_betweenness_centrality requires SciPy ',
                           'http://scipy.org/')
@@ -233,28 +234,29 @@ def edge_current_flow_betweenness_centrality_subset(G, sources, targets,
     ordering = list(reverse_cuthill_mckee_ordering(G))
     # make a copy with integer labels according to rcm ordering
     # this could be done without a copy if we really wanted to
-    mapping=dict(zip(ordering,range(n)))
-    H = nx.relabel_nodes(G,mapping)
-    betweenness=(dict.fromkeys(H.edges(),0.0))
+    mapping = dict(zip(ordering, range(n)))
+    H = nx.relabel_nodes(G, mapping)
+    betweenness = (dict.fromkeys(H.edges(), 0.0))
     if normalized:
-        nb=(n-1.0)*(n-2.0) # normalization factor
+        nb = (n - 1.0) * (n - 2.0)  # normalization factor
     else:
-        nb=2.0
-    for row,(e) in flow_matrix_row(H, weight=weight, dtype=dtype, 
-                                   solver=solver):
+        nb = 2.0
+    for row, (e) in flow_matrix_row(H, weight=weight, dtype=dtype,
+                                    solver=solver):
         for ss in sources:
-            i=mapping[ss]
+            i = mapping[ss]
             for tt in targets:
-                j=mapping[tt]
-                betweenness[e]+=0.5*np.abs(row[i]-row[j]) 
-        betweenness[e]/=nb
-    return dict(((ordering[s],ordering[t]),v) 
-                for (s,t),v in betweenness.items())
+                j = mapping[tt]
+                betweenness[e] += 0.5 * np.abs(row[i] - row[j])
+        betweenness[e] /= nb
+    return dict(((ordering[s], ordering[t]), v)
+                for (s, t), v in betweenness.items())
 
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import numpy
         import scipy

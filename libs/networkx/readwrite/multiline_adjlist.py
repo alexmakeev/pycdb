@@ -28,7 +28,7 @@ adjacency list (anything following the # in a line is a comment)::
 __author__ = '\n'.join(['Aric Hagberg <hagberg@lanl.gov>',
                         'Dan Schult <dschult@colgate.edu>',
                         'Loïc Séguin-C. <loicseguin@gmail.com>'])
-#    Copyright (C) 2004-2010 by 
+# Copyright (C) 2004-2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -43,7 +43,8 @@ __all__ = ['generate_multiline_adjlist',
 from networkx.utils import make_str, open_file
 import networkx as nx
 
-def generate_multiline_adjlist(G, delimiter = ' '):
+
+def generate_multiline_adjlist(G, delimiter=' '):
     """Generate a single line of the nxgraph G in multiline adjacency list format.
 
     Parameters
@@ -86,58 +87,59 @@ def generate_multiline_adjlist(G, delimiter = ' '):
     """
     if G.is_directed():
         if G.is_multigraph():
-            for s,nbrs in G.adjacency_iter():
-                nbr_edges=[ (u,data) 
-                            for u,datadict in nbrs.items() 
-                            for key,data in datadict.items()]
-                deg=len(nbr_edges)
-                yield make_str(s)+delimiter+"%i"%(deg)
-                for u,d in nbr_edges:
+            for s, nbrs in G.adjacency_iter():
+                nbr_edges = [(u, data)
+                             for u, datadict in nbrs.items()
+                             for key, data in datadict.items()]
+                deg = len(nbr_edges)
+                yield make_str(s) + delimiter + "%i" % (deg)
+                for u, d in nbr_edges:
                     if d is None:
                         yield make_str(u)
                     else:
-                        yield make_str(u)+delimiter+make_str(d)
-        else: # directed single edges
-            for s,nbrs in G.adjacency_iter():
-                deg=len(nbrs)
-                yield make_str(s)+delimiter+"%i"%(deg)
-                for u,d in nbrs.items():
-                   if d is None:    
-                       yield make_str(u)
-                   else:   
-                       yield make_str(u)+delimiter+make_str(d)
-    else: # undirected
+                        yield make_str(u) + delimiter + make_str(d)
+        else:  # directed single edges
+            for s, nbrs in G.adjacency_iter():
+                deg = len(nbrs)
+                yield make_str(s) + delimiter + "%i" % (deg)
+                for u, d in nbrs.items():
+                    if d is None:
+                        yield make_str(u)
+                    else:
+                        yield make_str(u) + delimiter + make_str(d)
+    else:  # undirected
         if G.is_multigraph():
-            seen=set()  # helper dict used to avoid duplicate edges
-            for s,nbrs in G.adjacency_iter():
-                nbr_edges=[ (u,data) 
-                            for u,datadict in nbrs.items() 
-                            if u not in seen
-                            for key,data in datadict.items()]
-                deg=len(nbr_edges)
-                yield make_str(s)+delimiter+"%i"%(deg)
-                for u,d in nbr_edges:
-                    if d is None:    
+            seen = set()  # helper dict used to avoid duplicate edges
+            for s, nbrs in G.adjacency_iter():
+                nbr_edges = [(u, data)
+                             for u, datadict in nbrs.items()
+                             if u not in seen
+                             for key, data in datadict.items()]
+                deg = len(nbr_edges)
+                yield make_str(s) + delimiter + "%i" % (deg)
+                for u, d in nbr_edges:
+                    if d is None:
                         yield make_str(u)
-                    else:   
-                        yield make_str(u)+delimiter+make_str(d)
+                    else:
+                        yield make_str(u) + delimiter + make_str(d)
                 seen.add(s)
-        else: # undirected single edges
-            seen=set()  # helper dict used to avoid duplicate edges
-            for s,nbrs in G.adjacency_iter():
-                nbr_edges=[ (u,d) for u,d in nbrs.items() if u not in seen]
-                deg=len(nbr_edges)
-                yield  make_str(s)+delimiter+"%i"%(deg)
-                for u,d in nbr_edges:
-                    if d is None:    
+        else:  # undirected single edges
+            seen = set()  # helper dict used to avoid duplicate edges
+            for s, nbrs in G.adjacency_iter():
+                nbr_edges = [(u, d) for u, d in nbrs.items() if u not in seen]
+                deg = len(nbr_edges)
+                yield make_str(s) + delimiter + "%i" % (deg)
+                for u, d in nbr_edges:
+                    if d is None:
                         yield make_str(u)
-                    else:   
-                        yield make_str(u)+delimiter+make_str(d)
+                    else:
+                        yield make_str(u) + delimiter + make_str(d)
                 seen.add(s)
 
-@open_file(1,mode='wb')
-def write_multiline_adjlist(G, path, delimiter=' ', 
-                            comments='#', encoding = 'utf-8'):
+
+@open_file(1, mode='wb')
+def write_multiline_adjlist(G, path, delimiter=' ',
+                            comments='#', encoding='utf-8'):
     """ Write the nxgraph G in multiline adjacency list format to path
 
     Parameters
@@ -175,19 +177,20 @@ def write_multiline_adjlist(G, path, delimiter=' ',
     import sys
     import time
 
-    pargs=comments+" ".join(sys.argv)
+    pargs = comments + " ".join(sys.argv)
     header = ("%s\n" % (pargs)
-             + comments + " GMT %s\n" % (time.asctime(time.gmtime()))
-             + comments + " %s\n" % (G.name))
+              + comments + " GMT %s\n" % (time.asctime(time.gmtime()))
+              + comments + " %s\n" % (G.name))
     path.write(header.encode(encoding))
 
     for multiline in generate_multiline_adjlist(G, delimiter):
-        multiline+='\n'
+        multiline += '\n'
         path.write(multiline.encode(encoding))
 
-def parse_multiline_adjlist(lines, comments = '#', delimiter = None,
-                            create_using = None, nodetype = None,
-                            edgetype = None):
+
+def parse_multiline_adjlist(lines, comments='#', delimiter=None,
+                            create_using=None, nodetype=None,
+                            edgetype=None):
     """Parse lines of a multiline adjacency list representation of a nxgraph.
 
     Parameters
@@ -231,31 +234,32 @@ def parse_multiline_adjlist(lines, comments = '#', delimiter = None,
     
     """
     from ast import literal_eval
+
     if create_using is None:
-        G=nx.Graph()
+        G = nx.Graph()
     else:
         try:
-            G=create_using
+            G = create_using
             G.clear()
         except:
             raise TypeError("Input nxgraph is not a networkx nxgraph type")
 
     for line in lines:
-        p=line.find(comments)
-        if p>=0:
+        p = line.find(comments)
+        if p >= 0:
             line = line[:p]
         if not line: continue
         try:
-            (u,deg)=line.strip().split(delimiter)
-            deg=int(deg)
+            (u, deg) = line.strip().split(delimiter)
+            deg = int(deg)
         except:
-            raise TypeError("Failed to read node and degree on line (%s)"%line)
+            raise TypeError("Failed to read node and degree on line (%s)" % line)
         if nodetype is not None:
             try:
-                u=nodetype(u)
+                u = nodetype(u)
             except:
-                raise TypeError("Failed to convert node (%s) to type %s"\
-                      %(u,nodetype))
+                raise TypeError("Failed to convert node (%s) to type %s" \
+                                % (u, nodetype))
         G.add_node(u)
         for i in range(deg):
             while True:
@@ -264,44 +268,45 @@ def parse_multiline_adjlist(lines, comments = '#', delimiter = None,
                 except StopIteration:
                     msg = "Failed to find neighbor for node (%s)" % (u,)
                     raise TypeError(msg)
-                p=line.find(comments)
-                if p>=0:
+                p = line.find(comments)
+                if p >= 0:
                     line = line[:p]
                 if line: break
-            vlist=line.strip().split(delimiter)
-            numb=len(vlist)
-            if numb<1:
-                continue # isolated node
-            v=vlist.pop(0)
-            data=''.join(vlist)
+            vlist = line.strip().split(delimiter)
+            numb = len(vlist)
+            if numb < 1:
+                continue  # isolated node
+            v = vlist.pop(0)
+            data = ''.join(vlist)
             if nodetype is not None:
                 try:
-                    v=nodetype(v)
+                    v = nodetype(v)
                 except:
                     raise TypeError(
-                            "Failed to convert node (%s) to type %s"\
-                                       %(v,nodetype))
+                        "Failed to convert node (%s) to type %s" \
+                        % (v, nodetype))
             if edgetype is not None:
                 try:
-                    edgedata={'weight':edgetype(data)}
+                    edgedata = {'weight': edgetype(data)}
                 except:
                     raise TypeError(
-                            "Failed to convert edge data (%s) to type %s"\
-                                    %(data, edgetype))
+                        "Failed to convert edge data (%s) to type %s" \
+                        % (data, edgetype))
             else:
-                try: # try to evaluate 
-                    edgedata=literal_eval(data)
+                try:  # try to evaluate
+                    edgedata = literal_eval(data)
                 except:
-                    edgedata={}
-            G.add_edge(u,v,attr_dict=edgedata)
+                    edgedata = {}
+            G.add_edge(u, v, attr_dict=edgedata)
 
     return G
 
-@open_file(0,mode='rb')
+
+@open_file(0, mode='rb')
 def read_multiline_adjlist(path, comments="#", delimiter=None,
                            create_using=None,
                            nodetype=None, edgetype=None,
-                           encoding = 'utf-8'):
+                           encoding='utf-8'):
     """Read nxgraph in multi-line adjacency list format from path.
 
     Parameters
@@ -378,16 +383,17 @@ def read_multiline_adjlist(path, comments="#", delimiter=None,
     write_multiline_adjlist
     """
     lines = (line.decode(encoding) for line in path)
-    return parse_multiline_adjlist(lines, 
-                                   comments = comments,
-                                   delimiter = delimiter,
-                                   create_using = create_using,
-                                   nodetype = nodetype,
-                                   edgetype = edgetype)
+    return parse_multiline_adjlist(lines,
+                                   comments=comments,
+                                   delimiter=delimiter,
+                                   create_using=create_using,
+                                   nodetype=nodetype,
+                                   edgetype=edgetype)
 
 
 # fixture for nose tests
 def teardown_module(module):
     import os
+
     os.unlink('test.adjlist')
     os.unlink('test.adjlist.gz')

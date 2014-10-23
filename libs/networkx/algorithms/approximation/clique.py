@@ -2,14 +2,16 @@
 """
 Cliques.
 """
-#   Copyright (C) 2011-2012 by
+# Copyright (C) 2011-2012 by
 #   Nicholas Mancuso <nick.mancuso@gmail.com>
 #   All rights reserved.
 #   BSD license.
 import networkx as nx
 from networkx.algorithms.approximation import ramsey
+
 __author__ = """Nicholas Mancuso (nick.mancuso@gmail.com)"""
-__all__ = ["clique_removal","max_clique"]
+__all__ = ["clique_removal", "max_clique"]
+
 
 def max_clique(graph):
     r"""Find the Maximum Clique
@@ -57,6 +59,7 @@ def max_clique(graph):
     cgraph = nx.complement(graph)
     iset, _ = clique_removal(cgraph)
     return iset
+
 
 def clique_removal(graph):
     """ Repeatedly remove cliques from the nxgraph.

@@ -6,6 +6,7 @@ import sys
 
 if sys.version >= '3':
     from ._decorator3 import *
+
     _decorator = _decorator3
 else:
     from ._decorator import *

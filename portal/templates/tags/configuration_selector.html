@@ -1,20 +1,20 @@
 <script language="JavaScript">
-    function UpdateSelectedConfiguration(sender)
-    {
+    function UpdateSelectedConfiguration(sender) {
         var val = $(sender).val()
         if (val == "") return;
         $.ajax({
             type: "GET",
             url: "/",
             data: { selected_configuration: val},
-        }).done(function(){
-                    location.reload();
-                })
+        }).done(function () {
+            location.reload();
+        })
     }
 </script>
 <select onchange="UpdateSelectedConfiguration(this);">
     <option value="">Please, select configuration</option>
-{% for conf in all_configurations %}
-    <option value="{{ conf.name }}" {% ifequal conf.name selected_configuration %}selected="selected" {% endifequal %}>{{ conf.title }}</option>
-{% endfor %}
+    {% for conf in all_configurations %}
+    <option value="{{ conf.name }}"
+    {% ifequal conf.name selected_configuration %}selected="selected" {% endifequal %}>{{ conf.title }}</option>
+    {% endfor %}
 </select>

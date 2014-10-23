@@ -2,11 +2,7 @@
 
 
 
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.template import RequestContext, loader
 import re
-import ast
 
 filename_expression = r"blklist-(?P<server_name>.+?)\.lst"
 filename_re = re.compile(filename_expression, re.I)
@@ -23,7 +19,7 @@ def index(request):
     results.append("-------")
     results.append(str(file_name))
     results.append("-------")
-    f = open('/home/xukum/Documents/Nikita/configs/'+file_name,'r')
+    f = open('/home/xukum/Documents/Nikita/configs/' + file_name, 'r')
     w_f = open('/home/xukum/Documents/Nikita/configs/my_blk.lst', 'w')
     data = ''.join(str(e) for e in f.readlines())
 
@@ -37,8 +33,9 @@ def index(request):
 
     for t_matchobj in re.finditer(blk_row_re, data):
         line = t_matchobj.groupdict()
-        t_str = str(line.pop('driver'))+" "+str(line.pop('bus_id'))+" "+str(line.pop('main_info'))+" "+str(line.pop('bigc_info'))+" "+str(line.pop('aux_info'))
-        if t_str.find('None') <0:
+        t_str = str(line.pop('driver')) + " " + str(line.pop('bus_id')) + " " + str(line.pop('main_info')) + " " + str(
+            line.pop('bigc_info')) + " " + str(line.pop('aux_info'))
+        if t_str.find('None') < 0:
             results.append(t_str)
 
     w_f.writelines("%s\n" % i for i in results)
@@ -46,4 +43,4 @@ def index(request):
     f.close()
     w_f.close()
     context = {'results': results}
- #   return render(request, 'cxv2_tools/index.html', context)
+    # return render(request, 'cxv2_tools/index.html', context)

@@ -1,23 +1,24 @@
 """
 Adjacency matrix and incidence matrix of graphs.
 """
-#    Copyright (C) 2004-2011 by 
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = "\n".join(['Aric Hagberg (hagberg@lanl.gov)',
                         'Pieter Swart (swart@lanl.gov)',
                         'Dan Schult(dschult@colgate.edu)'])
 
 __all__ = ['incidence_matrix',
            'adj_matrix', 'adjacency_matrix',
-           ]
+]
 
 
-def incidence_matrix(G, nodelist=None, edgelist=None, 
+def incidence_matrix(G, nodelist=None, edgelist=None,
                      oriented=False, weight=None):
     """Return incidence matrix of G.
 
@@ -72,7 +73,7 @@ def incidence_matrix(G, nodelist=None, edgelist=None,
         import numpy as np
     except ImportError:
         raise ImportError(
-          "incidence_matrix() requires numpy: http://scipy.org/ ")
+            "incidence_matrix() requires numpy: http://scipy.org/ ")
     if nodelist is None:
         nodelist = G.nodes()
     if edgelist is None:
@@ -80,10 +81,10 @@ def incidence_matrix(G, nodelist=None, edgelist=None,
             edgelist = G.edges(keys=True)
         else:
             edgelist = G.edges()
-    A = np.zeros((len(nodelist),len(edgelist)))
-    node_index = dict( (node,i) for i,node in enumerate(nodelist) )
-    for ei,e in enumerate(edgelist):
-        (u,v) = e[:2]
+    A = np.zeros((len(nodelist), len(edgelist)))
+    node_index = dict((node, i) for i, node in enumerate(nodelist))
+    for ei, e in enumerate(edgelist):
+        (u, v) = e[:2]
         if u == v: continue  # self loops give zero column
         try:
             ui = node_index[u]
@@ -96,16 +97,17 @@ def incidence_matrix(G, nodelist=None, edgelist=None,
         else:
             if G.is_multigraph():
                 ekey = e[2]
-                wt = G[u][v][ekey].get(weight,1)
+                wt = G[u][v][ekey].get(weight, 1)
             else:
-                wt = G[u][v].get(weight,1)
+                wt = G[u][v].get(weight, 1)
         if oriented:
-            A[ui,ei] = -wt
-            A[vi,ei] = wt
+            A[ui, ei] = -wt
+            A[vi, ei] = wt
         else:
-            A[ui,ei] = wt
-            A[vi,ei] = wt
+            A[ui, ei] = wt
+            A[vi, ei] = wt
     return np.asmatrix(A)
+
 
 def adjacency_matrix(G, nodelist=None, weight='weight'):
     """Return adjacency matrix of G.
@@ -143,13 +145,15 @@ def adjacency_matrix(G, nodelist=None, weight='weight'):
     to_numpy_matrix
     to_dict_of_dicts
     """
-    return nx.to_numpy_matrix(G,nodelist=nodelist,weight=weight)
+    return nx.to_numpy_matrix(G, nodelist=nodelist, weight=weight)
 
-adj_matrix=adjacency_matrix
+
+adj_matrix = adjacency_matrix
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import numpy
     except:

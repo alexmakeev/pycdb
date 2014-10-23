@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 """Floyd-Warshall algorithm for shortest paths.
 """
-#    Copyright (C) 2004-2012 by
+# Copyright (C) 2004-2012 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = """Aric Hagberg <aric.hagberg@gmail.com>"""
 __all__ = ['floyd_warshall',
            'floyd_warshall_predecessor_and_distance',
            'floyd_warshall_numpy']
+
 
 def floyd_warshall_numpy(G, nodelist=None, weight='weight'):
     """Find all-pairs shortest path lengths using Floyd's algorithm.
@@ -44,17 +46,18 @@ def floyd_warshall_numpy(G, nodelist=None, weight='weight'):
     try:
         import numpy as np
     except ImportError:
-        raise ImportError(\
-          "to_numpy_matrix() requires numpy: http://scipy.org/ ")
+        raise ImportError( \
+            "to_numpy_matrix() requires numpy: http://scipy.org/ ")
     A = nx.to_numpy_matrix(G, nodelist=nodelist, multigraph_weight=min,
                            weight=weight)
-    n,m = A.shape
+    n, m = A.shape
     I = np.identity(n)
-    A[A==0] = np.inf # set zero entries to inf
-    A[I==1] = 0 # except diagonal which should be zero
+    A[A == 0] = np.inf  # set zero entries to inf
+    A[I == 1] = 0  # except diagonal which should be zero
     for i in range(n):
-        A = np.minimum(A, A[i,:] + A[:,i])
+        A = np.minimum(A, A[i, :] + A[:, i])
     return A
+
 
 def floyd_warshall_predecessor_and_distance(G, weight='weight'):
     """Find all-pairs shortest path lengths using Floyd's algorithm.
@@ -90,12 +93,12 @@ def floyd_warshall_predecessor_and_distance(G, weight='weight'):
     # dictionary-of-dictionaries representation for dist and pred
     # use some defaultdict magick here
     # for dist the default is the floating point inf value
-    dist = defaultdict(lambda : defaultdict(lambda: float('inf')))
+    dist = defaultdict(lambda: defaultdict(lambda: float('inf')))
     pred = defaultdict(dict)
     # initialize path distance dictionary to be the adjacency matrix
     # also set the distance to self to 0 (zero diagonal)
     undirected = not G.is_directed()
-    for u,v,d in G.edges(data=True):
+    for u, v, d in G.edges(data=True):
         e_weight = d.get(weight, 1.0)
         dist[u][v] = min(e_weight, dist[u][v])
         pred[u][v] = u
@@ -109,7 +112,7 @@ def floyd_warshall_predecessor_and_distance(G, weight='weight'):
                 if dist[u][v] > dist[u][w] + dist[w][v]:
                     dist[u][v] = dist[u][w] + dist[w][v]
                     pred[u][v] = pred[w][v]
-    return dict(pred),dict(dist)
+    return dict(pred), dict(dist)
 
 
 def floyd_warshall(G, weight='weight'):
@@ -146,9 +149,11 @@ def floyd_warshall(G, weight='weight'):
     # could make this its own function to reduce memory costs
     return floyd_warshall_predecessor_and_distance(G, weight=weight)[1]
 
+
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import numpy
     except:

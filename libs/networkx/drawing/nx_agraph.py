@@ -15,16 +15,18 @@ See Also
 --------
 Pygraphviz: http://networkx.lanl.gov/pygraphviz
 """
-#    Copyright (C) 2004-2012 by
+# Copyright (C) 2004-2012 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import os
-import sys
 import tempfile
+
 import networkx as nx
+
+
 __author__ = """Aric Hagberg (hagberg@lanl.gov)"""
 __all__ = ['from_agraph', 'to_agraph',
            'write_dot', 'read_dot',
@@ -32,7 +34,8 @@ __all__ = ['from_agraph', 'to_agraph',
            'pygraphviz_layout',
            'view_pygraphviz']
 
-def from_agraph(A,create_using=None):
+
+def from_agraph(A, create_using=None):
     """Return a NetworkX Graph or DiGraph from a PyGraphviz nxgraph.
 
     Parameters
@@ -67,44 +70,45 @@ def from_agraph(A,create_using=None):
     if create_using is None:
         if A.is_directed():
             if A.is_strict():
-                create_using=nx.DiGraph()
+                create_using = nx.DiGraph()
             else:
-                create_using=nx.MultiDiGraph()
+                create_using = nx.MultiDiGraph()
         else:
             if A.is_strict():
-                create_using=nx.Graph()
+                create_using = nx.Graph()
             else:
-                create_using=nx.MultiGraph()
+                create_using = nx.MultiGraph()
 
     # assign defaults
-    N=nx.empty_graph(0,create_using)
-    N.name=''
+    N = nx.empty_graph(0, create_using)
+    N.name = ''
     if A.name is not None:
-        N.name=A.name
+        N.name = A.name
 
     # add nodes, attributes to N.node_attr
     for n in A.nodes():
-        str_attr=dict((str(k),v) for k,v in n.attr.items())
-        N.add_node(str(n),**str_attr)
+        str_attr = dict((str(k), v) for k, v in n.attr.items())
+        N.add_node(str(n), **str_attr)
 
     # add edges, assign edge data as dictionary of attributes
     for e in A.edges():
-        u,v=str(e[0]),str(e[1])
-        attr=dict(e.attr)
-        str_attr=dict((str(k),v) for k,v in attr.items())
+        u, v = str(e[0]), str(e[1])
+        attr = dict(e.attr)
+        str_attr = dict((str(k), v) for k, v in attr.items())
         if not N.is_multigraph():
             if e.name is not None:
-                str_attr['key']=e.name
-            N.add_edge(u,v,**str_attr)
+                str_attr['key'] = e.name
+            N.add_edge(u, v, **str_attr)
         else:
-            N.add_edge(u,v,key=e.name,**str_attr)
+            N.add_edge(u, v, key=e.name, **str_attr)
 
     # add default attributes for nxgraph, nodes, and edges
     # hang them on N.graph_attr
-    N.graph['nxgraph']=dict(A.graph_attr)
-    N.graph['node']=dict(A.node_attr)
-    N.graph['edge']=dict(A.edge_attr)
+    N.graph['nxgraph'] = dict(A.graph_attr)
+    N.graph['node'] = dict(A.node_attr)
+    N.graph['edge'] = dict(A.edge_attr)
     return N
+
 
 def to_agraph(N):
     """Return a pygraphviz nxgraph from a NetworkX nxgraph N.
@@ -132,34 +136,34 @@ def to_agraph(N):
         raise ImportError('requires pygraphviz ',
                           'http://networkx.lanl.gov/pygraphviz ',
                           '(not available for Python3)')
-    directed=N.is_directed()
-    strict=N.number_of_selfloops()==0 and not N.is_multigraph()
-    A=pygraphviz.AGraph(name=N.name,strict=strict,directed=directed)
+    directed = N.is_directed()
+    strict = N.number_of_selfloops() == 0 and not N.is_multigraph()
+    A = pygraphviz.AGraph(name=N.name, strict=strict, directed=directed)
 
     # default nxgraph attributes
-    A.graph_attr.update(N.graph.get('nxgraph',{}))
-    A.node_attr.update(N.graph.get('node',{}))
-    A.edge_attr.update(N.graph.get('edge',{}))
+    A.graph_attr.update(N.graph.get('nxgraph', {}))
+    A.node_attr.update(N.graph.get('node', {}))
+    A.edge_attr.update(N.graph.get('edge', {}))
 
     # add nodes
-    for n,nodedata in N.nodes(data=True):
-        A.add_node(n,**nodedata)
+    for n, nodedata in N.nodes(data=True):
+        A.add_node(n, **nodedata)
 
     # loop over edges
 
     if N.is_multigraph():
-        for u,v,key,edgedata in N.edges_iter(data=True,keys=True):
-            str_edgedata=dict((k,str(v)) for k,v in edgedata.items())
-            A.add_edge(u,v,key=str(key),**str_edgedata)
+        for u, v, key, edgedata in N.edges_iter(data=True, keys=True):
+            str_edgedata = dict((k, str(v)) for k, v in edgedata.items())
+            A.add_edge(u, v, key=str(key), **str_edgedata)
     else:
-        for u,v,edgedata in N.edges_iter(data=True):
-            str_edgedata=dict((k,str(v)) for k,v in edgedata.items())
-            A.add_edge(u,v,**str_edgedata)
-
+        for u, v, edgedata in N.edges_iter(data=True):
+            str_edgedata = dict((k, str(v)) for k, v in edgedata.items())
+            A.add_edge(u, v, **str_edgedata)
 
     return A
 
-def write_dot(G,path):
+
+def write_dot(G, path):
     """Write NetworkX nxgraph G to Graphviz dot format on path.
 
     Parameters
@@ -175,10 +179,11 @@ def write_dot(G,path):
         raise ImportError('requires pygraphviz ',
                           'http://networkx.lanl.gov/pygraphviz ',
                           '(not available for Python3)')
-    A=to_agraph(G)
+    A = to_agraph(G)
     A.write(path)
     A.clear()
     return
+
 
 def read_dot(path):
     """Return a NetworkX nxgraph from a dot file on path.
@@ -194,11 +199,11 @@ def read_dot(path):
         raise ImportError('read_dot() requires pygraphviz ',
                           'http://networkx.lanl.gov/pygraphviz ',
                           '(not available for Python3)')
-    A=pygraphviz.AGraph(file=path)
+    A = pygraphviz.AGraph(file=path)
     return from_agraph(A)
 
 
-def graphviz_layout(G,prog='neato',root=None, args=''):
+def graphviz_layout(G, prog='neato', root=None, args=''):
     """Create node positions for G using Graphviz.
 
     Parameters
@@ -226,9 +231,10 @@ def graphviz_layout(G,prog='neato',root=None, args=''):
     This is a wrapper for pygraphviz_layout.
 
     """
-    return pygraphviz_layout(G,prog=prog,root=root,args=args)
+    return pygraphviz_layout(G, prog=prog, root=root, args=args)
 
-def pygraphviz_layout(G,prog='neato',root=None, args=''):
+
+def pygraphviz_layout(G, prog='neato', root=None, args=''):
     """Create node positions for G using Graphviz.
 
     Parameters
@@ -259,23 +265,24 @@ def pygraphviz_layout(G,prog='neato',root=None, args=''):
                           'http://networkx.lanl.gov/pygraphviz ',
                           '(not available for Python3)')
     if root is not None:
-        args+="-Groot=%s"%root
-    A=to_agraph(G)
-    A.layout(prog=prog,args=args)
-    node_pos={}
+        args += "-Groot=%s" % root
+    A = to_agraph(G)
+    A.layout(prog=prog, args=args)
+    node_pos = {}
     for n in G:
-        node=pygraphviz.Node(A,n)
+        node = pygraphviz.Node(A, n)
         try:
-            xx,yy=node.attr["pos"].split(',')
-            node_pos[n]=(float(xx),float(yy))
+            xx, yy = node.attr["pos"].split(',')
+            node_pos[n] = (float(xx), float(yy))
         except:
-            print("no position for node",n)
-            node_pos[n]=(0.0,0.0)
+            print("no position for node", n)
+            node_pos[n] = (0.0, 0.0)
     return node_pos
+
 
 @nx.utils.open_file(5, 'w')
 def view_pygraphviz(G, edgelabel=None, prog='dot', args='',
-                       suffix='', path=None):
+                    suffix='', path=None):
     """Views the nxgraph G using the specified layout algorithm.
 
     Parameters
@@ -316,8 +323,6 @@ def view_pygraphviz(G, edgelabel=None, prog='dot', args='',
     if not len(G):
         raise nx.NetworkXException("An empty nxgraph cannot be drawn.")
 
-    import pygraphviz
-
     # If we are providing default values for graphviz, these must be set
     # before any nodes or edges are added to the PyGraphviz nxgraph object.
     # The reason for this is that default values only affect incoming objects.
@@ -342,7 +347,7 @@ def view_pygraphviz(G, edgelabel=None, prog='dot', args='',
     def update_attrs(which, attrs):
         # Update nxgraph attributes. Return list of those which were added.
         added = []
-        for k,v in attrs.items():
+        for k, v in attrs.items():
             if k not in G.graph[which]:
                 G.graph[which][k] = v
                 added.append(k)
@@ -377,13 +382,13 @@ def view_pygraphviz(G, edgelabel=None, prog='dot', args='',
 
         # update all the edge labels
         if G.is_multigraph():
-            for u,v,key,data in G.edges_iter(keys=True, data=True):
+            for u, v, key, data in G.edges_iter(keys=True, data=True):
                 # PyGraphviz doesn't convert the key to a string. See #339
-                edge = A.get_edge(u,v,str(key))
+                edge = A.get_edge(u, v, str(key))
                 edge.attr['label'] = str(func(data))
         else:
-            for u,v,data in G.edges_iter(data=True):
-                edge = A.get_edge(u,v)
+            for u, v, data in G.edges_iter(data=True):
+                edge = A.get_edge(u, v)
                 edge.attr['label'] = str(func(data))
 
     if path is None:
@@ -400,6 +405,7 @@ def view_pygraphviz(G, edgelabel=None, prog='dot', args='',
     display_pygraphviz(A, path=path, prog=prog, args=args)
 
     return path.name, A
+
 
 def display_pygraphviz(graph, path, format=None, prog=None, args=''):
     """Internal function to display a nxgraph in OS dependent manner.
@@ -438,9 +444,11 @@ def display_pygraphviz(graph, path, format=None, prog=None, args=''):
     path.close()
     nx.utils.default_opener(filename)
 
+
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import pygraphviz
     except:

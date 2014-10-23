@@ -2,7 +2,7 @@
 """Shortest paths and path lengths using A* ("A star") algorithm.
 """
 
-#    Copyright (C) 2004-2011 by
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -10,8 +10,10 @@
 #    BSD license.
 
 from heapq import heappush, heappop
+
 from networkx import NetworkXError
 import networkx as nx
+
 
 __author__ = "\n".join(["Salim Fadhley <salimfadhley@gmail.com>",
                         "Matteo Dell'Amico <matteodellamico@gmail.com>"])

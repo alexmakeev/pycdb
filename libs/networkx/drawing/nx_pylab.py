@@ -13,15 +13,16 @@ matplotlib:     http://matplotlib.sourceforge.net/
 pygraphviz:     http://networkx.lanl.gov/pygraphviz/
 
 """
-#    Copyright (C) 2004-2012 by
+# Copyright (C) 2004-2012 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
-from networkx.drawing.layout import shell_layout,\
-    circular_layout,spectral_layout,spring_layout,random_layout
+from networkx.drawing.layout import shell_layout, \
+    circular_layout, spectral_layout, spring_layout, random_layout
+
 __author__ = """Aric Hagberg (hagberg@lanl.gov)"""
 __all__ = ['draw',
            'draw_networkx',
@@ -35,6 +36,7 @@ __all__ = ['draw',
            'draw_spring',
            'draw_shell',
            'draw_graphviz']
+
 
 def draw(G, pos=None, ax=None, hold=None, **kwds):
     """Draw the nxgraph G with Matplotlib (pylab).
@@ -116,21 +118,21 @@ def draw(G, pos=None, ax=None, hold=None, **kwds):
         print("Matplotlib unable to open display")
         raise
 
-    cf=pylab.gcf()
+    cf = pylab.gcf()
     cf.set_facecolor('w')
     if ax is None:
         if cf._axstack() is None:
-            ax=cf.add_axes((0,0,1,1))
+            ax = cf.add_axes((0, 0, 1, 1))
         else:
-            ax=cf.gca()
+            ax = cf.gca()
 
- # allow callers to override the hold state by passing hold=True|False
+            # allow callers to override the hold state by passing hold=True|False
     b = pylab.ishold()
     h = kwds.pop('hold', None)
     if h is not None:
         pylab.hold(h)
     try:
-        draw_networkx(G,pos=pos,ax=ax,**kwds)
+        draw_networkx(G, pos=pos, ax=ax, **kwds)
         ax.set_axis_off()
         pylab.draw_if_interactive()
     except:
@@ -261,13 +263,14 @@ def draw_networkx(G, pos=None, with_labels=True, **kwds):
         raise
 
     if pos is None:
-        pos=nx.drawing.spring_layout(G) # default to spring layout
+        pos = nx.drawing.spring_layout(G)  # default to spring layout
 
-    node_collection=draw_networkx_nodes(G, pos, **kwds)
-    edge_collection=draw_networkx_edges(G, pos, **kwds)
+    node_collection = draw_networkx_nodes(G, pos, **kwds)
+    edge_collection = draw_networkx_edges(G, pos, **kwds)
     if with_labels:
         draw_networkx_labels(G, pos, **kwds)
     pylab.draw_if_interactive()
+
 
 def draw_networkx_nodes(G, pos,
                         nodelist=None,
@@ -280,7 +283,7 @@ def draw_networkx_nodes(G, pos,
                         vmax=None,
                         ax=None,
                         linewidths=None,
-                        label = None,
+                        label=None,
                         **kwds):
     """Draw the nodes of the nxgraph G.
 
@@ -357,37 +360,34 @@ def draw_networkx_nodes(G, pos,
         print("Matplotlib unable to open display")
         raise
 
-
     if ax is None:
-        ax=pylab.gca()
+        ax = pylab.gca()
 
     if nodelist is None:
-        nodelist=G.nodes()
+        nodelist = G.nodes()
 
-    if not nodelist or len(nodelist)==0:  # empty nodelist, no drawing
+    if not nodelist or len(nodelist) == 0:  # empty nodelist, no drawing
         return None
 
     try:
-        xy=numpy.asarray([pos[v] for v in nodelist])
+        xy = numpy.asarray([pos[v] for v in nodelist])
     except KeyError as e:
-        raise nx.NetworkXError('Node %s has no position.'%e)
+        raise nx.NetworkXError('Node %s has no position.' % e)
     except ValueError:
         raise nx.NetworkXError('Bad value in node positions.')
 
+    node_collection = ax.scatter(xy[:, 0], xy[:, 1],
+                                 s=node_size,
+                                 c=node_color,
+                                 marker=node_shape,
+                                 cmap=cmap,
+                                 vmin=vmin,
+                                 vmax=vmax,
+                                 alpha=alpha,
+                                 linewidths=linewidths,
+                                 label=label)
 
-
-    node_collection=ax.scatter(xy[:,0], xy[:,1],
-                               s=node_size,
-                               c=node_color,
-                               marker=node_shape,
-                               cmap=cmap,
-                               vmin=vmin,
-                               vmax=vmax,
-                               alpha=alpha,
-                               linewidths=linewidths,
-                               label=label)
-
-#    pylab.axes(ax)
+    #    pylab.axes(ax)
     pylab.sci(node_collection)
     node_collection.set_zorder(2)
     return node_collection
@@ -480,7 +480,7 @@ def draw_networkx_edges(G, pos,
         import matplotlib
         import matplotlib.pylab as pylab
         import matplotlib.cbook as cb
-        from matplotlib.colors import colorConverter,Colormap
+        from matplotlib.colors import colorConverter, Colormap
         from matplotlib.collections import LineCollection
         import numpy
     except ImportError:
@@ -490,16 +490,16 @@ def draw_networkx_edges(G, pos,
         raise
 
     if ax is None:
-        ax=pylab.gca()
+        ax = pylab.gca()
 
     if edgelist is None:
-        edgelist=G.edges()
+        edgelist = G.edges()
 
-    if not edgelist or len(edgelist)==0: # no edges!
+    if not edgelist or len(edgelist) == 0:  # no edges!
         return None
 
     # set edge positions
-    edge_pos=numpy.asarray([(pos[e[0]],pos[e[1]]) for e in edgelist])
+    edge_pos = numpy.asarray([(pos[e[0]], pos[e[1]]) for e in edgelist])
 
     if not cb.iterable(width):
         lw = (width,)
@@ -507,19 +507,19 @@ def draw_networkx_edges(G, pos,
         lw = width
 
     if not cb.is_string_like(edge_color) \
-           and cb.iterable(edge_color) \
-           and len(edge_color)==len(edge_pos):
+            and cb.iterable(edge_color) \
+            and len(edge_color) == len(edge_pos):
         if numpy.alltrue([cb.is_string_like(c)
-                         for c in edge_color]):
+                          for c in edge_color]):
             # (should check ALL elements)
             # list of color letters such as ['k','r','k',...]
-            edge_colors = tuple([colorConverter.to_rgba(c,alpha)
+            edge_colors = tuple([colorConverter.to_rgba(c, alpha)
                                  for c in edge_color])
         elif numpy.alltrue([not cb.is_string_like(c)
-                           for c in edge_color]):
+                            for c in edge_color]):
             # If color specs are given as (rgb) or (rgba) tuples, we're OK
-            if numpy.alltrue([cb.iterable(c) and len(c) in (3,4)
-                             for c in edge_color]):
+            if numpy.alltrue([cb.iterable(c) and len(c) in (3, 4)
+                              for c in edge_color]):
                 edge_colors = tuple(edge_color)
             else:
                 # numbers (which are going to be mapped with a colormap)
@@ -527,21 +527,21 @@ def draw_networkx_edges(G, pos,
         else:
             raise ValueError('edge_color must consist of either color names or numbers')
     else:
-        if cb.is_string_like(edge_color) or len(edge_color)==1:
+        if cb.is_string_like(edge_color) or len(edge_color) == 1:
             edge_colors = ( colorConverter.to_rgba(edge_color, alpha), )
         else:
-            raise ValueError('edge_color must be a single color or list of exactly m colors where m is the number or edges')
+            raise ValueError(
+                'edge_color must be a single color or list of exactly m colors where m is the number or edges')
 
     edge_collection = LineCollection(edge_pos,
-                                     colors       = edge_colors,
-                                     linewidths   = lw,
-                                     antialiaseds = (1,),
-                                     linestyle    = style,
-                                     transOffset = ax.transData,
-                                     )
+                                     colors=edge_colors,
+                                     linewidths=lw,
+                                     antialiaseds=(1,),
+                                     linestyle=style,
+                                     transOffset=ax.transData,
+    )
 
-
-    edge_collection.set_zorder(1) # edges go behind nodes
+    edge_collection.set_zorder(1)  # edges go behind nodes
     edge_collection.set_label(label)
     ax.add_collection(edge_collection)
 
@@ -555,7 +555,7 @@ def draw_networkx_edges(G, pos,
 
     if edge_colors is None:
         if edge_cmap is not None:
-            assert(isinstance(edge_cmap, Colormap))
+            assert (isinstance(edge_cmap, Colormap))
         edge_collection.set_array(numpy.asarray(edge_color))
         edge_collection.set_cmap(edge_cmap)
         if edge_vmin is not None or edge_vmax is not None:
@@ -564,7 +564,7 @@ def draw_networkx_edges(G, pos,
             edge_collection.autoscale()
         pylab.sci(edge_collection)
 
-    arrow_collection=None
+    arrow_collection = None
 
     if G.is_directed() and arrows:
 
@@ -572,55 +572,55 @@ def draw_networkx_edges(G, pos,
         # draw thick line segments at head end of edge
         # waiting for someone else to implement arrows that will work
         arrow_colors = edge_colors
-        a_pos=[]
-        p=1.0-0.25 # make head segment 25 percent of edge length
-        for src,dst in edge_pos:
-            x1,y1=src
-            x2,y2=dst
-            dx=x2-x1 # x offset
-            dy=y2-y1 # y offset
-            d=numpy.sqrt(float(dx**2+dy**2)) # length of edge
-            if d==0: # source and target at same position
+        a_pos = []
+        p = 1.0 - 0.25  # make head segment 25 percent of edge length
+        for src, dst in edge_pos:
+            x1, y1 = src
+            x2, y2 = dst
+            dx = x2 - x1  # x offset
+            dy = y2 - y1  # y offset
+            d = numpy.sqrt(float(dx ** 2 + dy ** 2))  # length of edge
+            if d == 0:  # source and target at same position
                 continue
-            if dx==0: # vertical edge
-                xa=x2
-                ya=dy*p+y1
-            if dy==0: # horizontal edge
-                ya=y2
-                xa=dx*p+x1
+            if dx == 0:  # vertical edge
+                xa = x2
+                ya = dy * p + y1
+            if dy == 0:  # horizontal edge
+                ya = y2
+                xa = dx * p + x1
             else:
-                theta=numpy.arctan2(dy,dx)
-                xa=p*d*numpy.cos(theta)+x1
-                ya=p*d*numpy.sin(theta)+y1
+                theta = numpy.arctan2(dy, dx)
+                xa = p * d * numpy.cos(theta) + x1
+                ya = p * d * numpy.sin(theta) + y1
 
-            a_pos.append(((xa,ya),(x2,y2)))
+            a_pos.append(((xa, ya), (x2, y2)))
 
         arrow_collection = LineCollection(a_pos,
-                                colors       = arrow_colors,
-                                linewidths   = [4*ww for ww in lw],
-                                antialiaseds = (1,),
-                                transOffset = ax.transData,
-                                )
+                                          colors=arrow_colors,
+                                          linewidths=[4 * ww for ww in lw],
+                                          antialiaseds=(1,),
+                                          transOffset=ax.transData,
+        )
 
-        arrow_collection.set_zorder(1) # edges go behind nodes
+        arrow_collection.set_zorder(1)  # edges go behind nodes
         arrow_collection.set_label(label)
         ax.add_collection(arrow_collection)
 
 
     # update view
-    minx = numpy.amin(numpy.ravel(edge_pos[:,:,0]))
-    maxx = numpy.amax(numpy.ravel(edge_pos[:,:,0]))
-    miny = numpy.amin(numpy.ravel(edge_pos[:,:,1]))
-    maxy = numpy.amax(numpy.ravel(edge_pos[:,:,1]))
+    minx = numpy.amin(numpy.ravel(edge_pos[:, :, 0]))
+    maxx = numpy.amax(numpy.ravel(edge_pos[:, :, 0]))
+    miny = numpy.amin(numpy.ravel(edge_pos[:, :, 1]))
+    maxy = numpy.amax(numpy.ravel(edge_pos[:, :, 1]))
 
-    w = maxx-minx
-    h = maxy-miny
-    padx, pady = 0.05*w, 0.05*h
-    corners = (minx-padx, miny-pady), (maxx+padx, maxy+pady)
-    ax.update_datalim( corners)
+    w = maxx - minx
+    h = maxy - miny
+    padx, pady = 0.05 * w, 0.05 * h
+    corners = (minx - padx, miny - pady), (maxx + padx, maxy + pady)
+    ax.update_datalim(corners)
     ax.autoscale_view()
 
-#    if arrow_collection:
+    #    if arrow_collection:
 
     return edge_collection
 
@@ -692,34 +692,35 @@ def draw_networkx_labels(G, pos,
         raise
 
     if ax is None:
-        ax=pylab.gca()
+        ax = pylab.gca()
 
     if labels is None:
-        labels=dict( (n,n) for n in G.nodes())
+        labels = dict((n, n) for n in G.nodes())
 
     # set optional alignment
-    horizontalalignment=kwds.get('horizontalalignment','center')
-    verticalalignment=kwds.get('verticalalignment','center')
+    horizontalalignment = kwds.get('horizontalalignment', 'center')
+    verticalalignment = kwds.get('verticalalignment', 'center')
 
-    text_items={}  # there is no text collection so we'll fake one
+    text_items = {}  # there is no text collection so we'll fake one
     for n, label in labels.items():
-        (x,y)=pos[n]
+        (x, y) = pos[n]
         if not cb.is_string_like(label):
-            label=str(label) # this will cause "1" and 1 to be labeled the same
-        t=ax.text(x, y,
-                  label,
-                  size=font_size,
-                  color=font_color,
-                  family=font_family,
-                  weight=font_weight,
-                  horizontalalignment=horizontalalignment,
-                  verticalalignment=verticalalignment,
-                  transform = ax.transData,
-                  clip_on=True,
-                  )
-        text_items[n]=t
+            label = str(label)  # this will cause "1" and 1 to be labeled the same
+        t = ax.text(x, y,
+                    label,
+                    size=font_size,
+                    color=font_color,
+                    family=font_family,
+                    weight=font_weight,
+                    horizontalalignment=horizontalalignment,
+                    verticalalignment=verticalalignment,
+                    transform=ax.transData,
+                    clip_on=True,
+        )
+        text_items[n] = t
 
     return text_items
+
 
 def draw_networkx_edge_labels(G, pos,
                               edge_labels=None,
@@ -804,100 +805,110 @@ def draw_networkx_edge_labels(G, pos,
         raise
 
     if ax is None:
-        ax=pylab.gca()
+        ax = pylab.gca()
     if edge_labels is None:
-        labels=dict( ((u,v), d) for u,v,d in G.edges(data=True) )
+        labels = dict(((u, v), d) for u, v, d in G.edges(data=True))
     else:
         labels = edge_labels
-    text_items={}
-    for (n1,n2), label in labels.items():
-        (x1,y1)=pos[n1]
-        (x2,y2)=pos[n2]
-        (x,y) = (x1 * label_pos + x2 * (1.0 - label_pos),
-                 y1 * label_pos + y2 * (1.0 - label_pos))
+    text_items = {}
+    for (n1, n2), label in labels.items():
+        (x1, y1) = pos[n1]
+        (x2, y2) = pos[n2]
+        (x, y) = (x1 * label_pos + x2 * (1.0 - label_pos),
+                  y1 * label_pos + y2 * (1.0 - label_pos))
 
         if rotate:
-            angle=numpy.arctan2(y2-y1,x2-x1)/(2.0*numpy.pi)*360 # degrees
+            angle = numpy.arctan2(y2 - y1, x2 - x1) / (2.0 * numpy.pi) * 360  # degrees
             # make label orientation "right-side-up"
             if angle > 90:
-                angle-=180
+                angle -= 180
             if angle < - 90:
-                angle+=180
+                angle += 180
             # transform data coordinate angle to screen coordinate angle
-            xy=numpy.array((x,y))
-            trans_angle=ax.transData.transform_angles(numpy.array((angle,)),
-                                                      xy.reshape((1,2)))[0]
+            xy = numpy.array((x, y))
+            trans_angle = ax.transData.transform_angles(numpy.array((angle,)),
+                                                        xy.reshape((1, 2)))[0]
         else:
-            trans_angle=0.0
+            trans_angle = 0.0
         # use default box of white with white border
         if bbox is None:
             bbox = dict(boxstyle='round',
                         ec=(1.0, 1.0, 1.0),
                         fc=(1.0, 1.0, 1.0),
-                        )
+            )
         if not cb.is_string_like(label):
-            label=str(label) # this will cause "1" and 1 to be labeled the same
+            label = str(label)  # this will cause "1" and 1 to be labeled the same
 
         # set optional alignment
-        horizontalalignment=kwds.get('horizontalalignment','center')
-        verticalalignment=kwds.get('verticalalignment','center')
+        horizontalalignment = kwds.get('horizontalalignment', 'center')
+        verticalalignment = kwds.get('verticalalignment', 'center')
 
-        t=ax.text(x, y,
-                  label,
-                  size=font_size,
-                  color=font_color,
-                  family=font_family,
-                  weight=font_weight,
-                  horizontalalignment=horizontalalignment,
-                  verticalalignment=verticalalignment,
-                  rotation=trans_angle,
-                  transform = ax.transData,
-                  bbox = bbox,
-                  zorder = 1,
-                  clip_on=True,
-                  )
-        text_items[(n1,n2)]=t
+        t = ax.text(x, y,
+                    label,
+                    size=font_size,
+                    color=font_color,
+                    family=font_family,
+                    weight=font_weight,
+                    horizontalalignment=horizontalalignment,
+                    verticalalignment=verticalalignment,
+                    rotation=trans_angle,
+                    transform=ax.transData,
+                    bbox=bbox,
+                    zorder=1,
+                    clip_on=True,
+        )
+        text_items[(n1, n2)] = t
 
     return text_items
 
+
 def draw_circular(G, **kwargs):
     """Draw the nxgraph G with a circular layout."""
-    draw(G,circular_layout(G),**kwargs)
+    draw(G, circular_layout(G), **kwargs)
+
 
 def draw_random(G, **kwargs):
     """Draw the nxgraph G with a random layout."""
-    draw(G,random_layout(G),**kwargs)
+    draw(G, random_layout(G), **kwargs)
+
 
 def draw_spectral(G, **kwargs):
     """Draw the nxgraph G with a spectral layout."""
-    draw(G,spectral_layout(G),**kwargs)
+    draw(G, spectral_layout(G), **kwargs)
+
 
 def draw_spring(G, **kwargs):
     """Draw the nxgraph G with a spring layout."""
-    draw(G,spring_layout(G),**kwargs)
+    draw(G, spring_layout(G), **kwargs)
+
 
 def draw_shell(G, **kwargs):
     """Draw networkx nxgraph with shell layout."""
     nlist = kwargs.get('nlist', None)
     if nlist != None:
-        del(kwargs['nlist'])
-    draw(G,shell_layout(G,nlist=nlist),**kwargs)
+        del (kwargs['nlist'])
+    draw(G, shell_layout(G, nlist=nlist), **kwargs)
+
 
 def draw_graphviz(G, prog="neato", **kwargs):
     """Draw networkx nxgraph with graphviz layout."""
-    pos=nx.drawing.graphviz_layout(G,prog)
-    draw(G,pos,**kwargs)
+    pos = nx.drawing.graphviz_layout(G, prog)
+    draw(G, pos, **kwargs)
 
-def draw_nx(G,pos,**kwds):
+
+def draw_nx(G, pos, **kwds):
     """For backward compatibility; use draw or draw_networkx."""
-    draw(G,pos,**kwds)
+    draw(G, pos, **kwds)
+
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import matplotlib as mpl
-        mpl.use('PS',warn=False)
+
+        mpl.use('PS', warn=False)
         import pylab
     except:
         raise SkipTest("matplotlib not available")

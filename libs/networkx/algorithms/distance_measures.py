@@ -4,7 +4,7 @@ Graph diameter, radius, eccentricity and other properties.
 """
 __author__ = "\n".join(['Aric Hagberg (hagberg@lanl.gov)',
                         'Dan Schult(dschult@colgate.edu)'])
-#    Copyright (C) 2004-2010 by 
+# Copyright (C) 2004-2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -14,6 +14,7 @@ __author__ = "\n".join(['Aric Hagberg (hagberg@lanl.gov)',
 __all__ = ['eccentricity', 'diameter', 'radius', 'periphery', 'center']
 
 import networkx
+
 
 def eccentricity(G, v=None, sp=None):
     """Return the eccentricity of nodes in G.
@@ -37,34 +38,34 @@ def eccentricity(G, v=None, sp=None):
     ecc : dictionary
        A dictionary of eccentricity values keyed by node.
     """
-    nodes=[]
-    if v is None:                # none, use entire nxgraph
-        nodes=G.nodes() 
+    nodes = []
+    if v is None:  # none, use entire nxgraph
+        nodes = G.nodes()
     elif isinstance(v, list):  # check for a list
-        nodes=v
-    else:                      # assume it is a single value
-        nodes=[v]
-    order=G.order()
+        nodes = v
+    else:  # assume it is a single value
+        nodes = [v]
+    order = G.order()
 
-    e={}
+    e = {}
     for v in nodes:
         if sp is None:
-            length=networkx.single_source_shortest_path_length(G,v)
+            length = networkx.single_source_shortest_path_length(G, v)
             L = len(length)
         else:
             try:
-                length=sp[v]
+                length = sp[v]
                 L = len(length)
             except TypeError:
                 raise networkx.NetworkXError('Format of "sp" is invalid.')
         if L != order:
             msg = "Graph not connected: infinite path length"
             raise networkx.NetworkXError(msg)
-            
-        e[v]=max(length.values())
 
-    if len(e)==1: 
-        return list(e.values())[0] # return single value
+        e[v] = max(length.values())
+
+    if len(e) == 1:
+        return list(e.values())[0]  # return single value
     else:
         return e
 
@@ -92,8 +93,9 @@ def diameter(G, e=None):
     eccentricity
     """
     if e is None:
-        e=eccentricity(G)
+        e = eccentricity(G)
     return max(e.values())
+
 
 def periphery(G, e=None):
     """Return the periphery of the nxgraph G.
@@ -114,9 +116,9 @@ def periphery(G, e=None):
        List of nodes in periphery
     """
     if e is None:
-        e=eccentricity(G)
-    diameter=max(e.values())
-    p=[v for v in e if e[v]==diameter]
+        e = eccentricity(G)
+    diameter = max(e.values())
+    p = [v for v in e if e[v] == diameter]
     return p
 
 
@@ -139,8 +141,9 @@ def radius(G, e=None):
        Radius of nxgraph
     """
     if e is None:
-        e=eccentricity(G)
+        e = eccentricity(G)
     return min(e.values())
+
 
 def center(G, e=None):
     """Return the periphery of the nxgraph G.
@@ -161,9 +164,9 @@ def center(G, e=None):
        List of nodes in center
     """
     if e is None:
-        e=eccentricity(G)
+        e = eccentricity(G)
     # order the nodes by path length
-    radius=min(e.values())
-    p=[v for v in e if e[v]==radius]
+    radius = min(e.values())
+    p = [v for v in e if e[v] == radius]
     return p
 

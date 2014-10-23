@@ -2,18 +2,20 @@
 """
 Functions for identifying isolate (degree zero) nodes.
 """
-#    Copyright (C) 2004-2011 by 
+# Copyright (C) 2004-2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = """\n""".join(['Drew Conway <drew.conway@nyu.edu>',
                             'Aric Hagberg <hagberg@lanl.gov>'])
-__all__=['is_isolate','isolates']
+__all__ = ['is_isolate', 'isolates']
 
-def is_isolate(G,n):
+
+def is_isolate(G, n):
     """Determine of node n is an isolate (degree zero).  
 
     Parameters
@@ -38,7 +40,8 @@ def is_isolate(G,n):
     >>> nx.is_isolate(G,3)
     True
     """
-    return G.degree(n)==0 
+    return G.degree(n) == 0
+
 
 def isolates(G):
     """Return list of isolates in the nxgraph.
@@ -74,4 +77,4 @@ def isolates(G):
     >>> nx.isolates(G)
     [3]
     """
-    return [n for (n,d) in G.degree_iter() if d==0]
+    return [n for (n, d) in G.degree_iter() if d == 0]

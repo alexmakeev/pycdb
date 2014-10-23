@@ -25,7 +25,7 @@ def _create_auxiliary_digraph(G, capacity='capacity'):
     auxiliary.add_nodes_from(G)
     inf_capacity_flows = {}
     if nx.is_directed(G):
-        for edge in G.edges(data = True):
+        for edge in G.edges(data=True):
             if capacity in edge[2]:
                 if edge[2][capacity] > 0:
                     auxiliary.add_edge(*edge)
@@ -33,7 +33,7 @@ def _create_auxiliary_digraph(G, capacity='capacity'):
                 auxiliary.add_edge(*edge)
                 inf_capacity_flows[(edge[0], edge[1])] = 0
     else:
-        for edge in G.edges(data = True):
+        for edge in G.edges(data=True):
             if capacity in edge[2]:
                 if edge[2][capacity] > 0:
                     auxiliary.add_edge(*edge)
@@ -68,7 +68,7 @@ def _create_flow_dict(G, H, inf_capacity_flows, capacity='capacity'):
             else:
                 flow[u][v] = G[u][v][capacity]
 
-    else: # undirected
+    else:  # undirected
         for u, v in G.edges_iter():
             if H.has_edge(u, v):
                 if capacity in G[u][v]:
@@ -149,7 +149,7 @@ def ford_fulkerson(G, s, t, capacity='capacity'):
     """
     if G.is_multigraph():
         raise nx.NetworkXError(
-                'MultiGraph and MultiDiGraph not supported (yet).')
+            'MultiGraph and MultiDiGraph not supported (yet).')
 
     if s not in G:
         raise nx.NetworkXError('node %s not in nxgraph' % str(s))
@@ -157,8 +157,8 @@ def ford_fulkerson(G, s, t, capacity='capacity'):
         raise nx.NetworkXError('node %s not in nxgraph' % str(t))
 
     auxiliary, inf_capacity_flows = _create_auxiliary_digraph(G,
-                                                        capacity=capacity)
-    flow_value = 0   # Initial feasible flow.
+                                                              capacity=capacity)
+    flow_value = 0  # Initial feasible flow.
 
     # As long as there is an (s, t)-path in the auxiliary digraph, find
     # the shortest (with respect to the number of arcs) such path and
@@ -175,13 +175,13 @@ def ford_fulkerson(G, s, t, capacity='capacity'):
         # Find the minimum capacity of an edge in the path.
         try:
             path_capacity = min([auxiliary[u][v][capacity]
-                                for u, v in path_edges
-                                if capacity in auxiliary[u][v]])
-        except ValueError: 
+                                 for u, v in path_edges
+                                 if capacity in auxiliary[u][v]])
+        except ValueError:
             # path of infinite capacity implies no max flow
             raise nx.NetworkXUnbounded(
-                    "Infinite capacity path, flow unbounded above.")
-        
+                "Infinite capacity path, flow unbounded above.")
+
         flow_value += path_capacity
 
         # Augment the flow along the path.
@@ -199,7 +199,7 @@ def ford_fulkerson(G, s, t, capacity='capacity'):
                     auxiliary[v][u][capacity] += path_capacity
             else:
                 auxiliary.add_edge(v, u, {capacity: path_capacity})
-    
+
     flow_dict = _create_flow_dict(G, auxiliary, inf_capacity_flows,
                                   capacity=capacity)
     return flow_value, flow_dict
@@ -387,5 +387,5 @@ def min_cut(G, s, t, capacity='capacity'):
         return ford_fulkerson(G, s, t, capacity=capacity)[0]
     except nx.NetworkXUnbounded:
         raise nx.NetworkXUnbounded(
-                "Infinite capacity path, no minimum cut.")
+            "Infinite capacity path, no minimum cut.")
 

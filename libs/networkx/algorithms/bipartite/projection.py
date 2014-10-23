@@ -2,7 +2,7 @@
 """One-mode (unipartite) projections of bipartite graphs.
 """
 import networkx as nx
-#    Copyright (C) 2011 by 
+# Copyright (C) 2011 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -16,6 +16,7 @@ __all__ = ['project',
            'collaboration_weighted_projected_graph',
            'overlap_weighted_projected_graph',
            'generic_weighted_projected_graph']
+
 
 def projected_graph(B, nodes, multigraph=False):
     r"""Returns the projection of B onto one of its node sets.
@@ -88,33 +89,34 @@ def projected_graph(B, nodes, multigraph=False):
     if B.is_multigraph():
         raise nx.NetworkXError("not defined for multigraphs")
     if B.is_directed():
-        directed=True
+        directed = True
         if multigraph:
-            G=nx.MultiDiGraph()
+            G = nx.MultiDiGraph()
         else:
-            G=nx.DiGraph()
+            G = nx.DiGraph()
     else:
-        directed=False
+        directed = False
         if multigraph:
-            G=nx.MultiGraph()
+            G = nx.MultiGraph()
         else:
-            G=nx.Graph()
+            G = nx.Graph()
     G.graph.update(B.graph)
-    G.add_nodes_from((n,B.node[n]) for n in nodes)
+    G.add_nodes_from((n, B.node[n]) for n in nodes)
     for u in nodes:
-        nbrs2=set((v for nbr in B[u] for v in B[nbr])) -set([u])
+        nbrs2 = set((v for nbr in B[u] for v in B[nbr])) - set([u])
         if multigraph:
             for n in nbrs2:
                 if directed:
-                    links=set(B[u]) & set(B.pred[n])
+                    links = set(B[u]) & set(B.pred[n])
                 else:
-                    links=set(B[u]) & set(B[n])
+                    links = set(B[u]) & set(B[n])
                 for l in links:
-                    if not G.has_edge(u,n,l):
-                        G.add_edge(u,n,key=l)
+                    if not G.has_edge(u, n, l):
+                        G.add_edge(u, n, key=l)
         else:
-            G.add_edges_from((u,n) for n in nbrs2)
+            G.add_edges_from((u, n) for n in nbrs2)
     return G
+
 
 def weighted_projected_graph(B, nodes, ratio=False):
     r"""Returns a weighted projection of B onto one of its node sets.
@@ -181,13 +183,13 @@ def weighted_projected_graph(B, nodes, ratio=False):
     if B.is_multigraph():
         raise nx.NetworkXError("not defined for multigraphs")
     if B.is_directed():
-        pred=B.pred
-        G=nx.DiGraph()
+        pred = B.pred
+        G = nx.DiGraph()
     else:
-        pred=B.adj
-        G=nx.Graph()
+        pred = B.adj
+        G = nx.Graph()
     G.graph.update(B.graph)
-    G.add_nodes_from((n,B.node[n]) for n in nodes)
+    G.add_nodes_from((n, B.node[n]) for n in nodes)
     n_top = float(len(B) - len(nodes))
     for u in nodes:
         unbrs = set(B[u])
@@ -199,8 +201,9 @@ def weighted_projected_graph(B, nodes, ratio=False):
                 weight = len(common)
             else:
                 weight = len(common) / n_top
-            G.add_edge(u,v,weight=weight)
+            G.add_edge(u, v, weight=weight)
     return G
+
 
 def collaboration_weighted_projected_graph(B, nodes):
     r"""Newman's weighted projection of B onto one of its node sets.
@@ -275,22 +278,23 @@ def collaboration_weighted_projected_graph(B, nodes):
     if B.is_multigraph():
         raise nx.NetworkXError("not defined for multigraphs")
     if B.is_directed():
-        pred=B.pred
-        G=nx.DiGraph()
+        pred = B.pred
+        G = nx.DiGraph()
     else:
-        pred=B.adj
-        G=nx.Graph()
+        pred = B.adj
+        G = nx.Graph()
     G.graph.update(B.graph)
-    G.add_nodes_from((n,B.node[n]) for n in nodes)
+    G.add_nodes_from((n, B.node[n]) for n in nodes)
     for u in nodes:
         unbrs = set(B[u])
         nbrs2 = set((n for nbr in unbrs for n in B[nbr])) - set([u])
         for v in nbrs2:
             vnbrs = set(pred[v])
             common = unbrs & vnbrs
-            weight = sum([1.0/(len(B[n]) - 1) for n in common if len(B[n])>1])
-            G.add_edge(u,v,weight=weight)
+            weight = sum([1.0 / (len(B[n]) - 1) for n in common if len(B[n]) > 1])
+            G.add_edge(u, v, weight=weight)
     return G
+
 
 def overlap_weighted_projected_graph(B, nodes, jaccard=True):
     r"""Overlap weighted projection of B onto one of its node sets.
@@ -368,13 +372,13 @@ def overlap_weighted_projected_graph(B, nodes, jaccard=True):
     if B.is_multigraph():
         raise nx.NetworkXError("not defined for multigraphs")
     if B.is_directed():
-        pred=B.pred
-        G=nx.DiGraph()
+        pred = B.pred
+        G = nx.DiGraph()
     else:
-        pred=B.adj
-        G=nx.Graph()
+        pred = B.adj
+        G = nx.Graph()
     G.graph.update(B.graph)
-    G.add_nodes_from((n,B.node[n]) for n in nodes)
+    G.add_nodes_from((n, B.node[n]) for n in nodes)
     for u in nodes:
         unbrs = set(B[u])
         nbrs2 = set((n for nbr in unbrs for n in B[nbr])) - set([u])
@@ -383,9 +387,10 @@ def overlap_weighted_projected_graph(B, nodes, jaccard=True):
             if jaccard:
                 weight = float(len(unbrs & vnbrs)) / len(unbrs | vnbrs)
             else:
-                weight = float(len(unbrs & vnbrs)) / min(len(unbrs),len(vnbrs))
-            G.add_edge(u,v,weight=weight)
+                weight = float(len(unbrs & vnbrs)) / min(len(unbrs), len(vnbrs))
+            G.add_edge(u, v, weight=weight)
     return G
+
 
 def generic_weighted_projected_graph(B, nodes, weight_function=None):
     r"""Weighted projection of B with a user-specified weight function.
@@ -456,23 +461,24 @@ def generic_weighted_projected_graph(B, nodes, weight_function=None):
     if B.is_multigraph():
         raise nx.NetworkXError("not defined for multigraphs")
     if weight_function is None:
-        weight_function = lambda unbrs,vnbrs:len(unbrs & vnbrs)
+        weight_function = lambda unbrs, vnbrs: len(unbrs & vnbrs)
     if B.is_directed():
-        pred=B.pred
-        G=nx.DiGraph()
+        pred = B.pred
+        G = nx.DiGraph()
     else:
-        pred=B.adj
-        G=nx.Graph()
+        pred = B.adj
+        G = nx.Graph()
     G.graph.update(B.graph)
-    G.add_nodes_from((n,B.node[n]) for n in nodes)
+    G.add_nodes_from((n, B.node[n]) for n in nodes)
     for u in nodes:
         unbrs = set(B[u])
         nbrs2 = set((n for nbr in unbrs for n in B[nbr])) - set([u])
         for v in nbrs2:
             vnbrs = set(pred[v])
             weight = weight_function(unbrs, vnbrs)
-            G.add_edge(u,v,weight=weight)
+            G.add_edge(u, v, weight=weight)
     return G
+
 
 def project(B, nodes, create_using=None):
     return projected_graph(B, nodes)

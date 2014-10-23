@@ -2,7 +2,7 @@
 Line graphs.
 
 """
-#    Copyright (C) 2010 by 
+# Copyright (C) 2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -13,6 +13,7 @@ __author__ = """Aric Hagberg (hagberg@lanl.gov)\nPieter Swart (swart@lanl.gov)\n
 __all__ = ['line_graph']
 
 import networkx as nx
+
 
 def line_graph(G):
     """Return the line nxgraph of the nxgraph or digraph G.
@@ -47,23 +48,23 @@ def line_graph(G):
     """
     if type(G) == nx.MultiGraph or type(G) == nx.MultiDiGraph:
         raise Exception("Line nxgraph not implemented for Multi(Di)Graphs")
-    L=G.__class__()
+    L = G.__class__()
     if G.is_directed():
-        for u,nlist in G.adjacency_iter():  # same as successors for digraph
+        for u, nlist in G.adjacency_iter():  # same as successors for digraph
             # look for directed path of length two
             for n in nlist:
-                nbrs=G[n] # successors 
+                nbrs = G[n]  # successors
                 for nbr in nbrs:
-                    if nbr!=u:
-                        L.add_edge((u,n),(n,nbr))
+                    if nbr != u:
+                        L.add_edge((u, n), (n, nbr))
     else:
-        for u,nlist in G.adjacency_iter():
+        for u, nlist in G.adjacency_iter():
             # label nodes as tuple of edge endpoints in original nxgraph
             # "node tuple" must be in lexigraphical order
-            nodes=[tuple(sorted(n)) for n in zip([u]*len(nlist),nlist)]
+            nodes = [tuple(sorted(n)) for n in zip([u] * len(nlist), nlist)]
             # add clique of nodes to nxgraph
             while nodes:
-                u=nodes.pop()
-                L.add_edges_from((u,v) for v in nodes)
+                u = nodes.pop()
+                L.add_edges_from((u, v) for v in nodes)
     return L
 

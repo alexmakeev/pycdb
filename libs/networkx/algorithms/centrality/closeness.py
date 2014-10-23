@@ -2,14 +2,16 @@
 Closeness centrality measures.
 
 """
-#    Copyright (C) 2004-2010 by 
+# Copyright (C) 2004-2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import functools
+
 import networkx as nx
+
 __author__ = "\n".join(['Aric Hagberg (hagberg@lanl.gov)',
                         'Pieter Swart (swart@lanl.gov)',
                         'Sasha Gutfraind (ag362@cornell.edu)'])
@@ -52,29 +54,29 @@ def closeness_centrality(G, v=None, distance=None, normalized=True):
     part separately.
     """
     if distance is not None:
-        if distance is True: distance='weight'
-        path_length=functools.partial(nx.single_source_dijkstra_path_length,
-                                      weight=distance)
+        if distance is True: distance = 'weight'
+        path_length = functools.partial(nx.single_source_dijkstra_path_length,
+                                        weight=distance)
     else:
-        path_length=nx.single_source_shortest_path_length
+        path_length = nx.single_source_shortest_path_length
 
     if v is None:
-        nodes=G.nodes()
+        nodes = G.nodes()
     else:
-        nodes=[v]
-    closeness_centrality={}
+        nodes = [v]
+    closeness_centrality = {}
 
     for n in nodes:
-        sp=path_length(G,n)
-        totsp=sum(sp.values())
+        sp = path_length(G, n)
+        totsp = sum(sp.values())
         if totsp > 0.0 and len(G) > 1:
-            closeness_centrality[n]= (len(sp)-1.0) / totsp
+            closeness_centrality[n] = (len(sp) - 1.0) / totsp
             # normalize to number of nodes-1 in connected part
             if normalized:
-                s=(len(sp)-1.0) / ( len(G) - 1 )
+                s = (len(sp) - 1.0) / ( len(G) - 1 )
                 closeness_centrality[n] *= s
-        else:                                                                
-            closeness_centrality[n]=0.0           
+        else:
+            closeness_centrality[n] = 0.0
     if v is not None:
         return closeness_centrality[v]
     else:

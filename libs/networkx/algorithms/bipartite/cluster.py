@@ -1,27 +1,32 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #    Copyright (C) 2011 by 
 #    Jordi Torrents <jtorrents@milnou.net>
 #    Aric Hagberg <hagberg@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = """\n""".join(['Jordi Torrents <jtorrents@milnou.net>',
                             'Aric Hagberg (hagberg@lanl.gov)'])
-__all__ = ['clustering','average_clustering']
+__all__ = ['clustering', 'average_clustering']
 
 # functions for computing clustering of pairs
-def cc_dot(nu,nv):
-    return float(len(nu & nv))/len(nu | nv)
+def cc_dot(nu, nv):
+    return float(len(nu & nv)) / len(nu | nv)
 
-def cc_max(nu,nv):
-    return float(len(nu & nv))/max(len(nu),len(nv))
 
-def cc_min(nu,nv):
-    return float(len(nu & nv))/min(len(nu),len(nv))
-    
-modes={'dot':cc_dot,
-       'min':cc_min,
-       'max':cc_max}
+def cc_max(nu, nv):
+    return float(len(nu & nv)) / max(len(nu), len(nv))
+
+
+def cc_min(nu, nv):
+    return float(len(nu & nv)) / min(len(nu), len(nv))
+
+
+modes = {'dot': cc_dot,
+         'min': cc_min,
+         'max': cc_max}
+
 
 def clustering(G, nodes=None, mode='dot'):
     r"""Compute a bipartite clustering coefficient for nodes.
@@ -99,25 +104,26 @@ def clustering(G, nodes=None, mode='dot'):
     """
     if not nx.algorithms.bipartite.is_bipartite(G):
         raise nx.NetworkXError("Graph is not bipartite")
-    
+
     try:
         cc_func = modes[mode]
     except KeyError:
-        raise nx.NetworkXError(\
-                "Mode for bipartite clustering must be: dot, min or max")
+        raise nx.NetworkXError( \
+            "Mode for bipartite clustering must be: dot, min or max")
 
     if nodes is None:
         nodes = G
     ccs = {}
     for v in nodes:
         cc = 0.0
-        nbrs2=set([u for nbr in G[v] for u in G[nbr]])-set([v])
+        nbrs2 = set([u for nbr in G[v] for u in G[nbr]]) - set([v])
         for u in nbrs2:
-            cc += cc_func(set(G[u]),set(G[v]))
-        if cc > 0.0: # len(nbrs2)>0
+            cc += cc_func(set(G[u]), set(G[v]))
+        if cc > 0.0:  # len(nbrs2)>0
             cc /= len(nbrs2)
         ccs[v] = cc
     return ccs
+
 
 def average_clustering(G, nodes=None, mode='dot'):
     r"""Compute the average bipartite clustering coefficient.
@@ -187,6 +193,6 @@ def average_clustering(G, nodes=None, mode='dot'):
         Social Networks 30(1), 31--48.
     """
     if nodes is None:
-        nodes=G
-    ccs=clustering(G, nodes=nodes, mode=mode)
-    return float(sum(ccs[v] for v in nodes))/len(nodes)
+        nodes = G
+    ccs = clustering(G, nodes=nodes, mode=mode)
+    return float(sum(ccs[v] for v in nodes)) / len(nodes)

@@ -7,15 +7,15 @@ gnr_graph: growing network with redirection
 scale_free_graph: scale free directed graph 
 
 """
-#    Copyright (C) 2006-2009 by 
+# Copyright (C) 2006-2009 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
 #    All rights reserved.
 #    BSD license.
-__author__ ="""Aric Hagberg (hagberg@lanl.gov)\nWillem Ligtenberg (W.P.A.Ligtenberg@tue.nl)"""
+__author__ = """Aric Hagberg (hagberg@lanl.gov)\nWillem Ligtenberg (W.P.A.Ligtenberg@tue.nl)"""
 
-__all__ = ['gn_graph', 'gnc_graph', 'gnr_graph','scale_free_graph']
+__all__ = ['gn_graph', 'gnc_graph', 'gnr_graph', 'scale_free_graph']
 
 import random
 
@@ -24,7 +24,7 @@ from networkx.generators.classic import empty_graph
 from networkx.utils import discrete_sequence
 
 
-def gn_graph(n,kernel=None,create_using=None,seed=None):
+def gn_graph(n, kernel=None, create_using=None, seed=None):
     """Return the GN digraph with n nodes.
 
     The GN (growing network) nxgraph is built by adding nodes one at a time with
@@ -71,27 +71,27 @@ def gn_graph(n,kernel=None,create_using=None,seed=None):
     if seed is not None:
         random.seed(seed)
 
-    G=empty_graph(1,create_using)
-    G.name="gn_graph(%s)"%(n)
+    G = empty_graph(1, create_using)
+    G.name = "gn_graph(%s)" % (n)
 
-    if n==1:
+    if n == 1:
         return G
 
-    G.add_edge(1,0) # get started
-    ds=[1,1] # degree sequence
+    G.add_edge(1, 0)  # get started
+    ds = [1, 1]  # degree sequence
 
-    for source in range(2,n):
+    for source in range(2, n):
         # compute distribution from kernel and degree
-        dist=[kernel(d) for d in ds] 
+        dist = [kernel(d) for d in ds]
         # choose target from discrete distribution 
-        target=discrete_sequence(1,distribution=dist)[0]
-        G.add_edge(source,target)
+        target = discrete_sequence(1, distribution=dist)[0]
+        G.add_edge(source, target)
         ds.append(1)  # the source has only one link (degree one)
-        ds[target]+=1 # add one to the target link degree
+        ds[target] += 1  # add one to the target link degree
     return G
 
 
-def gnr_graph(n,p,create_using=None,seed=None):
+def gnr_graph(n, p, create_using=None, seed=None):
     """Return the GNR digraph with n nodes and redirection probability p.
 
     The GNR (growing network with redirection) nxgraph is built by adding nodes
@@ -130,22 +130,22 @@ def gnr_graph(n,p,create_using=None,seed=None):
     if not seed is None:
         random.seed(seed)
 
-    G=empty_graph(1,create_using)
-    G.name="gnr_graph(%s,%s)"%(n,p)
+    G = empty_graph(1, create_using)
+    G.name = "gnr_graph(%s,%s)" % (n, p)
 
-    if n==1:
+    if n == 1:
         return G
 
-    for source in range(1,n):
-        target=random.randrange(0,source)
-        if random.random() < p and target !=0:
-            target=G.successors(target)[0]
-        G.add_edge(source,target)
+    for source in range(1, n):
+        target = random.randrange(0, source)
+        if random.random() < p and target != 0:
+            target = G.successors(target)[0]
+        G.add_edge(source, target)
 
     return G
 
 
-def gnc_graph(n,create_using=None,seed=None):
+def gnc_graph(n, create_using=None, seed=None):
     """Return the GNC digraph with n nodes.
 
     The GNC (growing network with copying) nxgraph is built by adding nodes one
@@ -175,17 +175,17 @@ def gnc_graph(n,create_using=None,seed=None):
     if not seed is None:
         random.seed(seed)
 
-    G=empty_graph(1,create_using)
-    G.name="gnc_graph(%s)"%(n)
+    G = empty_graph(1, create_using)
+    G.name = "gnc_graph(%s)" % (n)
 
-    if n==1:
+    if n == 1:
         return G
 
-    for source in range(1,n):
-        target=random.randrange(0,source)
+    for source in range(1, n):
+        target = random.randrange(0, source)
         for succ in G.successors(target):
-            G.add_edge(source,succ)
-        G.add_edge(source,target)
+            G.add_edge(source, succ)
+        G.add_edge(source, target)
 
     return G
 
@@ -240,27 +240,27 @@ def scale_free_graph(n,
            Discrete algorithms, 132--139, 2003.
     """
 
-    def _choose_node(G,distribution,delta):
-        cumsum=0.0
+    def _choose_node(G, distribution, delta):
+        cumsum = 0.0
         # normalization 
-        psum=float(sum(distribution.values()))+float(delta)*len(distribution)
-        r=random.random()
-        for i in range(0,len(distribution)):
-            cumsum+=(distribution[i]+delta)/psum
-            if r < cumsum:  
+        psum = float(sum(distribution.values())) + float(delta) * len(distribution)
+        r = random.random()
+        for i in range(0, len(distribution)):
+            cumsum += (distribution[i] + delta) / psum
+            if r < cumsum:
                 break
         return i
 
     if create_using is None:
         # start with 3-cycle
         G = nx.MultiDiGraph()
-        G.add_edges_from([(0,1),(1,2),(2,0)])
+        G.add_edges_from([(0, 1), (1, 2), (2, 0)])
     else:
         # keep existing nxgraph structure?
         G = create_using
         if not (G.is_directed() and G.is_multigraph()):
-            raise nx.NetworkXError(\
-                  "MultiDiGraph required in create_using")
+            raise nx.NetworkXError( \
+                "MultiDiGraph required in create_using")
 
     if alpha <= 0:
         raise ValueError('alpha must be >= 0.')
@@ -269,36 +269,37 @@ def scale_free_graph(n,
     if gamma <= 0:
         raise ValueError('beta must be >= 0.')
 
-    if alpha+beta+gamma !=1.0:
+    if alpha + beta + gamma != 1.0:
         raise ValueError('alpha+beta+gamma must equal 1.')
-        
-    G.name="directed_scale_free_graph(%s,alpha=%s,beta=%s,gamma=%s,delta_in=%s,delta_out=%s)"%(n,alpha,beta,gamma,delta_in,delta_out)
+
+    G.name = "directed_scale_free_graph(%s,alpha=%s,beta=%s,gamma=%s,delta_in=%s,delta_out=%s)" % (
+    n, alpha, beta, gamma, delta_in, delta_out)
 
     # seed random number generated (uses None as default)
     random.seed(seed)
 
-    while len(G)<n:
+    while len(G) < n:
         r = random.random()
         # random choice in alpha,beta,gamma ranges
-        if r<alpha:
+        if r < alpha:
             # alpha
             # add new node v
-            v = len(G) 
+            v = len(G)
             # choose w according to in-degree and delta_in
-            w = _choose_node(G, G.in_degree(),delta_in)
-        elif r < alpha+beta:
+            w = _choose_node(G, G.in_degree(), delta_in)
+        elif r < alpha + beta:
             # beta
             # choose v according to out-degree and delta_out
-            v = _choose_node(G, G.out_degree(),delta_out)
+            v = _choose_node(G, G.out_degree(), delta_out)
             # choose w according to in-degree and delta_in
-            w = _choose_node(G, G.in_degree(),delta_in)
+            w = _choose_node(G, G.in_degree(), delta_in)
         else:
             # gamma
             # choose v according to out-degree and delta_out
-            v = _choose_node(G, G.out_degree(),delta_out)
+            v = _choose_node(G, G.out_degree(), delta_out)
             # add new node w
-            w = len(G) 
-        G.add_edge(v,w)
-        
+            w = len(G)
+        G.add_edge(v, w)
+
     return G
 

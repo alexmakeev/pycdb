@@ -36,14 +36,16 @@ for examples.
 """
 __author__ = """\n""".join(['Salim Fadhley',
                             'Aric Hagberg (hagberg@lanl.gov)'
-                            ])
+])
 
 __all__ = ['write_graphml', 'read_graphml', 'generate_graphml',
            'GraphMLWriter', 'GraphMLReader']
 
+import warnings
+
 import networkx as nx
 from networkx.utils import open_file, make_str
-import warnings
+
 try:
     from xml.etree.cElementTree import Element, ElementTree, tostring
 except ImportError:
@@ -52,8 +54,9 @@ except ImportError:
     except ImportError:
         pass
 
-@open_file(1,mode='wb')
-def write_graphml(G, path, encoding='utf-8',prettyprint=True):
+
+@open_file(1, mode='wb')
+def write_graphml(G, path, encoding='utf-8', prettyprint=True):
     """Write G in GraphML XML format to path
 
     Parameters
@@ -78,11 +81,12 @@ def write_graphml(G, path, encoding='utf-8',prettyprint=True):
     This implementation does not support mixed graphs (directed and unidirected 
     edges together) hyperedges, nested graphs, or ports. 
     """
-    writer = GraphMLWriter(encoding=encoding,prettyprint=prettyprint)
+    writer = GraphMLWriter(encoding=encoding, prettyprint=prettyprint)
     writer.add_graph_element(G)
     writer.dump(path)
 
-def generate_graphml(G, encoding='utf-8',prettyprint=True):
+
+def generate_graphml(G, encoding='utf-8', prettyprint=True):
     """Generate GraphML lines for G
 
     Parameters
@@ -107,13 +111,14 @@ def generate_graphml(G, encoding='utf-8',prettyprint=True):
     This implementation does not support mixed graphs (directed and unidirected 
     edges together) hyperedges, nested graphs, or ports. 
     """
-    writer = GraphMLWriter(encoding=encoding,prettyprint=prettyprint)
+    writer = GraphMLWriter(encoding=encoding, prettyprint=prettyprint)
     writer.add_graph_element(G)
     for line in str(writer).splitlines():
         yield line
 
-@open_file(0,mode='rb')
-def read_graphml(path,node_type=str):
+
+@open_file(0, mode='rb')
+def read_graphml(path, node_type=str):
     """Read nxgraph in GraphML format from path.
 
     Parameters
@@ -150,64 +155,63 @@ def read_graphml(path,node_type=str):
     """
     reader = GraphMLReader(node_type=node_type)
     # need to check for multiple graphs
-    glist=list(reader(path))
+    glist = list(reader(path))
     return glist[0]
 
 
 class GraphML(object):
     NS_GRAPHML = "http://graphml.graphdrawing.org/xmlns"
     NS_XSI = "http://www.w3.org/2001/XMLSchema-instance"
-    #xmlns:y="http://www.yworks.com/xml/graphml"
+    # xmlns:y="http://www.yworks.com/xml/graphml"
     NS_Y = "http://www.yworks.com/xml/graphml"
     SCHEMALOCATION = \
         ' '.join(['http://graphml.graphdrawing.org/xmlns',
                   'http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd'])
-    
+
     try:
-        chr(12345)     # Fails on Py!=3.
+        chr(12345)  # Fails on Py!=3.
         unicode = str  # Py3k's str is our unicode type
-        long = int     # Py3K's int is our long type
+        long = int  # Py3K's int is our long type
     except ValueError:
         # Python 2.x
         pass
 
-    types=[(int,"integer"), # for Gephi GraphML bug
-           (str,"yfiles"),(str,"string"), (unicode,"string"),
-           (int,"int"), (long,"long"),
-           (float,"float"), (float,"double"),
-           (bool, "boolean")]
-    
+    types = [(int, "integer"),  # for Gephi GraphML bug
+             (str, "yfiles"), (str, "string"), (unicode, "string"),
+             (int, "int"), (long, "long"),
+             (float, "float"), (float, "double"),
+             (bool, "boolean")]
+
     xml_type = dict(types)
     python_type = dict(reversed(a) for a in types)
-    convert_bool={'true':True,'false':False, 
-                  'True': True, 'False': False}
+    convert_bool = {'true': True, 'false': False,
+                    'True': True, 'False': False}
 
 
-    
 class GraphMLWriter(GraphML):
-    def __init__(self, graph=None, encoding="utf-8",prettyprint=True):
+    def __init__(self, graph=None, encoding="utf-8", prettyprint=True):
         try:
             import xml.etree.ElementTree
         except ImportError:
-             raise ImportError('GraphML writer requires '
-                               'xml.elementtree.ElementTree')
-        self.prettyprint=prettyprint
+            raise ImportError('GraphML writer requires '
+                              'xml.elementtree.ElementTree')
+        self.prettyprint = prettyprint
         self.encoding = encoding
         self.xml = Element("graphml",
-                           {'xmlns':self.NS_GRAPHML,
-                            'xmlns:xsi':self.NS_XSI,
-                            'xsi:schemaLocation':self.SCHEMALOCATION}
-                           )
-        self.keys={}
+                           {'xmlns': self.NS_GRAPHML,
+                            'xmlns:xsi': self.NS_XSI,
+                            'xsi:schemaLocation': self.SCHEMALOCATION}
+        )
+        self.keys = {}
 
         if graph is not None:
             self.add_graph_element(graph)
 
-    
+
     def __str__(self):
         if self.prettyprint:
             self.indent(self.xml)
-        s=tostring(self.xml).decode(self.encoding)
+        s = tostring(self.xml).decode(self.encoding)
         return s
 
     def get_key(self, name, attr_type, scope, default):
@@ -217,21 +221,21 @@ class GraphMLWriter(GraphML):
         except KeyError:
             new_id = "d%i" % len(list(self.keys))
             self.keys[keys_key] = new_id
-            key_kwargs = {"id":new_id,
-                          "for":scope,
-                          "attr.name":name, 
-                          "attr.type":attr_type}
-            key_element=Element("key",**key_kwargs)
+            key_kwargs = {"id": new_id,
+                          "for": scope,
+                          "attr.name": name,
+                          "attr.type": attr_type}
+            key_element = Element("key", **key_kwargs)
             # add subelement for data default value if present
             if default is not None:
-                default_element=Element("default")
-                default_element.text=make_str(default)
+                default_element = Element("default")
+                default_element.text = make_str(default)
                 key_element.append(default_element)
-            self.xml.insert(0,key_element)
+            self.xml.insert(0, key_element)
         return new_id
-    
 
-    def add_data(self, name, element_type, value, 
+
+    def add_data(self, name, element_type, value,
                  scope="all",
                  default=None):
         """
@@ -240,70 +244,70 @@ class GraphMLWriter(GraphML):
         """
         if element_type not in self.xml_type:
             raise nx.NetworkXError('GraphML writer does not support '
-                                   '%s as data values.'%element_type)
+                                   '%s as data values.' % element_type)
         key_id = self.get_key(name, self.xml_type[element_type], scope, default)
         data_element = Element("data", key=key_id)
         data_element.text = make_str(value)
         return data_element
-    
+
     def add_attributes(self, scope, xml_obj, data, default):
         """Appends attributes to edges or nodes.
         """
-        for k,v in data.items():
-            default_value=default.get(k)
-            obj=self.add_data(make_str(k), type(v), make_str(v), 
-                              scope=scope, default=default_value)
+        for k, v in data.items():
+            default_value = default.get(k)
+            obj = self.add_data(make_str(k), type(v), make_str(v),
+                                scope=scope, default=default_value)
             xml_obj.append(obj)
-            
+
     def add_nodes(self, G, graph_element):
-        for node,data in G.nodes_iter(data=True):
-            node_element = Element("node", id = make_str(node))
-            default=G.graph.get('node_default',{})
+        for node, data in G.nodes_iter(data=True):
+            node_element = Element("node", id=make_str(node))
+            default = G.graph.get('node_default', {})
             self.add_attributes("node", node_element, data, default)
             graph_element.append(node_element)
 
-    def add_edges(self, G, graph_element):        
+    def add_edges(self, G, graph_element):
         if G.is_multigraph():
-            for u,v,key,data in G.edges_iter(data=True,keys=True):            
-                edge_element = Element("edge",source=make_str(u),
-                                       target=make_str(v)) 
-                default=G.graph.get('edge_default',{})
-                self.add_attributes("edge", edge_element, data, default)
-                self.add_attributes("edge", edge_element, 
-                                    {'key':key}, default)
-                graph_element.append(edge_element)                
-        else:
-            for u,v,data in G.edges_iter(data=True):
-                edge_element = Element("edge",source=make_str(u),
+            for u, v, key, data in G.edges_iter(data=True, keys=True):
+                edge_element = Element("edge", source=make_str(u),
                                        target=make_str(v))
-                default=G.graph.get('edge_default',{})
+                default = G.graph.get('edge_default', {})
                 self.add_attributes("edge", edge_element, data, default)
-                graph_element.append(edge_element)                
+                self.add_attributes("edge", edge_element,
+                                    {'key': key}, default)
+                graph_element.append(edge_element)
+        else:
+            for u, v, data in G.edges_iter(data=True):
+                edge_element = Element("edge", source=make_str(u),
+                                       target=make_str(v))
+                default = G.graph.get('edge_default', {})
+                self.add_attributes("edge", edge_element, data, default)
+                graph_element.append(edge_element)
 
     def add_graph_element(self, G):
         """
         Serialize nxgraph G in GraphML to the stream.
         """
         if G.is_directed():
-            default_edge_type='directed'
+            default_edge_type = 'directed'
         else:
-            default_edge_type='undirected'
-        
-        graphid=G.graph.pop('id',None)
+            default_edge_type = 'undirected'
+
+        graphid = G.graph.pop('id', None)
         if graphid is None:
             graph_element = Element("nxgraph",
-                                edgedefault = default_edge_type)
+                                    edgedefault=default_edge_type)
         else:
             graph_element = Element("nxgraph",
-                                edgedefault = default_edge_type, 
-                                id=graphid)
+                                    edgedefault=default_edge_type,
+                                    id=graphid)
 
-        default={}
-        data=dict((k,v) for (k,v) in  G.graph.items() 
-                  if k not in ['node_default','edge_default'])
+        default = {}
+        data = dict((k, v) for (k, v) in G.graph.items()
+                    if k not in ['node_default', 'edge_default'])
         self.add_attributes("nxgraph", graph_element, data, default)
-        self.add_nodes(G,graph_element)
-        self.add_edges(G,graph_element)
+        self.add_nodes(G, graph_element)
+        self.add_edges(G, graph_element)
         self.xml.append(graph_element)
 
     def add_graphs(self, graph_list):
@@ -317,20 +321,20 @@ class GraphMLWriter(GraphML):
         if self.prettyprint:
             self.indent(self.xml)
         document = ElementTree(self.xml)
-        header='<?xml version="1.0" encoding="%s"?>'%self.encoding
+        header = '<?xml version="1.0" encoding="%s"?>' % self.encoding
         stream.write(header.encode(self.encoding))
         document.write(stream, encoding=self.encoding)
 
     def indent(self, elem, level=0):
         # in-place prettyprint formatter
-        i = "\n" + level*"  "
+        i = "\n" + level * "  "
         if len(elem):
             if not elem.text or not elem.text.strip():
                 elem.text = i + "  "
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
             for elem in elem:
-                self.indent(elem, level+1)
+                self.indent(elem, level + 1)
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
         else:
@@ -341,67 +345,68 @@ class GraphMLWriter(GraphML):
 class GraphMLReader(GraphML):
     """Read a GraphML document.  Produces NetworkX nxgraph objects.
     """
+
     def __init__(self, node_type=str):
         try:
             import xml.etree.ElementTree
         except ImportError:
-             raise ImportError('GraphML reader requires '
-                               'xml.elementtree.ElementTree')
-        self.node_type=node_type
-        self.multigraph=False # assume multigraph and test for parallel edges
-        
+            raise ImportError('GraphML reader requires '
+                              'xml.elementtree.ElementTree')
+        self.node_type = node_type
+        self.multigraph = False  # assume multigraph and test for parallel edges
+
     def __call__(self, stream):
         self.xml = ElementTree(file=stream)
-        (keys,defaults) = self.find_graphml_keys(self.xml)
+        (keys, defaults) = self.find_graphml_keys(self.xml)
         for g in self.xml.findall("{%s}nxgraph" % self.NS_GRAPHML):
             yield self.make_graph(g, keys, defaults)
-            
+
     def make_graph(self, graph_xml, graphml_keys, defaults):
         # set default nxgraph type
         edgedefault = graph_xml.get("edgedefault", None)
-        if edgedefault=='directed':
-            G=nx.MultiDiGraph()
+        if edgedefault == 'directed':
+            G = nx.MultiDiGraph()
         else:
-            G=nx.MultiGraph()
+            G = nx.MultiGraph()
         # set defaults for nxgraph attributes
-        G.graph['node_default']={}
-        G.graph['edge_default']={}
-        for key_id,value in defaults.items():
-            key_for=graphml_keys[key_id]['for']
-            name=graphml_keys[key_id]['name']
-            python_type=graphml_keys[key_id]['type']
-            if key_for=='node':
-                G.graph['node_default'].update({name:python_type(value)})
-            if key_for=='edge':
-                G.graph['edge_default'].update({name:python_type(value)})
+        G.graph['node_default'] = {}
+        G.graph['edge_default'] = {}
+        for key_id, value in defaults.items():
+            key_for = graphml_keys[key_id]['for']
+            name = graphml_keys[key_id]['name']
+            python_type = graphml_keys[key_id]['type']
+            if key_for == 'node':
+                G.graph['node_default'].update({name: python_type(value)})
+            if key_for == 'edge':
+                G.graph['edge_default'].update({name: python_type(value)})
         # hyperedges are not supported
-        hyperedge=graph_xml.find("{%s}hyperedge" % self.NS_GRAPHML)        
+        hyperedge = graph_xml.find("{%s}hyperedge" % self.NS_GRAPHML)
         if hyperedge is not None:
             raise nx.NetworkXError("GraphML reader does not support hyperedges")
         # add nodes
-        for node_xml in graph_xml.findall("{%s}node" % self.NS_GRAPHML):        
-            self.add_node(G, node_xml, graphml_keys)                            
-        # add edges
-        for edge_xml in graph_xml.findall("{%s}edge" % self.NS_GRAPHML):        
-            self.add_edge(G, edge_xml, graphml_keys)                            
-        # add nxgraph data
+        for node_xml in graph_xml.findall("{%s}node" % self.NS_GRAPHML):
+            self.add_node(G, node_xml, graphml_keys)
+            # add edges
+        for edge_xml in graph_xml.findall("{%s}edge" % self.NS_GRAPHML):
+            self.add_edge(G, edge_xml, graphml_keys)
+            # add nxgraph data
         data = self.decode_data_elements(graphml_keys, graph_xml)
         G.graph.update(data)
 
         # switch to Graph or DiGraph if no parallel edges were found.
-        if not self.multigraph: 
+        if not self.multigraph:
             if G.is_directed():
                 return nx.DiGraph(G)
             else:
                 return nx.Graph(G)
         else:
             return G
-            
+
     def add_node(self, G, node_xml, graphml_keys):
         """Add a node to the nxgraph.
         """
         # warn on finding unsupported ports tag
-        ports=node_xml.find("{%s}port" % self.NS_GRAPHML)
+        ports = node_xml.find("{%s}port" % self.NS_GRAPHML)
         if ports is not None:
             warnings.warn("GraphML port tag not supported.")
         # find the node by id and cast it to the appropriate type
@@ -409,22 +414,22 @@ class GraphMLReader(GraphML):
         # get data/attributes for node
         data = self.decode_data_elements(graphml_keys, node_xml)
         G.add_node(node_id, data)
-        
+
     def add_edge(self, G, edge_element, graphml_keys):
         """Add an edge to the nxgraph.
         """
         # warn on finding unsupported ports tag
-        ports=edge_element.find("{%s}port" % self.NS_GRAPHML)
+        ports = edge_element.find("{%s}port" % self.NS_GRAPHML)
         if ports is not None:
             warnings.warn("GraphML port tag not supported.")
 
         # raise error if we find mixed directed and undirected edges
         directed = edge_element.get("directed")
-        if G.is_directed() and directed=='false':
-            raise nx.NetworkXError(\
+        if G.is_directed() and directed == 'false':
+            raise nx.NetworkXError( \
                 "directed=false edge found in directed nxgraph.")
-        if (not G.is_directed()) and directed=='true':
-            raise nx.NetworkXError(\
+        if (not G.is_directed()) and directed == 'true':
+            raise nx.NetworkXError( \
                 "directed=true edge found in undirected nxgraph.")
 
         source = self.node_type(edge_element.get("source"))
@@ -436,28 +441,28 @@ class GraphMLReader(GraphML):
         edge_id = edge_element.get("id")
         if edge_id:
             data["id"] = edge_id
-        if G.has_edge(source,target):
+        if G.has_edge(source, target):
             # mark this as a multigraph
-            self.multigraph=True
+            self.multigraph = True
         if edge_id is None:
             # no id specified, try using 'key' attribute as id
-            edge_id=data.pop('key',None)
+            edge_id = data.pop('key', None)
         G.add_edge(source, target, key=edge_id, **data)
-            
+
     def decode_data_elements(self, graphml_keys, obj_xml):
         """Use the key information to decode the data XML if present."""
         data = {}
-        for data_element in obj_xml.findall("{%s}data" % self.NS_GRAPHML): 
+        for data_element in obj_xml.findall("{%s}data" % self.NS_GRAPHML):
             key = data_element.get("key")
             try:
-                data_name=graphml_keys[key]['name']
-                data_type=graphml_keys[key]['type']
+                data_name = graphml_keys[key]['name']
+                data_type = graphml_keys[key]['type']
             except KeyError:
-                raise nx.NetworkXError("Bad GraphML data: no key %s"%key)
-            text=data_element.text
+                raise nx.NetworkXError("Bad GraphML data: no key %s" % key)
+            text = data_element.text
             # assume anything with subelements is a yfiles extension
-            if text is not None and len(list(data_element))==0:
-                if data_type==bool:
+            if text is not None and len(list(data_element)) == 0:
+                if data_type == bool:
                     data[data_name] = self.convert_bool[text]
                 else:
                     data[data_name] = data_type(text)
@@ -465,22 +470,22 @@ class GraphMLReader(GraphML):
                 # Assume yfiles as subelements, try to extract node_label
                 node_label = None
                 for node_type in ['ShapeNode', 'SVGNode', 'ImageNode']:
-                    geometry = data_element.find("{%s}%s/{%s}Geometry" % 
-                                (self.NS_Y, node_type, self.NS_Y))
+                    geometry = data_element.find("{%s}%s/{%s}Geometry" %
+                                                 (self.NS_Y, node_type, self.NS_Y))
                     if geometry is not None:
                         data['x'] = geometry.get('x')
                         data['y'] = geometry.get('y')
                     if node_label is None:
-                        node_label = data_element.find("{%s}%s/{%s}NodeLabel" % 
-                                (self.NS_Y, node_type, self.NS_Y))
+                        node_label = data_element.find("{%s}%s/{%s}NodeLabel" %
+                                                       (self.NS_Y, node_type, self.NS_Y))
                 if node_label is not None:
                     data['label'] = node_label.text
-                edge_label = data_element.find("{%s}PolyLineEdge/{%s}EdgeLabel"%
+                edge_label = data_element.find("{%s}PolyLineEdge/{%s}EdgeLabel" %
                                                (self.NS_Y, (self.NS_Y)))
                 if edge_label is not None:
                     data['label'] = edge_label.text
         return data
-            
+
     def find_graphml_keys(self, graph_element):
         """Extracts all the keys and key defaults from the xml.
         """
@@ -488,34 +493,38 @@ class GraphMLReader(GraphML):
         graphml_key_defaults = {}
         for k in graph_element.findall("{%s}key" % self.NS_GRAPHML):
             attr_id = k.get("id")
-            attr_type=k.get('attr.type')
-            attr_name=k.get("attr.name")
+            attr_type = k.get('attr.type')
+            attr_name = k.get("attr.name")
             if attr_type is None:
-                attr_name=k.get('yfiles.type')
-                attr_type='yfiles'
+                attr_name = k.get('yfiles.type')
+                attr_type = 'yfiles'
             if attr_name is None:
                 raise nx.NetworkXError("Unknown key type in file.")
             graphml_keys[attr_id] = {
-                "name":attr_name,
-                "type":self.python_type[attr_type],
-                "for":k.get("for")}
+                "name": attr_name,
+                "type": self.python_type[attr_type],
+                "for": k.get("for")}
             # check for "default" subelement of key element
-            default=k.find("{%s}default" % self.NS_GRAPHML)
+            default = k.find("{%s}default" % self.NS_GRAPHML)
             if default is not None:
-                graphml_key_defaults[attr_id]=default.text
-        return graphml_keys,graphml_key_defaults
+                graphml_key_defaults[attr_id] = default.text
+        return graphml_keys, graphml_key_defaults
+
 
 # fixture for nose tests
 def setup_module(module):
     from nose import SkipTest
+
     try:
         import xml.etree.ElementTree
     except:
         raise SkipTest("xml.etree.ElementTree not available")
 
+
 # fixture for nose tests
 def teardown_module(module):
     import os
+
     try:
         os.unlink('test.graphml')
     except:

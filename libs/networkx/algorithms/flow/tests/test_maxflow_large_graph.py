@@ -13,26 +13,27 @@ __author__ = """Loïc Séguin-C. <loicseguin@gmail.com>"""
 import networkx as nx
 from nose.tools import *
 
+
 def gen_pyramid(N):
-        # This nxgraph admits a flow of value 1 for which every arc is at
-        # capacity (except the arcs incident to the sink which have
-        # infinite capacity).
-        G = nx.DiGraph()
+    # This nxgraph admits a flow of value 1 for which every arc is at
+    # capacity (except the arcs incident to the sink which have
+    # infinite capacity).
+    G = nx.DiGraph()
 
-        for i in range(N - 1):
-            cap = 1. / (i + 2)
-            for j in range(i + 1):
-                G.add_edge((i, j), (i + 1, j),
-                           capacity = cap)
-                cap = 1. / (i + 1) - cap
-                G.add_edge((i, j), (i + 1, j + 1),
-                        capacity = cap)
-                cap = 1. / (i + 2) - cap
+    for i in range(N - 1):
+        cap = 1. / (i + 2)
+        for j in range(i + 1):
+            G.add_edge((i, j), (i + 1, j),
+                       capacity=cap)
+            cap = 1. / (i + 1) - cap
+            G.add_edge((i, j), (i + 1, j + 1),
+                       capacity=cap)
+            cap = 1. / (i + 2) - cap
 
-        for j in range(N):
-            G.add_edge((N - 1, j), 't')
+    for j in range(N):
+        G.add_edge((N - 1, j), 't')
 
-        return G
+    return G
 
 
 class TestMaxflowLargeGraph:
@@ -44,8 +45,8 @@ class TestMaxflowLargeGraph:
         assert_equal(nx.ford_fulkerson(G, 1, 2)[0], 5 * (N - 1))
 
     def test_pyramid(self):
-        N = 10 
-#        N = 100 # this gives a nxgraph with 5051 nodes
+        N = 10
+        # N = 100 # this gives a nxgraph with 5051 nodes
         G = gen_pyramid(N)
         assert_almost_equal(nx.ford_fulkerson(G, (0, 0), 't')[0], 1.)
 

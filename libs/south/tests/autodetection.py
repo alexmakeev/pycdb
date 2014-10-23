@@ -2,15 +2,15 @@ import unittest
 
 from south.creator.changes import AutoChanges
 
+
 class TestComparison(unittest.TestCase):
-    
     """
     Tests the comparison methods of startmigration.
     """
-    
+
     def test_no_change(self):
         "Test with a completely unchanged definition."
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['southdemo.Lizard']"}),
@@ -18,19 +18,21 @@ class TestComparison(unittest.TestCase):
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
-                ('django.db.models.fields.related.ForeignKey', ['ohhai', 'there'], {'to': "somewhere", "from": "there"}),
-                ('django.db.models.fields.related.ForeignKey', ['ohhai', 'there'], {"from": "there", 'to': "somewhere"}),
+                (
+                'django.db.models.fields.related.ForeignKey', ['ohhai', 'there'], {'to': "somewhere", "from": "there"}),
+                (
+                'django.db.models.fields.related.ForeignKey', ['ohhai', 'there'], {"from": "there", 'to': "somewhere"}),
             ),
             False,
         )
-    
-    
+
+
     def test_pos_change(self):
         "Test with a changed positional argument."
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['hi'], {'to': "foo"}),
@@ -38,7 +40,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', [], {'to': "foo"}),
@@ -46,7 +48,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['pi'], {'to': "foo"}),
@@ -54,7 +56,7 @@ class TestComparison(unittest.TestCase):
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['pisdadad'], {'to': "foo"}),
@@ -62,7 +64,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['hi'], {}),
@@ -70,7 +72,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', [], {}),
@@ -78,7 +80,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['pi'], {}),
@@ -86,7 +88,7 @@ class TestComparison(unittest.TestCase):
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['pi'], {}),
@@ -94,11 +96,11 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-    
-    
+
+
     def test_kwd_change(self):
         "Test a changed keyword argument"
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['pi'], {'to': "foo"}),
@@ -106,7 +108,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', [], {'to': "foo"}),
@@ -114,7 +116,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['b'], {'to': "foo"}),
@@ -122,7 +124,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', [], {'to': "foo"}),
@@ -130,7 +132,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['a'], {'to': "foo"}),
@@ -138,7 +140,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', [], {}),
@@ -146,7 +148,7 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('django.db.models.fields.CharField', ['a'], {}),
@@ -154,12 +156,11 @@ class TestComparison(unittest.TestCase):
             ),
             True,
         )
-        
-    
-    
+
+
     def test_backcompat_nochange(self):
         "Test that the backwards-compatable comparison is working"
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('models.CharField', [], {}),
@@ -167,7 +168,7 @@ class TestComparison(unittest.TestCase):
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('models.CharField', ['ack'], {}),
@@ -175,59 +176,59 @@ class TestComparison(unittest.TestCase):
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
-                ('models.CharField', [], {'to':'b'}),
-                ('django.db.models.fields.CharField', [], {'to':'b'}),
+                ('models.CharField', [], {'to': 'b'}),
+                ('django.db.models.fields.CharField', [], {'to': 'b'}),
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
-                ('models.CharField', ['hah'], {'to':'you'}),
-                ('django.db.models.fields.CharField', ['hah'], {'to':'you'}),
+                ('models.CharField', ['hah'], {'to': 'you'}),
+                ('django.db.models.fields.CharField', ['hah'], {'to': 'you'}),
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
-                ('models.CharField', ['hah'], {'to':'you'}),
-                ('django.db.models.fields.CharField', ['hah'], {'to':'heh'}),
+                ('models.CharField', ['hah'], {'to': 'you'}),
+                ('django.db.models.fields.CharField', ['hah'], {'to': 'heh'}),
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('models.CharField', ['hah'], {}),
-                ('django.db.models.fields.CharField', [], {'to':"orm['appname.hah']"}),
+                ('django.db.models.fields.CharField', [], {'to': "orm['appname.hah']"}),
             ),
             False,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('models.CharField', ['hah'], {}),
-                ('django.db.models.fields.CharField', [], {'to':'hah'}),
+                ('django.db.models.fields.CharField', [], {'to': 'hah'}),
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('models.CharField', ['hah'], {}),
-                ('django.db.models.fields.CharField', [], {'to':'rrr'}),
+                ('django.db.models.fields.CharField', [], {'to': 'rrr'}),
             ),
             True,
         )
-        
+
         self.assertEqual(
             AutoChanges.different_attributes(
                 ('models.CharField', ['hah'], {}),
-                ('django.db.models.fields.IntField', [], {'to':'hah'}),
+                ('django.db.models.fields.IntField', [], {'to': 'hah'}),
             ),
             True,
         )

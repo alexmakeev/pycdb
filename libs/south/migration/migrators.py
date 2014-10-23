@@ -3,7 +3,6 @@ from cStringIO import StringIO
 import datetime
 import inspect
 import sys
-import traceback
 
 from django.core.management import call_command
 from django.core.management.commands import loaddata
@@ -28,7 +27,7 @@ class Migrator(object):
     def print_title(self, target):
         if self.verbosity:
             print self.title(target)
-        
+
     @staticmethod
     def status(target):
         raise NotImplementedError()
@@ -62,17 +61,17 @@ class Migrator(object):
 
     def run_migration_error(self, migration, extra_info=''):
         return (
-            ' ! Error found during real zrun of migration! Aborting.\n'
-            '\n'
-            ' ! Since you have a database that does not support running\n'
-            ' ! schema-altering statements in transactions, we have had \n'
-            ' ! to leave it in an interim state between migrations.\n'
-            '%s\n'
-            ' ! The South developers regret this has happened, and would\n'
-            ' ! like to gently persuade you to consider a slightly\n'
-            ' ! easier-to-deal-with DBMS.\n'
-            ' ! NOTE: The error which caused the migration to fail is further up.'
-        ) % extra_info
+                   ' ! Error found during real zrun of migration! Aborting.\n'
+                   '\n'
+                   ' ! Since you have a database that does not support running\n'
+                   ' ! schema-altering statements in transactions, we have had \n'
+                   ' ! to leave it in an interim state between migrations.\n'
+                   '%s\n'
+                   ' ! The South developers regret this has happened, and would\n'
+                   ' ! like to gently persuade you to consider a slightly\n'
+                   ' ! easier-to-deal-with DBMS.\n'
+                   ' ! NOTE: The error which caused the migration to fail is further up.'
+               ) % extra_info
 
     def run_migration(self, migration):
         migration_function = self.direction(migration)
@@ -197,7 +196,6 @@ class FakeMigrator(MigratorWrapper):
 
 
 class LoadInitialDataMigrator(MigratorWrapper):
-    
     def load_initial_data(self, target, db='default'):
         if target is None or target != target.migrations[-1]:
             return
@@ -290,7 +288,7 @@ class Forwards(Migrator):
         try:
             for migration in migrations:
                 result = self.migrate(migration, database)
-                if result is False: # The migrations errored, but nicely.
+                if result is False:  # The migrations errored, but nicely.
                     return False
         finally:
             # Call any pending post_syncdb signals

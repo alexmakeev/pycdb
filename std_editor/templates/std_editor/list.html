@@ -2,25 +2,25 @@
 {% load i18n %}
 
 {% block head %}
-    <title>{% trans "Edit configuration" %}</title>
+<title>{% trans "Edit configuration" %}</title>
 {% endblock head %}
 
 
 {% block content %}
-    <h3>{{ class_info.readable_name }} instances</h3>
-    <table style="width:100%;">
+<h3>{{ class_info.readable_name }} instances</h3>
+<table style="width:100%;">
     <tr>
         <th style="width:70px;">CID.ID</th>
         <th>Title</th>
         <th style="width:100px;">Action</th>
     </tr>
     {% for ent in entities %}
-        <tr>
-            <td>{{ ent.cid }}.{{ ent.id }}</td>
-            <td>{{ ent.getTitle }}</td>
-            <td style="text-align: center;"><a href="{% url std-editor-edit-instance ent.cid ent.id %}">Edit</a></td>
-        </tr>
+    <tr>
+        <td>{{ ent.cid }}.{{ ent.id }}</td>
+        <td>{{ ent.getTitle }}</td>
+        <td style="text-align: center;"><a href="{% url std-editor-edit-instance ent.cid ent.id %}">Edit</a></td>
+    </tr>
     {% endfor %}
-    </table>
-    <a href="{% url std-editor-add-instance cid %}">Add Instance</a>
+</table>
+<a href="{% url std-editor-add-instance cid %}">Add Instance</a>
 {% endblock content %}

@@ -2,21 +2,18 @@
 
 import simplejson
 from django.core.exceptions import ValidationError
-from django.forms import Field, HiddenInput, Widget
-from django.template import RequestContext
+from django.forms import Field, Widget
 from django.template.loader import render_to_string
 
 
-
 def GetHtmlDictionaryInput(name, value):
-
-
     params = {
-        "field_name" : name,
-        "field_value" : simplejson.dumps(value),
-        }
+        "field_name": name,
+        "field_value": simplejson.dumps(value),
+    }
     ret = render_to_string("input_widgets/dictionary_input.html", params)
     return ret
+
 
 class DictionaryInputWidget(Widget):
     def render(self, name, value, attrs=None):
@@ -27,6 +24,7 @@ class DictionaryInputWidget(Widget):
             value = {}
         return GetHtmlDictionaryInput(name, value)
 
+
 class DictionaryInputField(Field):
     widget = DictionaryInputWidget
 
@@ -35,8 +33,8 @@ class DictionaryInputField(Field):
 
     def prepare_value(self, value):
         ret = value
-        if not value: value={}
-        if type(value)!=dict:
+        if not value: value = {}
+        if type(value) != dict:
             try:
                 ret = simplejson.loads(str(value))
             except (Exception):

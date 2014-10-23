@@ -1,32 +1,34 @@
 # -*- encoding: utf-8 -*-
 
-import networkx as nx
 import os
+
+import networkx as nx
+
 
 class Storage:
     def __init__(self, graph_file):
         self.graph_file = graph_file
         if os.path.exists(self.graph_file):
             self.nxgraph = nx.read_gpickle(self.graph_file)
-            #print "Loaded"
+            # print "Loaded"
         else:
             self.nxgraph = nx.MultiDiGraph(max_id=1)
             self.nxgraph.graph["max_ids"] = {}
             self.nxgraph.graph["edges_by_ids"] = {}
-            #print "Created"
+            # print "Created"
 
     def persist(self):
-        #print "Persisted"
-        prefixes = ["", ".reserve.01",  ".reserve.02", ".reserve.03", ".reserve.04", ".reserve.05"]
+        # print "Persisted"
+        prefixes = ["", ".reserve.01", ".reserve.02", ".reserve.03", ".reserve.04", ".reserve.05"]
 
-        print range(len(prefixes)-2, -1, -1)
-        for i in range(len(prefixes)-2, -1, -1):
+        print range(len(prefixes) - 2, -1, -1)
+        for i in range(len(prefixes) - 2, -1, -1):
             print i, self.graph_file + prefixes[i], os.path.exists(self.graph_file + prefixes[i])
             if os.path.exists(self.graph_file + prefixes[i]):
-                os.rename(self.graph_file + prefixes[i], self.graph_file + prefixes[i+1])
-        nx.write_gpickle(self.nxgraph, self.graph_file + prefixes[0]) # "/home/alexmak/test.pickle")#
+                os.rename(self.graph_file + prefixes[i], self.graph_file + prefixes[i + 1])
+        nx.write_gpickle(self.nxgraph, self.graph_file + prefixes[0])  # "/home/alexmak/test.pickle")#
 
     def __del__(self):
-        #print "Deleted"
+        # print "Deleted"
         self.persist()
 

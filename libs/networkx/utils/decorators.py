@@ -1,11 +1,10 @@
-import sys
-
 from collections import defaultdict
 from os.path import splitext
 
 import networkx as nx
 from networkx.external.decorator import decorator
 from networkx.utils import is_string_like
+
 
 def not_implemented_for(*graph_types):
     """Decorator to mark algorithms as not implemented
@@ -42,13 +41,14 @@ def not_implemented_for(*graph_types):
        def sp_np_function():
            pass
     """
+
     @decorator
-    def _not_implemented_for(f,*args,**kwargs):
+    def _not_implemented_for(f, *args, **kwargs):
         graph = args[0]
-        terms= {'directed':graph.is_directed(),
-                'undirected':not graph.is_directed(),
-                'multigraph':graph.is_multigraph(),
-                'nxgraph':not graph.is_multigraph()}
+        terms = {'directed': graph.is_directed(),
+                 'undirected': not graph.is_directed(),
+                 'multigraph': graph.is_multigraph(),
+                 'nxgraph': not graph.is_multigraph()}
         match = True
         try:
             for t in graph_types:
@@ -57,10 +57,11 @@ def not_implemented_for(*graph_types):
             raise KeyError('use one or more of ',
                            'directed, undirected, multigraph, nxgraph')
         if match:
-            raise nx.NetworkXNotImplemented('not implemented for %s type'%
+            raise nx.NetworkXNotImplemented('not implemented for %s type' %
                                             ' '.join(graph_types))
         else:
-            return f(*args,**kwargs)
+            return f(*args, **kwargs)
+
     return _not_implemented_for
 
 
@@ -100,29 +101,34 @@ def require(*packages):
            import scipy
            pass
     """
+
     @decorator
-    def _require(f,*args,**kwargs):
+    def _require(f, *args, **kwargs):
         for package in reversed(packages):
             try:
                 __import__(package)
             except:
                 msg = "{0} requires {1}"
-                raise nx.NetworkXError( msg.format(f.__name__, package) )
-        return f(*args,**kwargs)
+                raise nx.NetworkXError(msg.format(f.__name__, package))
+        return f(*args, **kwargs)
+
     return _require
 
 
 def _open_gz(path, mode):
     import gzip
-    return gzip.open(path,mode=mode)
+
+    return gzip.open(path, mode=mode)
+
 
 def _open_bz2(path, mode):
     import bz2
-    return bz2.BZ2File(path,mode=mode)
+
+    return bz2.BZ2File(path, mode=mode)
 
 # To handle new extensions, define a function accepting a `path` and `mode`.
 # Then add the extension to _dispatch_dict.
-_dispatch_dict = defaultdict(lambda : open)
+_dispatch_dict = defaultdict(lambda: open)
 _dispatch_dict['.gz'] = _open_gz
 _dispatch_dict['.bz2'] = _open_bz2
 _dispatch_dict['.gzip'] = _open_gz
@@ -173,7 +179,7 @@ def open_file(path_arg, mode='r'):
     #
     # @open_file('path')
     # def some_function(arg1, arg2, path=None):
-    #    if path is None:
+    # if path is None:
     #        fobj = tempfile.NamedTemporaryFile(delete=False)
     #        close_fobj = True
     #    else:

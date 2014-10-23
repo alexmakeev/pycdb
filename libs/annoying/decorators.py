@@ -7,10 +7,9 @@ from django.utils import simplejson
 
 __all__ = ['render_to', 'signals', 'ajax_request', 'autostrip']
 
-
 try:
     from functools import wraps
-except ImportError: 
+except ImportError:
     def wraps(wrapped, assigned=('__module__', '__name__', '__doc__'),
               updated=('__dict__',)):
         def inner(wrapper):
@@ -19,6 +18,7 @@ except ImportError:
             for attr in updated:
                 getattr(wrapper, attr).update(getattr(wrapped, attr, {}))
             return wrapper
+
         return inner
 
 
@@ -68,6 +68,7 @@ def render_to(template=None, mimetype=None):
                                   context_instance=RequestContext(request))
 
     """
+
     def renderer(function):
         @wraps(function)
         def wrapper(request, *args, **kwargs):
@@ -76,10 +77,11 @@ def render_to(template=None, mimetype=None):
                 return output
             tmpl = output.pop('TEMPLATE', template)
             return render_to_response(tmpl, output, \
-                        context_instance=RequestContext(request), mimetype=mimetype)
-        return wrapper
-    return renderer
+                                      context_instance=RequestContext(request), mimetype=mimetype)
 
+        return wrapper
+
+    return renderer
 
 
 class Signals(object):
@@ -108,6 +110,7 @@ class Signals(object):
 
     (c) 2008 Alexander Solovyov, new BSD License
     '''
+
     def __init__(self):
         self._signals = {}
 
@@ -124,27 +127,29 @@ class Signals(object):
         def inner(func):
             signal.connect(func, **kwargs)
             return func
+
         return inner
 
     def _connect(self, signal):
         def wrapper(**kwargs):
             return self(signal, **kwargs)
+
         return wrapper
 
     def register_signal(self, signal, name):
         self._signals[name] = signal
 
-signals = Signals()
 
+signals = Signals()
 
 
 class JsonResponse(HttpResponse):
     """
     HttpResponse descendant, which return response with ``application/json`` mimetype.
     """
+
     def __init__(self, data):
         super(JsonResponse, self).__init__(content=simplejson.dumps(data), mimetype='application/json')
-
 
 
 def ajax_request(func):
@@ -159,6 +164,7 @@ def ajax_request(func):
             news_titles = [entry.title for entry in news]
             return {'news_titles': news_titles}
     """
+
     @wraps(func)
     def wrapper(request, *args, **kwargs):
         response = func(request, *args, **kwargs)
@@ -166,6 +172,7 @@ def ajax_request(func):
             return JsonResponse(response)
         else:
             return response
+
     return wrapper
 
 
@@ -188,6 +195,7 @@ def autostrip(cls):
     for field_name, field_object in fields:
         def get_clean_func(original_clean):
             return lambda value: original_clean(value and value.strip())
+
         clean_func = get_clean_func(getattr(field_object, 'clean'))
         setattr(field_object, 'clean', clean_func)
     return cls

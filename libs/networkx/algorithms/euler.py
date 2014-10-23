@@ -6,7 +6,7 @@ import networkx as nx
 
 __author__ = """\n""".join(['Nima Mohammadi (nima.irt[AT]gmail.com)',
                             'Aric Hagberg <hagberg@lanl.gov>'])
-#    Copyright (C) 2010 by 
+# Copyright (C) 2010 by
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -14,6 +14,7 @@ __author__ = """\n""".join(['Nima Mohammadi (nima.irt[AT]gmail.com)',
 #    BSD license.
 
 __all__ = ['is_eulerian', 'eulerian_circuit']
+
 
 def is_eulerian(G):
     """Return True if G is an Eulerian nxgraph, False otherwise.
@@ -43,20 +44,20 @@ def is_eulerian(G):
         # Every node must have equal in degree and out degree
         for n in G.nodes_iter():
             if G.in_degree(n) != G.out_degree(n):
-               return False
+                return False
         # Must be strongly connected
         if not nx.is_strongly_connected(G):
             return False
     else:
         # An undirected Eulerian nxgraph has no vertices of odd degrees
-        for v,d in G.degree_iter():
+        for v, d in G.degree_iter():
             if d % 2 != 0:
                 return False
         # Must be connected
         if not nx.is_connected(G):
             return False
     return True
-	  
+
 
 def eulerian_circuit(G, source=None):
     """Return the edges of an Eulerian circuit in G.
@@ -108,7 +109,7 @@ def eulerian_circuit(G, source=None):
     if not is_eulerian(G):
         raise nx.NetworkXError("G is not Eulerian.")
 
-    g = G.__class__(G) # copy nxgraph structure (not attributes)
+    g = G.__class__(G)  # copy nxgraph structure (not attributes)
 
     # set starting node
     if source is None:
@@ -117,19 +118,19 @@ def eulerian_circuit(G, source=None):
         v = source
 
     while g.size() > 0:
-        n = v   
+        n = v
         # sort nbrs here to provide stable ordering of alternate cycles
-        nbrs = sorted([v for u,v in g.edges(n)])
+        nbrs = sorted([v for u, v in g.edges(n)])
         for v in nbrs:
-            g.remove_edge(n,v)
+            g.remove_edge(n, v)
             bridge = not nx.is_connected(g.to_undirected())
             if bridge:
-                g.add_edge(n,v)  # add this edge back and try another
+                g.add_edge(n, v)  # add this edge back and try another
             else:
                 break  # this edge is good, break the for loop 
         if bridge:
-            g.remove_edge(n,v)            
+            g.remove_edge(n, v)
             g.remove_node(n)
-        yield (n,v)
+        yield (n, v)
 
 

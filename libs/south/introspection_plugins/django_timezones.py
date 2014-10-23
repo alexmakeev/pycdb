@@ -1,5 +1,7 @@
-from south.modelsinspector import add_introspection_rules
 from django.conf import settings
+
+from south.modelsinspector import add_introspection_rules
+
 
 if "timezones" in settings.INSTALLED_APPS:
     try:
@@ -17,5 +19,5 @@ if "timezones" in settings.INSTALLED_APPS:
                 },
             ),
         ]
-        add_introspection_rules(rules, ["^timezones\.fields",])
+        add_introspection_rules(rules, ["^timezones\.fields", ])
 

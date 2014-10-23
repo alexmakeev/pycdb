@@ -5,8 +5,8 @@
 import os
 
 from nose import SkipTest
-
 import networkx as nx
+
 
 class TestPylab(object):
     @classmethod
@@ -14,7 +14,8 @@ class TestPylab(object):
         global pylab
         try:
             import matplotlib as mpl
-            mpl.use('PS',warn=False)
+
+            mpl.use('PS', warn=False)
             import pylab
         except ImportError:
             raise SkipTest('matplotlib not available.')
@@ -22,12 +23,12 @@ class TestPylab(object):
             raise SkipTest('matplotlib not available.')
 
     def setUp(self):
-        self.G=nx.barbell_graph(5,10)
+        self.G = nx.barbell_graph(5, 10)
 
 
     def test_draw(self):
-#         hold(False)
-        N=self.G
+        # hold(False)
+        N = self.G
         nx.draw_spring(N)
         pylab.savefig("test.ps")
         nx.draw_random(N)

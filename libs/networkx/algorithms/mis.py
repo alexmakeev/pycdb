@@ -4,7 +4,7 @@
 Algorithm to find a maximal (not maximum) independent set.
 
 """
-#    Leo Lopes <leo.lopes@monash.edu>
+# Leo Lopes <leo.lopes@monash.edu>
 #    Aric Hagberg <hagberg@lanl.gov>
 #    Dan Schult <dschult@colgate.edu>
 #    Pieter Swart <swart@lanl.gov>
@@ -17,7 +17,9 @@ __author__ = "\n".join(["Leo Lopes <leo.lopes@monash.edu>",
 __all__ = ['maximal_independent_set']
 
 import random
+
 import networkx as nx
+
 
 def maximal_independent_set(G, nodes=None):
     """Return a random maximal independent set guaranteed to contain
@@ -66,11 +68,11 @@ def maximal_independent_set(G, nodes=None):
         nodes = set(nodes)
     if not nodes.issubset(G):
         raise nx.NetworkXUnfeasible(
-                "%s is not a subset of the nodes of G" % nodes)
+            "%s is not a subset of the nodes of G" % nodes)
     neighbors = set.union(*[set(G.neighbors(v)) for v in nodes])
     if set.intersection(neighbors, nodes):
         raise nx.NetworkXUnfeasible(
-                "%s is not an independent set of G" % nodes)
+            "%s is not an independent set of G" % nodes)
     indep_nodes = list(nodes)
     available_nodes = set(G.nodes()).difference(neighbors.union(nodes))
     while available_nodes:

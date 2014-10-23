@@ -1,13 +1,13 @@
+from django.db import models
 
-from django.db import connection, models
 from south.db import generic
 
-class DatabaseOperations(generic.DatabaseOperations):
 
+class DatabaseOperations(generic.DatabaseOperations):
     """
     PsycoPG2 implementation of database operations.
     """
-    
+
     backend_name = "postgres"
 
     def rename_column(self, table_name, old, new):
@@ -19,7 +19,7 @@ class DatabaseOperations(generic.DatabaseOperations):
             self.quote_name(old),
             self.quote_name(new),
         ))
-    
+
     def rename_table(self, old_table_name, table_name):
         "will rename the table and an associated ID sequence and primary key index"
         # First, rename the table
@@ -29,7 +29,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         self.commit_transaction()
         self.start_transaction()
         try:
-            generic.DatabaseOperations.rename_table(self, old_table_name+"_id_seq", table_name+"_id_seq")
+            generic.DatabaseOperations.rename_table(self, old_table_name + "_id_seq", table_name + "_id_seq")
         except:
             if self.debug:
                 print "   ~ No such sequence (ignoring error)"
@@ -42,7 +42,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         # the table that are used by django (e.g. foreign keys). Until
         # figure out how, you need to do this yourself.
         try:
-            generic.DatabaseOperations.rename_table(self, old_table_name+"_pkey", table_name+ "_pkey")
+            generic.DatabaseOperations.rename_table(self, old_table_name + "_pkey", table_name + "_pkey")
         except:
             if self.debug:
                 print "   ~ No such primary key (ignoring error)"

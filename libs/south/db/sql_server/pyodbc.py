@@ -1,25 +1,27 @@
 from django.db import models
 from django.db.models import fields
+
 from south.db import generic
+
 
 class DatabaseOperations(generic.DatabaseOperations):
     """
     django-pyodbc (sql_server.pyodbc) implementation of database operations.
     """
-    
+
     backend_name = "pyodbc"
-    
+
     add_column_string = 'ALTER TABLE %s ADD %s;'
     alter_string_set_type = 'ALTER COLUMN %(column)s %(type)s'
     alter_string_set_null = 'ALTER COLUMN %(column)s %(type)s NULL'
     alter_string_drop_null = 'ALTER COLUMN %(column)s %(type)s NOT NULL'
-    
+
     allows_combined_alters = False
 
     drop_index_string = 'DROP INDEX %(index_name)s ON %(table_name)s'
     drop_constraint_string = 'ALTER TABLE %(table_name)s DROP CONSTRAINT %(constraint_name)s'
     delete_column_string = 'ALTER TABLE %s DROP COLUMN %s'
-    
+
     default_schema_name = "dbo"
 
 
@@ -27,14 +29,14 @@ class DatabaseOperations(generic.DatabaseOperations):
         q_table_name, q_name = (self.quote_name(table_name), self.quote_name(name))
 
         # Zap the indexes
-        for ind in self._find_indexes_for_column(table_name,name):
-            params = {'table_name':q_table_name, 'index_name': ind}
+        for ind in self._find_indexes_for_column(table_name, name):
+            params = {'table_name': q_table_name, 'index_name': ind}
             sql = self.drop_index_string % params
             self.execute(sql, [])
 
         # Zap the constraints
-        for const in self._find_constraints_for_column(table_name,name):
-            params = {'table_name':q_table_name, 'constraint_name': const}
+        for const in self._find_constraints_for_column(table_name, name):
+            params = {'table_name': q_table_name, 'constraint_name': const}
             sql = self.drop_constraint_string % params
             self.execute(sql, [])
 
@@ -89,21 +91,21 @@ class DatabaseOperations(generic.DatabaseOperations):
         cons = self.execute(sql, [db_name, schema_name, table_name, name])
         return [c[0] for c in cons]
 
-    def _alter_set_defaults(self, field, name, params, sqls): 
+    def _alter_set_defaults(self, field, name, params, sqls):
         "Subcommand of alter_column that sets default values (overrideable)"
         # First drop the current default if one exists
         table_name = self.quote_name(params['table_name'])
         drop_default = self.drop_column_default_sql(table_name, name)
         if drop_default:
             sqls.append((drop_default, []))
-            
+
         # Next, set any default
-        
-        if field.has_default(): # was: and not field.null
+
+        if field.has_default():  # was: and not field.null
             default = field.get_default()
             sqls.append(('ADD DEFAULT %%s for %s' % (self.quote_name(name),), [default]))
-        #else:
-        #    sqls.append(('ALTER COLUMN %s DROP DEFAULT' % (self.quote_name(name),), []))
+            # else:
+            #    sqls.append(('ALTER COLUMN %s DROP DEFAULT' % (self.quote_name(name),), []))
 
     def drop_column_default_sql(self, table_name, name, q_name=None):
         "MSSQL specific drop default, which is a pain"
@@ -165,7 +167,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         db_name = self._get_setting('name')
         schema_name = self._get_schema_name()
         return self.execute(sql, [db_name, schema_name, table_name])
-                
+
     def delete_table(self, table_name, cascade=True):
         """
         Deletes the table 'table_name'.
@@ -173,14 +175,14 @@ class DatabaseOperations(generic.DatabaseOperations):
         if cascade:
             refing = self._find_referencing_fks(table_name)
             for schmea, table, constraint in refing:
-                table = ".".join(map (self.quote_name, [schmea, table]))
-                params = dict(table_name = table,
-                              constraint_name = self.quote_name(constraint))
+                table = ".".join(map(self.quote_name, [schmea, table]))
+                params = dict(table_name=table,
+                              constraint_name=self.quote_name(constraint))
                 sql = self.drop_constraint_string % params
                 self.execute(sql, [])
             cascade = False
         super(DatabaseOperations, self).delete_table(table_name, cascade)
-            
+
     def rename_column(self, table_name, old, new):
         """
         Renames the column of 'table_name' from 'old' to 'new'.

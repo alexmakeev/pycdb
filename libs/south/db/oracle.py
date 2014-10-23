@@ -1,31 +1,32 @@
-import os.path
 import sys
 import re
-import cx_Oracle
 
 from django.db import connection, models
 from django.db.backends.util import truncate_name
-from django.core.management.color import no_style
 from django.db.backends.oracle.base import get_sequence_name
 from django.db.models.fields import NOT_PROVIDED
+
+import cx_Oracle
 from south.db import generic
+
 
 print >> sys.stderr, " ! WARNING: South's Oracle support is still alpha."
 print >> sys.stderr, " !          Be wary of posible bugs."
 
-class DatabaseOperations(generic.DatabaseOperations):    
+
+class DatabaseOperations(generic.DatabaseOperations):
     """
     Oracle implementation of database operations.    
     """
     backend_name = 'oracle'
 
-    alter_string_set_type =     'ALTER TABLE %(table_name)s MODIFY "%(column)s" %(type)s %(nullity)s;'
-    alter_string_set_default =  'ALTER TABLE %(table_name)s MODIFY "%(column)s" DEFAULT %(default)s;'
-    add_column_string =         'ALTER TABLE %s ADD %s;'
-    delete_column_string =      'ALTER TABLE %s DROP COLUMN %s;'
+    alter_string_set_type = 'ALTER TABLE %(table_name)s MODIFY "%(column)s" %(type)s %(nullity)s;'
+    alter_string_set_default = 'ALTER TABLE %(table_name)s MODIFY "%(column)s" DEFAULT %(default)s;'
+    add_column_string = 'ALTER TABLE %s ADD %s;'
+    delete_column_string = 'ALTER TABLE %s DROP COLUMN %s;'
 
     allows_combined_alters = False
-    
+
     constraits_dict = {
         'PRIMARY KEY': 'P',
         'UNIQUE': 'U',
@@ -35,10 +36,12 @@ class DatabaseOperations(generic.DatabaseOperations):
     table_names_cache = set()
 
     def adj_column_sql(self, col):
-        col = re.sub('(?P<constr>CHECK \(.*\))(?P<any>.*)(?P<default>DEFAULT [0|1])', 
-                     lambda mo: '%s %s%s'%(mo.group('default'), mo.group('constr'), mo.group('any')), col) #syntax fix for boolean field only
+        col = re.sub('(?P<constr>CHECK \(.*\))(?P<any>.*)(?P<default>DEFAULT [0|1])',
+                     lambda mo: '%s %s%s' % (mo.group('default'), mo.group('constr'), mo.group('any')),
+                     col)  # syntax fix for boolean field only
         col = re.sub('(?P<not_null>NOT NULL) (?P<default>DEFAULT.+)',
-                     lambda mo: '%s %s'%(mo.group('default'), mo.group('not_null')), col) #fix order  of DEFAULT and NOT NULL
+                     lambda mo: '%s %s' % (mo.group('default'), mo.group('not_null')),
+                     col)  # fix order  of DEFAULT and NOT NULL
         return col
 
     def check_m2m(self, table_name):
@@ -51,7 +54,7 @@ class DatabaseOperations(generic.DatabaseOperations):
         tn = table_name.rsplit('_', 1)
 
         while len(tn) == 2:
-            tn2qn = self.quote_name(tn[0], upper = False, check_m2m = False) 
+            tn2qn = self.quote_name(tn[0], upper=False, check_m2m=False)
             if tn2qn in self.table_names_cache:
                 m2m_table_name = table_name.replace(tn[0], tn2qn)
                 break
@@ -67,20 +70,20 @@ class DatabaseOperations(generic.DatabaseOperations):
         return m2m_table_name
 
     def check_meta(self, table_name):
-        return table_name in [ m._meta.db_table for m in models.get_models() ] #caching provided by Django
+        return table_name in [m._meta.db_table for m in models.get_models()]  # caching provided by Django
 
-    def quote_name(self, name, upper=True, column = False, check_m2m = True):
+    def quote_name(self, name, upper=True, column=False, check_m2m=True):
         if not column:
             if check_m2m:
                 name = self.check_m2m(name)
-            if self.check_meta(name): #replication of Django flow for models where Meta.db_table is set by user
+            if self.check_meta(name):  # replication of Django flow for models where Meta.db_table is set by user
                 name = name.upper()
         tn = truncate_name(name, connection.ops.max_name_length())
 
         return upper and tn.upper() or tn.lower()
 
-    def create_table(self, table_name, fields): 
-        qn = self.quote_name(table_name, upper = False)
+    def create_table(self, table_name, fields):
+        qn = self.quote_name(table_name, upper=False)
         qn_upper = qn.upper()
         columns = []
         autoinc_sql = ''
@@ -102,13 +105,13 @@ class DatabaseOperations(generic.DatabaseOperations):
             self.execute(autoinc_sql[1])
 
     def delete_table(self, table_name, cascade=True):
-        qn = self.quote_name(table_name, upper = False)
+        qn = self.quote_name(table_name, upper=False)
 
         if cascade:
             self.execute('DROP TABLE %s CASCADE CONSTRAINTS PURGE;' % qn.upper())
         else:
             self.execute('DROP TABLE %s;' % qn.upper())
-        self.execute('DROP SEQUENCE %s;'%get_sequence_name(qn))
+        self.execute('DROP SEQUENCE %s;' % get_sequence_name(qn))
 
     def alter_column(self, table_name, name, field, explicit_name=True):
         qn = self.quote_name(table_name)
@@ -122,11 +125,11 @@ class DatabaseOperations(generic.DatabaseOperations):
         field.set_attributes_from_name(name)
         if not explicit_name:
             name = field.column
-        qn_col = self.quote_name(name, column = True)
+        qn_col = self.quote_name(name, column=True)
 
         # First, change the type
         params = {
-            'table_name':qn,
+            'table_name': qn,
             'column': qn_col,
             'type': self._db_type_for_alter_column(field),
             'nullity': 'NOT NULL',
@@ -141,7 +144,7 @@ class DatabaseOperations(generic.DatabaseOperations):
 
         sqls.append(self.alter_string_set_default % params)
 
-        #UNIQUE constraint
+        # UNIQUE constraint
         unique_constraint = list(self._constraints_affecting_columns(qn, [qn_col]))
 
         if field.unique and not unique_constraint:
@@ -159,7 +162,7 @@ class DatabaseOperations(generic.DatabaseOperations):
                     raise
 
     def add_column(self, table_name, name, field, keep_default=True):
-        qn = self.quote_name(table_name, upper = False)
+        qn = self.quote_name(table_name, upper=False)
         sql = self.column_sql(qn, name, field)
         sql = self.adj_column_sql(sql)
 

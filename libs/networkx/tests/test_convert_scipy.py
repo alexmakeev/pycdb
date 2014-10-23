@@ -1,8 +1,8 @@
 from nose import SkipTest
-from nose.tools import assert_raises, assert_true, assert_equal, raises
 
 import networkx as nx
-from networkx.generators.classic import barbell_graph,cycle_graph,path_graph
+from networkx.generators.classic import barbell_graph, cycle_graph, path_graph
+
 
 class TestConvertNumpy(object):
     @classmethod
@@ -12,7 +12,8 @@ class TestConvertNumpy(object):
             import numpy as np
             import scipy as sp
             import scipy.sparse as sparse
-            np_assert_equal=np.testing.assert_equal
+
+            np_assert_equal = np.testing.assert_equal
         except ImportError:
             raise SkipTest('SciPy sparse library not available.')
 
@@ -26,16 +27,16 @@ class TestConvertNumpy(object):
     def create_weighted(self, G):
         g = cycle_graph(4)
         e = g.edges()
-        source = [u for u,v in e]
-        dest = [v for u,v in e]
-        weight = [s+10 for s in source]
+        source = [u for u, v in e]
+        dest = [v for u, v in e]
+        weight = [s + 10 for s in source]
         ex = zip(source, dest, weight)
         G.add_weighted_edges_from(ex)
         return G
 
     def assert_equal(self, G1, G2):
-        assert_true( sorted(G1.nodes())==sorted(G2.nodes()) )
-        assert_true( sorted(G1.edges())==sorted(G2.edges()) )
+        assert_true(sorted(G1.nodes()) == sorted(G2.nodes()))
+        assert_true(sorted(G1.edges()) == sorted(G2.edges()))
 
     def identity_conversion(self, G, A, create_using):
         GG = nx.from_scipy_sparse_matrix(A, create_using=create_using)
@@ -69,7 +70,7 @@ class TestConvertNumpy(object):
 
     def test_shape(self):
         "Conversion from non-square sparse array."
-        A = sp.sparse.lil_matrix([[1,2,3],[4,5,6]])
+        A = sp.sparse.lil_matrix([[1, 2, 3], [4, 5, 6]])
         assert_raises(nx.NetworkXError, nx.from_scipy_sparse_matrix, A)
 
     def test_identity_graph_matrix(self):
@@ -103,60 +104,60 @@ class TestConvertNumpy(object):
 
         # Make nodelist ambiguous by containing duplicates.
         nodelist += [nodelist[0]]
-        assert_raises(nx.NetworkXError, nx.to_numpy_matrix, P3, 
+        assert_raises(nx.NetworkXError, nx.to_numpy_matrix, P3,
                       nodelist=nodelist)
 
     def test_weight_keyword(self):
         WP4 = nx.Graph()
-        WP4.add_edges_from( (n,n+1,dict(weight=0.5,other=0.3)) 
-                            for n in range(3) )
+        WP4.add_edges_from((n, n + 1, dict(weight=0.5, other=0.3))
+                           for n in range(3))
         P4 = path_graph(4)
         A = nx.to_scipy_sparse_matrix(P4)
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
-        np_assert_equal(0.5*A.todense(),
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
+        np_assert_equal(0.5 * A.todense(),
                         nx.to_scipy_sparse_matrix(WP4).todense())
-        np_assert_equal(0.3*A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight='other').todense())
+        np_assert_equal(0.3 * A.todense(),
+                        nx.to_scipy_sparse_matrix(WP4, weight='other').todense())
 
     def test_format_keyword(self):
         WP4 = nx.Graph()
-        WP4.add_edges_from( (n,n+1,dict(weight=0.5,other=0.3))
-                            for n in range(3) )
+        WP4.add_edges_from((n, n + 1, dict(weight=0.5, other=0.3))
+                           for n in range(3))
         P4 = path_graph(4)
         A = nx.to_scipy_sparse_matrix(P4, format='csr')
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
 
         A = nx.to_scipy_sparse_matrix(P4, format='csc')
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
 
         A = nx.to_scipy_sparse_matrix(P4, format='coo')
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
 
         A = nx.to_scipy_sparse_matrix(P4, format='bsr')
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
 
         A = nx.to_scipy_sparse_matrix(P4, format='lil')
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
 
         A = nx.to_scipy_sparse_matrix(P4, format='dia')
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
 
         A = nx.to_scipy_sparse_matrix(P4, format='dok')
         np_assert_equal(A.todense(),
-                        nx.to_scipy_sparse_matrix(WP4,weight=None).todense())
+                        nx.to_scipy_sparse_matrix(WP4, weight=None).todense())
 
     @raises(nx.NetworkXError)
     def test_format_keyword_fail(self):
         WP4 = nx.Graph()
-        WP4.add_edges_from( (n,n+1,dict(weight=0.5,other=0.3))
-                            for n in range(3) )
+        WP4.add_edges_from((n, n + 1, dict(weight=0.5, other=0.3))
+                           for n in range(3))
         P4 = path_graph(4)
         nx.to_scipy_sparse_matrix(P4, format='any_other')
 
@@ -172,8 +173,8 @@ class TestConvertNumpy(object):
 
     def test_ordering(self):
         G = nx.DiGraph()
-        G.add_edge(1,2)
-        G.add_edge(2,3)
-        G.add_edge(3,1)
-        M = nx.to_scipy_sparse_matrix(G,nodelist=[3,2,1])
-        np_assert_equal(M.todense(), np.matrix([[0,0,1],[1,0,0],[0,1,0]]))
+        G.add_edge(1, 2)
+        G.add_edge(2, 3)
+        G.add_edge(3, 1)
+        M = nx.to_scipy_sparse_matrix(G, nodelist=[3, 2, 1])
+        np_assert_equal(M.todense(), np.matrix([[0, 0, 1], [1, 0, 0], [0, 1, 0]]))

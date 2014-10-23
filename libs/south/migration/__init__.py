@@ -2,28 +2,25 @@
 Main migration logic.
 """
 
-import sys
-
 from django.core.exceptions import ImproperlyConfigured
 
 import south.db
 from south import exceptions
 from south.models import MigrationHistory
-from south.db import db, DEFAULT_DB_ALIAS
 from south.migration.migrators import (Backwards, Forwards,
                                        DryRunMigrator, FakeMigrator,
                                        LoadInitialDataMigrator)
-from south.migration.base import Migration, Migrations
 from south.migration.utils import SortedSet
-from south.migration.base import all_migrations
 from south.signals import pre_migrate, post_migrate
 
 
 def to_apply(forwards, done):
     return [m for m in forwards if m not in done]
 
+
 def to_unapply(backwards, done):
     return [m for m in backwards if m in done]
+
 
 def problems(pending, done):
     last = None
@@ -36,6 +33,7 @@ def problems(pending, done):
         if last and migration not in done:
             yield last, migration
 
+
 def forwards_problems(pending, done, verbosity):
     """
     Takes the list of linearised pending migrations, and the set of done ones,
@@ -43,8 +41,10 @@ def forwards_problems(pending, done, verbosity):
     """
     return inner_problem_check(problems(reversed(pending), done), done, verbosity)
 
+
 def backwards_problems(pending, done, verbosity):
     return inner_problem_check(problems(pending, done), done, verbosity)
+
 
 def inner_problem_check(problems, done, verbosity):
     "Takes a set of possible problems and gets the actual issues out of it."
@@ -65,6 +65,7 @@ def inner_problem_check(problems, done, verbosity):
                 to_check.extend(checking.dependencies)
     return result
 
+
 def check_migration_histories(histories, delete_ghosts=False, ignore_ghosts=False):
     "Checks that there's no 'ghost' migrations in the database."
     exists = SortedSet()
@@ -76,7 +77,7 @@ def check_migration_histories(histories, delete_ghosts=False, ignore_ghosts=Fals
         except exceptions.UnknownMigration:
             ghosts.append(h)
         except ImproperlyConfigured:
-            pass                        # Ignore missing applications
+            pass  # Ignore missing applications
         else:
             exists.add(m)
     if ghosts:
@@ -87,6 +88,7 @@ def check_migration_histories(histories, delete_ghosts=False, ignore_ghosts=Fals
         elif not ignore_ghosts:
             raise exceptions.GhostMigrations(ghosts)
     return exists
+
 
 def get_dependencies(target, migrations):
     forwards = list
@@ -102,6 +104,7 @@ def get_dependencies(target, migrations):
         if migration_before_here:
             backwards = migration_before_here.backwards_plan
     return forwards, backwards
+
 
 def get_direction(target, applied, migrations, verbosity, interactive):
     # Get the forwards and reverse dependencies for this target
@@ -131,6 +134,7 @@ def get_direction(target, applied, migrations, verbosity, interactive):
             direction = Backwards(verbosity=verbosity, interactive=interactive)
     return direction, problems, workplan
 
+
 def get_migrator(direction, db_dry_run, fake, load_initial_data):
     if not direction:
         return direction
@@ -142,21 +146,24 @@ def get_migrator(direction, db_dry_run, fake, load_initial_data):
         direction = LoadInitialDataMigrator(migrator=direction)
     return direction
 
-def migrate_app(migrations, target_name=None, merge=False, fake=False, db_dry_run=False, yes=False, verbosity=0, load_initial_data=False, skip=False, database=DEFAULT_DB_ALIAS, delete_ghosts=False, ignore_ghosts=False, interactive=False):
+
+def migrate_app(migrations, target_name=None, merge=False, fake=False, db_dry_run=False, yes=False, verbosity=0,
+                load_initial_data=False, skip=False, database=DEFAULT_DB_ALIAS, delete_ghosts=False,
+                ignore_ghosts=False, interactive=False):
     app_label = migrations.app_label()
 
     verbosity = int(verbosity)
     # Fire off the pre-migrate signal
     pre_migrate.send(None, app=app_label)
-    
+
     # If there aren't any, quit quizically
     if not migrations:
         print "? You have no migrations for the '%s' app. You might want some." % app_label
         return
-    
+
     # Load the entire dependency nxgraph
     Migrations.calculate_dependencies()
-    
+
     # Check there's no strange ones in the database
     applied = MigrationHistory.objects.filter(applied__isnull=False)
     # If we're using a different database, use that
@@ -166,10 +173,10 @@ def migrate_app(migrations, target_name=None, merge=False, fake=False, db_dry_ru
         # We now have to make sure the migrations are all reloaded, as they'll
         # have imported the old value of south.db.db.
         Migrations.invalidate_all_modules()
-    
+
     south.db.db.debug = (verbosity > 1)
     applied = check_migration_histories(applied, delete_ghosts, ignore_ghosts)
-    
+
     # Guess the target_name
     target = migrations.guess_migration(target_name)
     if verbosity:
@@ -177,13 +184,13 @@ def migrate_app(migrations, target_name=None, merge=False, fake=False, db_dry_ru
             print " - Soft matched migration %s to %s." % (target_name,
                                                            target.name())
         print "Running migrations for %s:" % app_label
-    
+
     # Get the forwards and reverse dependencies for this target
     direction, problems, workplan = get_direction(target, applied, migrations,
                                                   verbosity, interactive)
     if problems and not (merge or skip):
         raise exceptions.InconsistentMigrationHistory(problems)
-    
+
     # Perform the migration
     migrator = get_migrator(direction, db_dry_run, fake, load_initial_data)
     if migrator:

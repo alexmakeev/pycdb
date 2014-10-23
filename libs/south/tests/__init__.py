@@ -1,9 +1,12 @@
-
 import unittest
 import os
 import sys
+
 from django.conf import settings
+
 from south.hacks import hacks
+
+
 
 # Add the tests directory so fakeapp is on sys.path
 test_root = os.path.dirname(__file__)
@@ -12,16 +15,15 @@ sys.path.append(test_root)
 # Note: the individual test files are imported below this.
 
 class Monkeypatcher(unittest.TestCase):
-
     """
     Base test class for tests that play with the INSTALLED_APPS setting at runtime.
     """
 
     def create_fake_app(self, name):
-        
+
         class Fake:
             pass
-        
+
         fake = Fake()
         fake.__name__ = name
         try:
@@ -37,8 +39,8 @@ class Monkeypatcher(unittest.TestCase):
         """
         if getattr(self, 'installed_apps', None):
             hacks.set_installed_apps(self.installed_apps)
-    
-    
+
+
     def tearDown(self):
         """
         Undoes what setUp did.

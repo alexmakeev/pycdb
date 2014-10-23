@@ -1,15 +1,17 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #    Copyright (C) 2011 by 
 #    Jordi Torrents <jtorrents@milnou.net>
 #    Aric Hagberg <hagberg@lanl.gov>
 #    All rights reserved.
 #    BSD license.
 import networkx as nx
+
 __author__ = """\n""".join(['Jordi Torrents <jtorrents@milnou.net>',
                             'Aric Hagberg (hagberg@lanl.gov)'])
-__all__=['degree_centrality',
-         'betweenness_centrality',
-         'closeness_centrality']
+__all__ = ['degree_centrality',
+           'betweenness_centrality',
+           'closeness_centrality']
+
 
 def degree_centrality(G, nodes):
     r"""Compute the degree centrality for nodes in a bipartite network.
@@ -70,10 +72,10 @@ def degree_centrality(G, nodes):
     """
     top = set(nodes)
     bottom = set(G) - top
-    s = 1.0/len(bottom)
-    centrality = dict((n,d*s) for n,d in G.degree_iter(top))
-    s = 1.0/len(top)
-    centrality.update(dict((n,d*s) for n,d in G.degree_iter(bottom)))
+    s = 1.0 / len(bottom)
+    centrality = dict((n, d * s) for n, d in G.degree_iter(top))
+    s = 1.0 / len(top)
+    centrality.update(dict((n, d * s) for n, d in G.degree_iter(bottom)))
     return centrality
 
 
@@ -150,23 +152,24 @@ def betweenness_centrality(G, nodes):
     bottom = set(G) - top
     n = float(len(top))
     m = float(len(bottom))
-    s = (n-1) // m
-    t = (n-1) % m
-    bet_max_top = (((m**2)*((s+1)**2))+
-                   (m*(s+1)*(2*t-s-1))-
-                   (t*((2*s)-t+3)))/2.0
-    p = (m-1) // n
-    r = (m-1) % n
-    bet_max_bot = (((n**2)*((p+1)**2))+
-                   (n*(p+1)*(2*r-p-1))-
-                   (r*((2*p)-r+3)))/2.0
-    betweenness = nx.betweenness_centrality(G, normalized=False, 
+    s = (n - 1) // m
+    t = (n - 1) % m
+    bet_max_top = (((m ** 2) * ((s + 1) ** 2)) +
+                   (m * (s + 1) * (2 * t - s - 1)) -
+                   (t * ((2 * s) - t + 3))) / 2.0
+    p = (m - 1) // n
+    r = (m - 1) % n
+    bet_max_bot = (((n ** 2) * ((p + 1) ** 2)) +
+                   (n * (p + 1) * (2 * r - p - 1)) -
+                   (r * ((2 * p) - r + 3))) / 2.0
+    betweenness = nx.betweenness_centrality(G, normalized=False,
                                             weight=None)
     for node in top:
-        betweenness[node]/=bet_max_top
+        betweenness[node] /= bet_max_top
     for node in bottom:
-        betweenness[node]/=bet_max_bot
+        betweenness[node] /= bet_max_bot
     return betweenness
+
 
 def closeness_centrality(G, nodes, normalized=True):
     r"""Compute the closeness centrality for nodes in a bipartite network.
@@ -236,31 +239,31 @@ def closeness_centrality(G, nodes, normalized=True):
         of Social Network Analysis. Sage Publications.
         http://www.steveborgatti.com/papers/bhaffiliations.pdf
     """
-    closeness={}
-    path_length=nx.single_source_shortest_path_length
+    closeness = {}
+    path_length = nx.single_source_shortest_path_length
     top = set(nodes)
     bottom = set(G) - top
     n = float(len(top))
     m = float(len(bottom))
     for node in top:
-        sp=path_length(G,node)
-        totsp=sum(sp.values())
+        sp = path_length(G, node)
+        totsp = sum(sp.values())
         if totsp > 0.0 and len(G) > 1:
-            closeness[node]= (m + 2*(n-1)) / totsp
+            closeness[node] = (m + 2 * (n - 1)) / totsp
             if normalized:
-                s=(len(sp)-1.0) / ( len(G) - 1 )
+                s = (len(sp) - 1.0) / ( len(G) - 1 )
                 closeness[node] *= s
         else:
-            closeness[n]=0.0
+            closeness[n] = 0.0
     for node in bottom:
-        sp=path_length(G,node)
-        totsp=sum(sp.values())
+        sp = path_length(G, node)
+        totsp = sum(sp.values())
         if totsp > 0.0 and len(G) > 1:
-            closeness[node]= (n + 2*(m-1)) / totsp
+            closeness[node] = (n + 2 * (m - 1)) / totsp
             if normalized:
-                s=(len(sp)-1.0) / ( len(G) - 1 )
+                s = (len(sp) - 1.0) / ( len(G) - 1 )
                 closeness[node] *= s
         else:
-            closeness[n]=0.0
+            closeness[n] = 0.0
     return closeness
 
