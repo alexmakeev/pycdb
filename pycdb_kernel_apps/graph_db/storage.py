@@ -15,7 +15,14 @@ class Storage:
 
     def persist(self):
         #print "Persisted"
-        nx.write_gpickle(self.nxgraph, self.graph_file) # "/home/alexmak/test.pickle")#
+        prefixes = ["", ".reserve.01",  ".reserve.02", ".reserve.03", ".reserve.04", ".reserve.05"]
+
+        print range(len(prefixes)-2, -1, -1)
+        for i in range(len(prefixes)-2, -1, -1):
+            print i, self.graph_file + prefixes[i], os.path.exists(self.graph_file + prefixes[i])
+            if os.path.exists(self.graph_file + prefixes[i]):
+                os.rename(self.graph_file + prefixes[i], self.graph_file + prefixes[i+1])
+        nx.write_gpickle(self.nxgraph, self.graph_file + prefixes[0]) # "/home/alexmak/test.pickle")#
 
     def __del__(self):
         #print "Deleted"
