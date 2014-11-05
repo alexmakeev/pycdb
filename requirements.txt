@@ -1,0 +1,4 @@
+django
+
+networkx
+django-annoying

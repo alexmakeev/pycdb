@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block head %}
+    <title>{% trans "Types connector" %}</title>
+    <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}nsls_tools/js/types_connector_primitives.js"></script>
+{% endblock head %}
+
+
+{% block content %}
+    <h1>Types connector</h1>
+    <a href="{% url 'nsls-types-connector' %}">&laquo; Back</a>
+
+    <h3>Edit connection:</h3>
+
+    <form method="POST" action="{% url 'nsls-types-connector-save' conn_type.cid conn_type.id %}">
+        {% csrf_token %}
+        <table style="width:100%;">
+            <tr>
+                <td>Title:</td>
+                <td><input type="text" name="title" value="{{ conn_type.getTitle }}" placeholder="Title"></td>
+            </tr>
+            <tr>
+                <td>From:</td>
+                <td>{{ from_widget }}</td>
+            </tr>
+            <tr>
+                <td>To:</td>
+                <td>{{ to_widget }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="Save">
+                    <input type="submit" name="save_and_return" value="Save and Return">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+
+    <style>
+        .draggable { width: 100px; cursor: move; padding: 0.5em; float: left; margin: 0px;}
+        .droppable { width: 250px;  padding: 0.5em; float: left; margin: 10px; }
+        .item {margin: 2px; padding: 3px;}
+        .hover {background-color: orange !important;}
+        .connected {background-color: #90ee90;}
+        .not_connected {background-color: #FFFFEE;}
+        .connected div {background-color: #008000;}
+        .through_item {float:left; padding: 1px 5px; margin: 1px;}
+        .not_connected div {background-color: #FFFFAA;}
+        .through_item {cursor: hand;}
+        .through_over {background-color: #8b0000 !important;}
+    </style>
+    <script type="text/javascript"><!--
+    var register = UIObjectsRegister()
+
+    function LoadContainers()
+    {
+        var inst_id_to_uid = {}
+        {% for item in from_items %}
+            inst_id_to_uid["{{ item.cid }}.{{ item.id }}"] = ItemFrom(register, "{{ item.getTitle }}", {{ item.cid }}, {{ item.id }}).uid;
+        {% endfor %}
+        {% for item in to_items %}
+            inst_id_to_uid["{{ item.cid }}.{{ item.id }}"] = ItemTo(register, "{{ item.getTitle }}", {{ item.cid }}, {{ item.id }}).uid;
+        {% endfor %}
+        {% for item in through_items %}
+            var through_obj = ItemThrough(register,{{ item.cid }},{{ item.id }});
+            through_obj["from_item_uid"] = inst_id_to_uid["{{ item.from_item.cid }}.{{ item.from_item.id }}"];
+            through_obj["to_item_uid"] = inst_id_to_uid["{{ item.to_item.cid }}.{{ item.to_item.id }}"];
+            register.get_uiobject(through_obj["from_item_uid"]).on_redraw.fire();
+            register.get_uiobject(through_obj["to_item_uid"]).on_redraw.fire();
+        {% endfor %}
+
+        $( ".draggable" ).draggable({ revert: true });
+        //$( ".draggable2" ).draggable({ revert: "invalid" });
+
+        $( ".droppable" ).droppable({
+            activeClass: "",
+            hoverClass: "hover",
+
+            drop: function( event, ui ) {
+                var from = $(ui.draggable);
+                var to = $(this);
+                var from_obj = register.get_uiobject(from.attr("p_uid"));
+                var to_obj = register.get_uiobject(to.attr("p_uid"));
+                var through_obj = ItemThrough(register,0,0);
+                through_obj["from_item_uid"] = from_obj.uid;
+                through_obj["to_item_uid"] = to_obj.uid;
+                from_obj.on_redraw.fire();
+                to_obj.on_redraw.fire();
+                var t_data = {
+                    "from_cid" : from_obj.cid,
+                    "from_id" : from_obj.id,
+                    "to_cid" : to_obj.cid,
+                    "to_id" : to_obj.id
+                };
+
+                $.ajax({
+                            url: "{% url 'nsls-types-connector-save-conn-type-part' conn_type.cid conn_type.id %}",
+                            global: false,
+                            data : t_data,
+                            type: "GET",
+                            dataType: "json",
+                            async:true
+                        }
+                ).done(function( json_data ) {
+                            through_obj.cid = json_data["cid"]
+                            through_obj.id = json_data["id"]
+                        });
+            }
+        })
+
+
+    }
+    function SelectConnection(elem)
+    {
+        var uid = $(elem).attr("p_uid")
+        $("[p_uid]").removeClass("through_over")
+        $("[p_uid=" + uid + "]").addClass("through_over")
+    }
+    function DeleteConnection(elem)
+    {
+        var uid = $(elem).attr("p_uid")
+        var through_obj = register.get_uiobject(uid)
+        var from_obj = register.get_uiobject(through_obj["from_item_uid"])
+        var to_obj = register.get_uiobject(through_obj["to_item_uid"])
+        var t_data = {
+            "through_cid" : through_obj.cid,
+            "through_id" : through_obj.id,
+        };
+        $.ajax({
+                    url: "{% url 'nsls-types-connector-delete-conn-type-part' conn_type.cid conn_type.id %}",
+                    global: false,
+                    data : t_data,
+                    type: "GET",
+                    dataType: "html",
+                    async:false
+                }
+        );
+        through_obj.on_delete.fire();
+        from_obj.on_redraw.fire();
+        to_obj.on_redraw.fire();
+    }
+
+    //--></script>
+
+    <h3>Edit Connection Template</h3>
+    <table style="width:100%;">
+        <tr>
+            <td style="width:50%;"><h2>From</h2></td>
+            <td><h2>To</h2></td>
+        </tr>
+        <tr>
+            <td id="from_container"></td>
+            <td id="to_container"></td>
+        </tr>
+
+        <tr>
+            <td colspan="2">Double-click connection square to disconnect</td>
+        </tr>
+
+    </table>
+    <script id="tmpl_item_from" type="text/x-jquery-tmpl">
+        <div class="item draggable not_connected" p_uid="${uid}" p_cid="${cid}" p_id="${id}">
+            ${title}
+            <div class="through_items"></div>
+        </div>
+    </script>
+    <script id="tmpl_item_to" type="text/x-jquery-tmpl">
+        <div class="item droppable not_connected" p_uid="${uid}" p_cid="${cid}" p_id="${id}">
+            ${title}
+            <div class="through_items"></div>
+        </div>
+    </script>
+    <script id="tmpl_item_through" type="text/x-jquery-tmpl">
+        <div class="through_item" onmouseover="SelectConnection(this);" ondblclick="DeleteConnection(this);" p_uid="${uid}">${target_title}</div>
+    </script>
+
+    <script language="JavaScript">
+        LoadContainers();
+    </script>
+{% endblock content %}

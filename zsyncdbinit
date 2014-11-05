@@ -1,8 +1,0 @@
-python manage.py syncdb
-
-echo ""
-echo "### INITIAL MIGRATION"
-echo "### Migrating portal"
-# python manage.py migrate portal 0001 --fake
-python manage.py schemamigration portal --initial
-python manage.py migrate portal

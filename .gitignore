@@ -3,9 +3,7 @@
 *~
 *.log
 *.pid
-*.sqlite
 *.fuse*
-/graph_db/databases/*.gpickle
 /files
 /settings.py
 /.idea
@@ -14,3 +12,12 @@
 /static
 /zfcgi
 /projectFilesBackup
+*.sqlite
+*.sqlite3
+.DS_Store
+/.idea
+/venv
+/srv_web/graph_dbs/data
+/srv_web/static
+/srv_web/media
+/srv_web/main/settings.py

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load dict_key %}
+
+{% block head %}
+    <title>{% trans "Edit configuration" %}</title>
+    <style>
+    .proto .attribute-value {
+        opacity: 0.5;
+    }
+    .attribute-warning {
+        display: none;
+        color: maroon;
+        font-size: small;
+    }
+    .proto .attribute-warning {
+        display: inline;
+    }
+    .hidden {
+        display: none !important;
+    }
+    </style>
+{% endblock head %}
+
+
+{% block content %}
+    <script language="JavaScript">
+    function ClickProto(clicked_obj)
+    {
+        var obj = $(clicked_obj)
+        if (obj.prop("checked"))
+        {
+            obj.parents("tr").first().addClass("proto");
+        }
+        else
+        {
+            obj.parents("tr").first().removeClass("proto");
+        }
+        obj.parents("tr").first().find(".hidden").removeClass("hidden")
+    }
+    </script>
+    <small>Editing [{{ entity.cid }}.{{ entity.id }}]</small> <b>{{ entity.getTitle }}</b>
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <table style="width:100%;" cellspacing="10">
+            <tr>
+                <td>
+                    <font size='1' style="font-weight: bold;">
+                        Attribute
+                    </font>
+                </td>
+                <td>
+                    <font size='1' style="font-weight: bold;">
+                        Proto /<br>
+                        Default
+                    </font>
+                </td>
+                <td>
+                    <font size='1' style="font-weight: bold;">
+                        Value
+                    </font>
+                </td>
+            </tr>
+            {% for field in form %}
+                <tr {% if protos|keyvalue:field.name %}class="proto"{% endif %}>
+                    <td class="attribute-name">
+                        <font size='2'>
+                            {{ field.label_tag }}:
+                        </font>
+                    </td>
+                    <td class="attribute-proto">
+                        <input onclick="ClickProto(this);" type="checkbox" {% if protos|keyvalue:field.name %}checked="checked"{% endif %} purpose="proto" name="{{ field.name }}_proto" />
+                    </td>
+                    <td class="attribute-value"> {{ field }}
+
+                    <div class="attribute-warning {% if protos|keyvalue:field.name %}hidden{% endif %}">
+                        <br>
+                        This value will be lost and linked to proto/default:<br>
+                        {{ protos_values|keyvalue:field.name }}
+                    </div>
+
+                    {% if field.errors %}
+                        {{ field.errors }}
+                    {% endif %}
+
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        Relations:
+        <table style="width:100%;" cellspacing="10">
+        {% for relation_info in relations_infos %}
+            <tr>
+                <td style="background-color: #90ee90; padding: 5px;">
+                    <b>{{ relation_info.title }}</b>
+                </td>
+                <td>
+                    {% for relation in relation_info.relations %}
+                        {% if relation %}
+                        <div style='background-color: #e1e1e1;{% if not relation.is_real %}opacity: 0.3;{% endif %} width:100px; float:left; padding:2px; margin: 1px; border: 1px gray solid;'>
+                            <div style="float: right;">
+                                <font size='1'>
+                                    <a onclick="return confirm('Are you sure you want to delete relation {{ relation.role }} {{ relation.title }}?')" href="{% url 'std-editor-delete-relation' relation.cid relation.id %}?next={{ request.get_full_path|urlencode }}">X</a>
+                                </font>
+                            </div>
+                            <a href="{% url 'std-editor-edit-instance' relation.other_cid relation.other_id %}" style="text-decoration: none; color: #000000;">
+                                <font size='1'>
+                                    {{ relation.role }}
+                                </font>
+                                <font size='1'>
+                                    <span style='background-color: yellow; padding:1px 2px; margin: 1px; border: 1px gray solid;'><b>{{ relation.class_name }}</b></span>
+                                </font>
+                                <font size='2'>
+                                    {{ relation.title }}
+                                </font>
+                            </a>
+                        </div>
+                        {% else %}
+                            <div style="clear: both; height: 10px;">&nbsp;</div>
+                        {% endif %}
+                    {% endfor %}
+                    <div style="clear: both;" />
+                    <table>
+                    {% for allowed_neighbour in relation_info.allowed_neighbours %}
+                        <tr>
+                            <td>
+                                <font size='2'>
+                                    <span style="font-size: larger; font-weight: 900; color:green;"><b>+</b></span> new relation {{ allowed_neighbour.title }}:
+                                </font>
+                            </td>
+                            <td>
+                                {{ allowed_neighbour.input_widget }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        <input name="save" type="submit" value="Save">
+        <input name="save_and_return" type="submit" value="Save and return">
+        <a href="{% url 'std-editor-delete-instance' entity.cid entity.id %}"  onclick="return confirm('Are you sure you want to delete entity {{ entity.getTitle }}?')">Delete</a>
+    </form>
+
+
+{% endblock content %}
