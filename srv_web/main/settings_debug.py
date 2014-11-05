@@ -32,6 +32,7 @@ INSTALLED_APPS += [
     'std_editor',
     'cxv2_tools',
     'nsls_tools',
+    'pasha_app',
 ]
 
 MENU_SOURCES += ["nsls_tools.menu.MENU_ITEMS", "std_editor.menu.MENU_ITEMS",  "cxv2_tools.menu.MENU_ITEMS"]

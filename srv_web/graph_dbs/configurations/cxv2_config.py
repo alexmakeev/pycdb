@@ -71,6 +71,7 @@ class CXV2Config(Configuration):
 	    ############ EDGES #############
         # addRelationClass(cid, name, readable_name, description, attributes_list, allowed_relations)
         self.addRelationClass(101, "physical", "Physical", "Physical connections", [
+            # makeAttribute("cable_length", "Cable length", "Relation attribute example", self.TYPE_STRING, ""),
             ], [
             makeAllowedRelation(
                 {"cname":"server", "multiplicity" : self.MUL_ONE},

@@ -209,7 +209,7 @@ class Configuration:
 
     def convertCNameIfNeeded(self, cname_or_cid):
         cid = cname_or_cid
-        print(self.cnames_to_cids)
+        # print(self.cnames_to_cids)
         if type(cid) == str: cid = self.cnames_to_cids[cname_or_cid]
         return cid
 
@@ -275,9 +275,12 @@ class Configuration:
             t_eid2 = t_ent2.getId()
             if t_eid2 not in self.storage.nxgraph[t_eid1]: continue
             relations = self.storage.nxgraph[t_eid1][t_eid2]
-            for rel in relations.keys():
-                if rel[0] == cid:
-                    ret += [self.makeRelation(cid, t_ent1, t_ent2, rel[1])]
+            for rid in relations.keys():
+                if rid[0] == cid:
+                    trel = self.makeRelation(cid, t_ent1, t_ent2, rid[1])
+                    data = self.storage.nxgraph[t_eid1][t_eid2][rid]
+                    trel.attributes = deepcopy(data)
+                    ret += [trel]
         return ret
 
     def loadRelation(self, cname_or_cid, id):

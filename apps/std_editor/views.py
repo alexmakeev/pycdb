@@ -114,8 +114,8 @@ def edit_instance(request, cid, id):
     real_rel_ids = []
     for rel in relations_real:
         real_rel_ids += [rel.id]
-    print(allowed_neighbours)
-    print(cids)
+    # print(allowed_neighbours)
+    # print(cids)
     relations_infos = []
     for t_cid in cids:
         relation_info_by_cids = {

@@ -1,0 +1,21 @@
+REFRESH PAGE and see, that sequence is not guaranteed
+
+All server instances:
+{% for serv in all_servers %}
+    {{ serv.getTitle|safe }} {#  <<-- safe means not to escape " symbol  #}
+{% endfor %}
+
+
+Filtered by startswith("Pasha12") server instances:
+{% for serv in pasha_servers %}
+    {{ serv.getTitle|safe }} {#  <<-- safe means not to escape " symbol  #}
+{% endfor %}
+
+{% for nb in nbs %}
+    {{ nb.getTitle }}
+{% endfor %}
+
+{% for rel in rels %}
+    {{ rel.getFromEntity.getTitle|safe }} ----> {{ rel.getToEntity.getTitle|safe }}
+    cable_length = {{ rel.cable_length }}
+{% endfor %}
